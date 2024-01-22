@@ -1,0 +1,26 @@
+body{
+    margin-top: 15%;
+}
+
+.board{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    
+}
+
+.white-square{
+    background-color: #E9EDCC;
+    width: 90px;
+    height: 90px;
+}
+
+.black-square{
+    background-color: #779954;
+    width: 90px;
+    height: 90px;
+}
+
+.piece.black-rook{
+    background-image: url(/images/pieces/black-rook.png);
+} 

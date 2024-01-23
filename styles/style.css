@@ -20,6 +20,14 @@ body{
     height: 90px;
 }
 
+.black-square:focus{
+    background-color: #BDCD46;
+}
+
+.white-square:focus{ 
+    background-color: #F4F68A;
+}
+
 .piece{
     background-size: 100%;
     cursor: pointer;

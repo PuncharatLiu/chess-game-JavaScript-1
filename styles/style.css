@@ -11,13 +11,13 @@ body{
 .white-square{
     background-color: #E9EDCC;
     width: 90px;
-    height: 90px;
+    aspect-ratio: 1 /1;
 }
 
 .black-square{
     background-color: #779954;
     width: 90px;
-    height: 90px;
+    aspect-ratio: 1 /1;
 }
 
 .piece{
@@ -30,52 +30,64 @@ body{
 /* black pieces */
 .piece.black-rook{
     background-image: url("/images/pieces/black-rook.png");
+    background-repeat: no-repeat;
 } 
 
 .piece.black-knight{
     background-image: url("/images/pieces/black-knight.png");
+    background-repeat: no-repeat;
 }
 
 .piece.black-bishop{
     background-image: url("/images/pieces/black-bishop.png");
+    background-repeat: no-repeat;
 }
 
 .piece.black-queen{
     background-image: url("/images/pieces/black-queen.png");
+    background-repeat: no-repeat;
 }
 
 .piece.black-king{
     background-image: url("/images/pieces/black-king.png");
+    background-repeat: no-repeat;
 }
 
 .piece.black-pawn{
     background-image: url("/images/pieces/black-pawn.png");
+    background-repeat: no-repeat;
 }
 
 
 /* white pieces */
 .piece.white-rook{
     background-image: url("/images/pieces/white-rook.png");
+    background-repeat: no-repeat;
 }
 
 .piece.white-knight{
     background-image: url("/images/pieces/white-knight.png");
+    background-repeat: no-repeat;
 }
 
 .piece.white-bishop{
     background-image: url("/images/pieces/white-bishop.png");
+    background-repeat: no-repeat;
 }
 
 .piece.white-queen{
     background-image: url("/images/pieces/white-queen.png");
+    background-repeat: no-repeat;
 }
 
 .piece.white-king{
     background-image: url("/images/pieces/white-king.png");
+    background-repeat: no-repeat;
 }
 
 .piece.white-pawn{
     background-image: url("/images/pieces/white-pawn.png");
+    background-repeat: no-repeat;
 }
 
 /* chess pieces */

@@ -1,12 +1,37 @@
-const r = 'url("images/pieces/black-rook.png")';
-const n = 'url("images/pieces/black-knight.png")';
-const b = 'url("images/pieces/black-bishop.png")';
-const q = 'url("images/pieces/black-queen.png")';
-const k = 'url("images/pieces/black-king.png")';
-const p = 'url("images/pieces/black-pawn.png")';
-const R = 'url("images/pieces/white-rook.png")';
-const N = 'url("images/pieces/white-knight.png")';
-const B = 'url("images/pieces/white-bishop.png")';
-const Q = 'url("images/pieces/white-queen.png")';
-const K = 'url("images/pieces/white-king.png")';
-const P = 'url("images/pieces/white-pawn.png")';
+const pieces = [
+    {type: 'rook', color:'black', position: {x: 0, y: 0}},
+    {type: 'knight', color:'black', position: {x: 1, y: 0}},
+    {type: 'bishop', color:'black', position: {x: 2, y: 0}},
+    {type: 'queen', color:'black', position: {x: 3, y: 0}},
+    {type: 'king', color:'black', position: {x: 4, y: 0}},
+    {type: 'bishop', color:'black', position: {x: 5, y: 0}},
+    {type: 'knight', color:'black', position: {x: 6, y: 0}},
+    {type: 'rook', color:'black', position: {x: 7, y: 0}},
+    {type: 'pawn', color:'black', position: {x: 0, y: 1}},
+    {type: 'pawn', color:'black', position: {x: 1, y: 1}},
+    {type: 'pawn', color:'black', position: {x: 2, y: 1}},
+    {type: 'pawn', color:'black', position: {x: 3, y: 1}},
+    {type: 'pawn', color:'black', position: {x: 4, y: 1}},
+    {type: 'pawn', color:'black', position: {x: 5, y: 1}},
+    {type: 'pawn', color:'black', position: {x: 6, y: 1}},
+    {type: 'pawn', color:'black', position: {x: 7, y: 1}},
+    {type: 'pawn', color:'white', position: {x: 0, y: 6}},
+    {type: 'pawn', color:'white', position: {x: 1, y: 6}},
+    {type: 'pawn', color:'white', position: {x: 2, y: 6}},
+    {type: 'pawn', color:'white', position: {x: 3, y: 6}},
+    {type: 'pawn', color:'white', position: {x: 4, y: 6}},
+    {type: 'pawn', color:'white', position: {x: 5, y: 6}},
+    {type: 'pawn', color:'white', position: {x: 6, y: 6}},
+    {type: 'pawn', color:'white', position: {x: 7, y: 6}},
+    {type: 'rook', color:'white', position: {x: 0, y: 7}},
+    {type: 'knight', color:'white', position: {x: 1, y: 7}},
+    {type: 'bishop', color:'white', position: {x: 2, y: 7}},
+    {type: 'queen', color:'white', position: {x: 3, y: 7}},
+    {type: 'king', color:'white', position: {x: 4, y: 7}},
+    {type: 'bishop', color:'white', position: {x: 5, y: 7}},
+    {type: 'knight', color:'white', position: {x: 6, y: 7}},
+    {type: 'rook', color:'white', position: {x: 7, y: 7}},
+    
+];
+
+export { pieces };

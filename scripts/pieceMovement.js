@@ -1,7 +1,7 @@
 import { pieces } from "./pieces.js";
 import { validSquare } from "./validateSquare.js";
 
-let getPieceId, getFile, getColumn, getPiece;
+let getPieceId, getFile, getRank, getPiece;
 let isSamePiece = "";
 let startPosition = true;
 
@@ -29,10 +29,10 @@ export function handleClick(event){
             
         // get file and column 
         getFile = selectedPiece.position.x;
-        getColumn = selectedPiece.position.y;
+        getRank = selectedPiece.position.y;
 
         // generate and calculate valid square
-        validSquare(getPieceId, getFile, getColumn, startPosition, changePosition);
+        validSquare(getPieceId, getFile, getRank, startPosition, changePosition);
         isSamePiece = getPieceId;
         
     } else {
@@ -45,7 +45,7 @@ export function handleClick(event){
     // test
     console.log(getPieceId); 
     console.log('file ', getFile);
-    console.log('column ', getColumn );
+    console.log('column ', getRank );
 
 }
 

@@ -35,3 +35,29 @@ const pieces = [
 ];
 
 export { pieces };
+
+const blackPawnDefualtPosition = [
+    {defaultPosition: {rank: 0, file: 1}},
+    {defaultPosition: {rank: 1, file: 1}},
+    {defaultPosition: {rank: 2, file: 1}},
+    {defaultPosition: {rank: 3, file: 1}},
+    {defaultPosition: {rank: 4, file: 1}},
+    {defaultPosition: {rank: 5, file: 1}},
+    {defaultPosition: {rank: 6, file: 1}},
+    {defaultPosition: {rank: 7, file: 1}},
+]
+
+const whitePawnDefualtPosition = [
+    {defaultPosition: {rank: 0, file: 6}},
+    {defaultPosition: {rank: 1, file: 6}},
+    {defaultPosition: {rank: 2, file: 6}},
+    {defaultPosition: {rank: 3, file: 6}},
+    {defaultPosition: {rank: 4, file: 6}},
+    {defaultPosition: {rank: 5, file: 6}},
+    {defaultPosition: {rank: 6, file: 6}},
+    {defaultPosition: {rank: 7, file: 6}},
+
+]
+
+export { blackPawnDefualtPosition };
+export { whitePawnDefualtPosition };

@@ -24,8 +24,10 @@
 
 }
 
-.chess-piece.highlight{
-    
+.valid-square{
+    background-size: contain;
+    cursor: pointer;
+    position: absolute;
     border-radius: 100%;
     background-color: rgb(152 33 33 / 14%);
     width: 40px;

@@ -99,9 +99,9 @@ function validSquare(){
     // ======================================= Pawn move =========================================== //
     else {
         // convert to number  
-        getPieceId = parseInt(getPieceId);
-        console.log("pawn ",getPieceId);
-         // ================================= black pawn ======================================= // 
+        // getPieceId = parseInt(getPieceId);
+         
+        // ================================= black pawn ======================================= // 
         if (getPieceId >= 8 && getPieceId <= 15 ) {
             let pawnRank = pieces[getPieceId].position.rank;
             console.log("black pawn go here ", pawnRank);
@@ -345,23 +345,23 @@ function getCurrentPosition() {
 // ===================================== PIECE MOVEMENT ============================================== //
 // =================================================================================================== //
 
-let getPieceId, getFile, getRank, getPiece;
+let getPieceId, getFile, getRank, getPiece, pieceIdBackup;
 let isSamePiece = "";
 let startPosition = true;
 let whitePiece = ["16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
 let blackPiece = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"];
 let turn = 'white'
-let whiteOrBlack;
+let playerTurn;
 
 function handleClick(event){
-    getPieceId = event.target.id;
-    whiteOrBlack = event.target.classList.contains(turn);
+    pieceIdBackup = event.target.id;
+    playerTurn = event.target.classList.contains(turn);
     // when click same piece it unstate
-    if (getPieceId === isSamePiece) {    
+    if (pieceIdBackup === isSamePiece) {    
         removeValidMove();
         return;
     } 
-    if (whiteOrBlack) {
+    if (playerTurn) {
         handlePlay();
     }
   
@@ -376,13 +376,13 @@ function handlePlay() {
     removeValidMove();
     getPieceId = event.target.id;
     getPiece = document.getElementById(getPieceId);
+    
     // let selectedPiece = pieces[getPieceId];
     let selectedPiece = pieces[getPieceId];
             
     // get file and column 
     getFile = selectedPiece.position.file;
     getRank = selectedPiece.position.rank;
-
     // generate and calculate valid square
     validSquare();
     isSamePiece = getPieceId; 

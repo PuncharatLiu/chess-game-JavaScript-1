@@ -1,4 +1,4 @@
-import { pieces, blackPawnDefualtPosition, whitePawnDefualtPosition  } from "./pieces.js";
+import { pieces } from "./pieces.js";
 
 let overlapBlack = [];
 let overlapWhite = [];
@@ -23,8 +23,7 @@ function renderPiece(piece){
     let pieceAttribute = (piece.position.file).toString() + (piece.position.rank).toString();
     chessPiece.setAttribute("position", pieceAttribute);
 
-    // set id
-    chessPiece.id = i;
+    chessPiece.id = i;  // set id
     
     // set eventlistenner.
     chessPiece.addEventListener('click', handleClick);
@@ -56,8 +55,6 @@ initializeBoard();
 // ==================================================================================================== //
 
 function validSquare(){
-    // get board wrap
-    // const chessBoard = document.getElementById('chess-board');
     getCurrentPosition();
     
     // =============================== Rook move  =========================================== //
@@ -95,11 +92,13 @@ function validSquare(){
 
     // ========================================= King move ========================================= // 
     else if (getPieceId === '4' || getPieceId === '28') {
+        // all king move
         const filePosition = [getFile, getFile - 1, getFile + 1, getFile - 1, getFile + 1, getFile, getFile -1, getFile + 1];
         const rankPosition = [getRank - 1, getRank - 1, getRank - 1, getRank, getRank, getRank + 1, getRank + 1, getRank + 1];
 
-        console.log("black pair", overlapBlack);
+        // calculate valid square
         for (let i = 0; i <= 7; i++) {
+            // check if piece block the valid square
             if ( ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'white') || ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'black' ) )  {
                 continue;
             }
@@ -111,16 +110,10 @@ function validSquare(){
 
     // ======================================= Pawn move =========================================== //
     else {
-        // convert to number  
-        // getPieceId = parseInt(getPieceId);
-         
         // ================================= black pawn ======================================= // 
         if (getPieceId >= 8 && getPieceId <= 15 ) {
             let pawnRank = pieces[getPieceId].position.rank;
-            console.log("black pawn go here ", pawnRank);
 
-
-           
             // check if first move of black pawn
             if (pawnRank * 100 === 100) {
                 // generate two valid square  
@@ -128,7 +121,22 @@ function validSquare(){
                     const filePosition = getFile;
                     const rankPosition = (getRank + i);
 
-                    if ( ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') || ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black' ) )  {
+                    let blackPawnCaptueRightSquare = (getFile + 1).toString() + (getRank + 1).toString();
+                    let blackPawnCaptueLeftSquare = (getFile - 1).toString() + (getRank + 1).toString();
+
+                    if (overlapWhite.includes(blackPawnCaptueLeftSquare) && turn === 'black') {
+                        createValidSquare(getFile - 1, getRank + 1);
+                    } 
+                    if (overlapWhite.includes(blackPawnCaptueRightSquare) && turn === 'black') {
+                        createValidSquare(getFile + 1, getRank + 1);
+                    }
+
+                    if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') ||
+                        ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black') ||
+                        ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') ||
+                        ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black')
+                        )  
+                        {
                         break;
                     }
                     createValidSquare(filePosition, rankPosition);
@@ -142,7 +150,22 @@ function validSquare(){
                 const filePosition = getFile;
                 const rankPosition = getRank + 1;
 
-                if ( ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') || ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black' ) )  {
+                let blackPawnCaptueRightSquare = (getFile + 1).toString() + (getRank + 1).toString();
+                let blackPawnCaptueLeftSquare = (getFile - 1).toString() + (getRank + 1).toString();
+
+                if (overlapWhite.includes(blackPawnCaptueLeftSquare) && turn === 'black') {
+                    createValidSquare(getFile - 1, getRank + 1);
+                } 
+                if (overlapWhite.includes(blackPawnCaptueRightSquare) && turn === 'black') {
+                    createValidSquare(getFile + 1, getRank + 1);
+                }
+
+                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') || 
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black') ||
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') ||
+                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black') 
+                    )
+                    {
                     return;
                 }
                 createValidSquare(filePosition, rankPosition);
@@ -153,7 +176,6 @@ function validSquare(){
          // ======================================= White pawn ======================================== // 
          else {
             let pawnRank = pieces[getPieceId].position.rank;
-            console.log("pawn go here ", pawnRank);
 
             // check if first move of white pawn 
             if ( (pawnRank) * 100 === 600) {
@@ -163,7 +185,23 @@ function validSquare(){
                     const filePosition = (getFile);
                     const rankPosition = (getRank - i);
 
-                    if ( ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') || ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black' ) )  {
+                    let whitePawnCaptueRightSquare = (getFile + 1).toString() + (getRank - 1).toString();
+                    let whitePawnCaptueLeftSquare = (getFile - 1).toString() + (getRank - 1).toString();
+
+                    if (overlapBlack.includes(whitePawnCaptueLeftSquare) && turn === 'white') {
+                        createValidSquare(getFile - 1, getRank - 1);
+                    } 
+                    if (overlapBlack.includes(whitePawnCaptueRightSquare) && turn === 'white') {
+                        createValidSquare(getFile + 1, getRank - 1);
+                    }
+
+
+                    if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') ||
+                        ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black') ||
+                        ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') ||
+                        ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black')
+                        )
+                        {
                         break;
                     }
                     
@@ -174,11 +212,25 @@ function validSquare(){
 
             // create one valid square 
             else {
-                console.log("white secondary");
                 const filePosition = getFile;
                 const rankPosition = getRank - 1;
 
-                if ( ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') || ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black' ) )  {
+                let whitePawnCaptueRightSquare = (getFile + 1).toString() + (getRank - 1).toString();
+                let whitePawnCaptueLeftSquare = (getFile - 1).toString() + (getRank - 1).toString();
+
+                if (overlapBlack.includes(whitePawnCaptueLeftSquare) && turn === 'white') {
+                    createValidSquare(getFile - 1, getRank - 1);
+                } 
+                if (overlapBlack.includes(whitePawnCaptueRightSquare) && turn === 'white') {
+                    createValidSquare(getFile + 1, getRank - 1);
+                }
+
+                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') || 
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black') ||
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') ||
+                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black') 
+                    )
+                    {
                     return;
                 }
                 console.log("white pawn secondary");
@@ -328,7 +380,7 @@ function validSquare(){
         }
     }
 
-    startPosition = false;
+    // startPosition = false;
 }
 
 function getCurrentPosition() {
@@ -394,9 +446,6 @@ function createValidSquare(filePosition, rankPosition) {
 
 let getPieceId, getFile, getRank, getPiece, pieceIdBackup;
 let isSamePiece = "";
-let startPosition = true;
-let whitePiece = ["16", "17", "18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31"];
-let blackPiece = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15"];
 let turn = 'white'
 let playerTurn;
 
@@ -477,7 +526,7 @@ function removeValidMove() {
 
     // set to default
     isSamePiece = "";
-    startPosition = true;
+    // startPosition = true;
 }
 
 let take;
@@ -499,15 +548,6 @@ function changeDefualtPosition(getFilePosition, getRankPosition, /*pieceAttribut
     console.log("overlapwhite", overlapWhite);
     
 }
-
-// =================================================================================================== // 
-// ===================================== PIECE MOVEMENT ============================================== //
-// =================================================================================================== // 
-
-
-
-
-
 
 /* ==================================================================================================== */
 /* ============================================= PIECE CAPTURE ======================================== */

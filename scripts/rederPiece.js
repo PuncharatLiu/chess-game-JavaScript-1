@@ -1,29 +1,34 @@
-// // impost pieces array object from pieces.js file.
-// import { pieces } from './pieces.js';
-// // import { handleClick } from './pieceMovement.js';
+// /* ==================================================================================================== */
+// /* ====================================== CREATE PIECES ================================================*/
+// /* ==================================================================================================== */
 
-// // get chess board Id
-// // const chessBoard = document.getElementById('chess-board');
+// import { pieces, blackPawnDefualtPosition, whitePawnDefualtPosition  } from "./pieces.js";
 
 // // create pieces
 // function renderPiece(piece){
 //     // get chess board Id
-//     const chessBoard = document.getElementById('chess-board');
-//     // const pieceID = ['br', 'bn', 'bb', 'bq', 'bk', 'bB', 'bN', 'bR', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'bp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wp', 'wr', 'wn', 'wb', 'wq', 'wk', 'wB', 'wN', 'wR'];
+//     const chessBoard = document.getElementById("chess-board");
 //     const chessPiece = document.createElement('div');
     
 //     // add class to element
 //     chessPiece.className = `chess-piece ${piece.color} ${piece.type}`;
     
 //     // set position
-//     chessPiece.style.transform = `translate(${piece.position.x * 100}px , ${piece.position.y * 100}px)`;
+//     chessPiece.style.transform = `translate(${piece.position.file * 100}px , ${piece.position.rank * 100}px)`;
     
+//     // set attribute as position
+//     let pieceAttribute = (piece.position.file).toString() + (piece.position.rank).toString();
+//     chessPiece.setAttribute("position", pieceAttribute);
+
 //     // set id
 //     chessPiece.id = i;
-
-//     chessPiece.addEventListener('click', handleClick);
-
+    
+//     // set eventlistenner.
+//     chessPiece.addEventListener('click', movePiece);
+    
+//     // add to wrap "chess-Board" 
 //     chessBoard.appendChild(chessPiece);
+    
 //     i ++;
 // }
 

@@ -19,10 +19,19 @@ function renderPiece(piece){
     // set position
     chessPiece.style.transform = `translate(${piece.position.file * 100}px , ${piece.position.rank * 100}px)`;
     
+    // set attribute as position
+    let pieceAttribute = (piece.position.file).toString() + (piece.position.rank).toString();
+    chessPiece.setAttribute("position", pieceAttribute);
+
     // set id
     chessPiece.id = i;
+    
+    // set eventlistenner.
     chessPiece.addEventListener('click', handleClick);
+    
+    // add to wrap "chess-Board" 
     chessBoard.appendChild(chessPiece);
+    
     i ++;
 }
 
@@ -43,9 +52,13 @@ initializeBoard();
 
 // ==================================================================================================== //
 // ======================================== VALIDATE SQUARE =========================================== //
+/* =========================== This function use to calculate valid square ============================ */
 // ==================================================================================================== //
+
 function validSquare(){
-    const chessBoard = document.getElementById('chess-board');
+    // get board wrap
+    // const chessBoard = document.getElementById('chess-board');
+    getCurrentPosition();
     
     // =============================== Rook move  =========================================== //
     if (getPieceId === '0' || getPieceId === '7' || getPieceId === '24' || getPieceId === '31') {
@@ -184,6 +197,13 @@ function validSquare(){
                 break;
             }
             createValidSquare(filePosition, rankPosition);
+
+            if ( 
+                ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black' ) ||
+                ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white' ) 
+                ) {
+                break;
+             }
         }
         // right move 
         for (let i = 1; i <= (7 - getFile); i++ ) {
@@ -193,6 +213,13 @@ function validSquare(){
                 break;
             }
             createValidSquare(filePosition, rankPosition);
+
+            if ( 
+                ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black' ) ||
+                ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white' ) 
+                ) {
+                break;
+             }
         } 
         // up move
         for (let i = 1; i <= getRank; i++ ) {
@@ -202,6 +229,13 @@ function validSquare(){
                 break;
             }
             createValidSquare(filePosition, rankPosition);
+
+            if ( 
+                ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black' ) ||
+                ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white' ) 
+                ) {
+                break;
+             }
         }
         // down move 
         for (let i = 1; i <= (7 - getRank); i++) {
@@ -211,14 +245,19 @@ function validSquare(){
                 break;
             }
             createValidSquare(filePosition, rankPosition);
+
+            if ( 
+                ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black' ) ||
+                ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white' ) 
+                ) {
+                break;
+             }
         }
     
     }
 
     // ========================================== diagonal move ===================================== // 
     function diagonal() {
-        const chessBoardSize = 8;
-
         // up left diagonal
         for (let i = 1; i <= getFile; i ++) {
             const filePosition = (getFile - i);
@@ -289,31 +328,6 @@ function validSquare(){
         }
     }
 
-    
-    // create valid move 
-    function createValidSquare(filePosition, rankPosition) {
-        getCurrentPosition();
-
-        // check if valid square outside board 
-        if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
-            return;
-
-        } 
-        // create valid square
-        else {
-            const validMove = document.createElement('div');
-            validMove.style.transform = `translate(${ filePosition * 100 }px, ${ rankPosition * 100 }px)`;
-            validMove.className = 'valid-square';
-            validMove.id = `${filePosition} ${rankPosition}`;
-    
-            validMove.addEventListener("click", function(event) {
-                changePosition(event);
-            });
-        
-            chessBoard.appendChild(validMove);
-        }
-    }
-    
     startPosition = false;
 }
 
@@ -331,11 +345,44 @@ function getCurrentPosition() {
     }
 }
 
-
-
 // ==================================================================================================== //
 // ======================================== VALIDATE SQUARE =========================================== //
 // ==================================================================================================== //
+
+
+
+
+
+/**==================================================================================================== */
+/**======================================= CREATE VALID SQUARE ======================================== */
+/**==================================================================================================== */
+
+// create valid move 
+function createValidSquare(filePosition, rankPosition) {
+    const chessBoard = document.getElementById('chess-board');
+   
+    getCurrentPosition();
+
+    // check if valid square outside board 
+    if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
+        return;
+
+    } 
+    // create valid square
+    else {
+        const validSquare = document.createElement('div');
+        validSquare.style.transform = `translate(${ filePosition * 100 }px, ${ rankPosition * 100 }px)`;
+        validSquare.className = 'valid-square';
+        validSquare.id = `${filePosition} ${rankPosition}`;
+
+        validSquare.addEventListener("click", function(event) {
+            changePosition(event);
+        });
+    
+        chessBoard.appendChild(validSquare);
+    }
+}
+
 
 
 
@@ -376,6 +423,7 @@ function handlePlay() {
     removeValidMove();
     getPieceId = event.target.id;
     getPiece = document.getElementById(getPieceId);
+    console.log('getPieceId ', getPieceId);
     
     // let selectedPiece = pieces[getPieceId];
     let selectedPiece = pieces[getPieceId];
@@ -388,51 +436,140 @@ function handlePlay() {
     isSamePiece = getPieceId; 
 }
 
-function changePosition(){
-    removeValidMove();
-    
+let getValidSquareID;
+function changePosition(){ 
+    // get valid square element 
     let squareToGo = event.target;
-    let getValidSquareID = squareToGo.id;
-    console.log("id: ", getValidSquareID);
+    
+    // get id
+    getValidSquareID = squareToGo.id;
+    
+    // saparate file and rank
     let [filePart, rankPart] = getValidSquareID.split(" ");
+    
+    // convert to number
     let getFilePosition = parseInt(filePart);
     let getRankPosition = parseInt(rankPart);
+    
+    // change position
     let getPosition = squareToGo.style.transform;
     getPiece.style.transform = getPosition;
+
+    // handle piece capture
+    capture(getFilePosition, getRankPosition, filePart, rankPart);
     
-    changeDefualtPosition(getFilePosition, getRankPosition);
-
+     // remove valid square
+     removeValidMove();
+        
+    // change player turn
     turn === "white" ? turn = "black" : turn = "white";
-
-    // test
-    console.log("file and rank", getFilePosition, getRankPosition);
-    console.log(squareToGo);
 
 }
 
 function removeValidMove() {
     // Remove existing highlighted squares
     const getValidSquare = document.querySelectorAll('.valid-square');
-    console.log(getValidSquare);
+    
+    // remove all valid square
     getValidSquare.forEach(function(div) {
         div.remove();
     });
 
+    // set to default
     isSamePiece = "";
     startPosition = true;
 }
 
-function changeDefualtPosition(getFilePosition, getRankPosition) {
+let take;
+function changeDefualtPosition(getFilePosition, getRankPosition, /*pieceAttribute*/ filePart, rankPart, squareToGo) {
     pieces[getPieceId].position.file = getFilePosition;
     pieces[getPieceId].position.rank = getRankPosition;
 
+    let getPieceElement = document.getElementById(getPieceId);
+    getPieceElement.setAttribute("position", getFilePosition.toString()+getRankPosition.toString());
 
     overlapWhite = [];
     overlapBlack = [];
 
     getCurrentPosition();
+    
+
+   
+    console.log("overlapblack", overlapBlack);
+    console.log("overlapwhite", overlapWhite);
+    
 }
 
 // =================================================================================================== // 
 // ===================================== PIECE MOVEMENT ============================================== //
 // =================================================================================================== // 
+
+
+
+
+
+
+/* ==================================================================================================== */
+/* ============================================= PIECE CAPTURE ======================================== */
+/* ==================================================================================================== */
+
+function capture(getFilePosition, getRankPosition, filePart, rankPart) {
+
+
+
+    let storeFR = filePart + rankPart;
+    console.log("storeFR", storeFR);
+    if (turn === 'white') {
+        if ( overlapBlack.includes(storeFR) ) {
+            let getEnemyPosition = document.querySelector(`[position="${filePart}${rankPart}"]`);
+            let getEnemyId = getEnemyPosition.id;
+            
+            let getEnemyElement = document.getElementById(getEnemyId);
+            getEnemyElement.setAttribute("position", "taken");
+
+            console.log('enemy id', getEnemyId);
+            console.log('getEnemyPosition', getEnemyPosition);
+
+            if (getEnemyPosition) {
+                getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
+                
+                pieces[getEnemyId].position.file = -1000;
+                pieces[getEnemyId].position.rank = -1000;
+                changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
+
+                take = true;
+
+                console.log('being capture from white');
+            }
+        }
+    } else {
+        if ( overlapWhite.includes(storeFR) ) {
+            let getEnemyPosition = document.querySelector(`[position="${filePart}${rankPart}"]`);
+            let getEnemyId = getEnemyPosition.id;
+
+            let getEnemyElement = document.getElementById(getEnemyId);
+            getEnemyElement.setAttribute("position", "taken");
+
+            console.log('enemy id', getEnemyId);
+            console.log('getEnemyPosition', getEnemyPosition);
+            
+            if (getEnemyPosition) {
+                getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
+                
+                pieces[getEnemyId].position.file = -1000;
+                pieces[getEnemyId].position.rank = -1000;
+                changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
+
+                take = true;
+
+                console.log('being capture from black');
+            }
+        }
+    }
+
+    changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
+}
+
+
+
+

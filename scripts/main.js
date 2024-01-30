@@ -95,6 +95,26 @@ function validSquare(){
         // all king move
         const filePosition = [getFile, getFile - 1, getFile + 1, getFile - 1, getFile + 1, getFile, getFile -1, getFile + 1];
         const rankPosition = [getRank - 1, getRank - 1, getRank - 1, getRank, getRank, getRank + 1, getRank + 1, getRank + 1];
+        
+        // check if beside king is empty
+        let isEmptyWhiteRight = overlapWhite.includes( ( ( (getFile + 1).toString() + getRank.toString() ) && (getFile + 2).toString() + getRank.toString() ) );
+        let isEmptyWhiteLeft = overlapWhite.includes( ( ( (getFile - 1).toString() + getRank.toString() ) && (getFile - 2).toString() + getRank.toString() && (getFile - 2).toString() + getRank.toString() ));
+        let isEmptyBlackRight = overlapBlack.includes( ( ( (getFile + 1).toString() + getRank.toString() ) && (getFile + 2).toString() + getRank.toString() ) );
+        let isEmptyBlackLeft = overlapBlack.includes( ( ( (getFile - 2).toString() + getRank.toString() ) && (getFile - 2).toString() + getRank.toString() && (getFile - 2).toString() + getRank.toString() ));
+        
+        if (!isEmptyWhiteRight && turn === 'white') {
+            shortCastleSquare(getFile + 2, getRank);
+            console.log('ready to short castle');
+        } else if (!isEmptyWhiteLeft && turn === 'white') {
+            longCastlesquare(getFile - 2, getRank);
+            console.log('ready for long castle');
+        } 
+
+        if (!isEmptyBlackRight && turn === 'black') {
+            shortCastleSquare(getFile + 2, getRank);
+        } else if (!isEmptyBlackLeft && turn === 'black') {
+            longCastlesquare(getFile - 2, getRank);
+        }
 
         // calculate valid square
         for (let i = 0; i <= 7; i++) {
@@ -435,6 +455,110 @@ function createValidSquare(filePosition, rankPosition) {
     }
 }
 
+// create short castle square for black and white
+function shortCastleSquare(filePosition, rankPosition) {
+    const chessBoard = document.getElementById('chess-board');
+    const validSquare = document.createElement('div');
+    validSquare.style.transform = `translate(${ filePosition * 100 }px, ${ rankPosition * 100 }px)`;
+    validSquare.className = 'valid-square';
+    validSquare.id = `${filePosition} ${rankPosition}`;
+
+    validSquare.addEventListener("click", function(event) {
+        shortCastle(event);
+    });
+    
+    chessBoard.appendChild(validSquare);
+} 
+
+function longCastlesquare(filePosition, rankPosition){
+    const chessBoard = document.getElementById('chess-board');
+    const validSquare = document.createElement('div');
+    validSquare.style.transform = `translate(${ filePosition * 100 }px, ${ rankPosition * 100 }px)`;
+    validSquare.className = 'valid-square';
+    validSquare.id = `${filePosition} ${rankPosition}`;
+
+    validSquare.addEventListener("click", function(event) {
+        longCastle(event);
+    });
+    
+    chessBoard.appendChild(validSquare);
+}
+
+// short castle for black and white
+function shortCastle(){
+    let getWhiteRook = document.getElementById("31"); // get white rook
+    let getWhiteKing = document.getElementById("28"); // get white element
+    
+    let getBlackRook = document.getElementById("7"); // get black rook
+    let getBlackKing = document.getElementById("4"); // get black king element
+    
+    if (turn === 'white') {
+        getWhiteRook.style.transform = `translate(${500}px, ${700}px)`;
+        getWhiteRook.setAttribute("position", "57");
+        getWhiteKing.style.transform = `translate(${600}px, ${700}px)`;
+        getWhiteKing.setAttribute("position", "67");
+        pieces[31].position.file = 5;
+        pieces[31].position.rank = 7;
+        pieces[28].position.file = 6;
+        pieces[28].position.rank = 7;
+        getCurrentPosition();
+        removeValidMove();
+        turn = 'black';
+        return;
+    }
+    if (turn === 'black') {
+        getBlackRook.style.transform = `translate(${500}px, ${0}px)`;
+        getBlackRook.setAttribute("position", "50");
+        getBlackKing.style.transform = `translate(${600}px, ${0}px)`;
+        getBlackKing.setAttribute("position", "60");
+        pieces[7].position.file = 5;
+        pieces[7].position.rank = 0;
+        pieces[4].position.file = 6;
+        pieces[4].position.rank = 0;
+        getCurrentPosition();
+        removeValidMove();
+        turn = 'white';
+        return;
+    }
+}
+
+function longCastle(){
+    let getWhiteRook = document.getElementById("24"); // get white rook
+    let getWhiteKing = document.getElementById("28"); // get white element
+    
+    let getBlackRook = document.getElementById("0"); // get black rook
+    let getBlackKing = document.getElementById("4"); // get black king element
+    
+    if (turn === 'white') {
+        getWhiteRook.style.transform = `translate(${300}px, ${700}px)`;
+        getWhiteRook.setAttribute("position", "37");
+        getWhiteKing.style.transform = `translate(${200}px, ${700}px)`;
+        getWhiteKing.setAttribute("position", "27");
+        pieces[24].position.file = 3;
+        pieces[24].position.rank = 7;
+        pieces[28].position.file = 2;
+        pieces[28].position.rank = 7;
+        getCurrentPosition();
+        removeValidMove();
+        turn = 'black';
+        return;
+    }
+    if (turn === 'black') {
+        getBlackRook.style.transform = `translate(${300}px, ${0}px)`;
+        getBlackRook.setAttribute("position", "30");
+        getBlackKing.style.transform = `translate(${200}px, ${0}px)`;
+        getBlackKing.setAttribute("position", "20");
+        pieces[0].position.file = 3;
+        pieces[0].position.rank = 0;
+        pieces[4].position.file = 2;
+        pieces[4].position.rank = 0;
+        getCurrentPosition();
+        removeValidMove();
+        turn = 'white';
+        return;
+    }
+}
+
 
 
 
@@ -535,7 +659,7 @@ function changeDefualtPosition(getFilePosition, getRankPosition, /*pieceAttribut
     pieces[getPieceId].position.rank = getRankPosition;
 
     let getPieceElement = document.getElementById(getPieceId);
-    getPieceElement.setAttribute("position", getFilePosition.toString()+getRankPosition.toString());
+    getPieceElement.setAttribute("position", filePart+rankPart);
 
     overlapWhite = [];
     overlapBlack = [];

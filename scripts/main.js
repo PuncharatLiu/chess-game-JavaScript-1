@@ -1,4 +1,4 @@
-import { calculateAttackSquare } from "./AttackSquare.js";
+// import { calculateAttackSquare } from "./AttackSquare.js";
 import { generateFen } from "./generateFen.js";
 import { pieces } from "./pieces.js";
 // const { engineMove } = require('./../sever/engine/index.js');
@@ -66,16 +66,57 @@ initializeBoard();
 /* =========================== This function use to calculate valid square ============================ */
 // ==================================================================================================== //
 
-function validSquare(){
+export function validSquare(fromPieceId){
     getCurrentPosition();
-    
+
+    function rook() { // white and black rook
+        return (
+            getPieceId === '0' || getPieceId === '7' || getPieceId === '24' || getPieceId === '31' ||
+            fromPieceId === '0' || fromPieceId === "7" || fromPieceId === "24" || fromPieceId === "31"
+        );
+    }
+
+    function knight() {
+        return (
+            getPieceId === '1' || getPieceId === '6' || getPieceId === '25' || getPieceId === '30' ||
+            fromPieceId === "1" || fromPieceId === "6" ||  fromPieceId === "25" || fromPieceId === "30"
+        );
+    }
+
+    function bishop() {
+        return (
+            getPieceId === '2' || getPieceId === '5' || getPieceId === '26' || getPieceId === '29' ||
+            fromPieceId === "2" || fromPieceId === "5" || fromPieceId === "26" || fromPieceId === "29"
+        );
+    }
+
+    function queen() {
+        return (
+            getPieceId === '3' || getPieceId === '27' ||
+            fromPieceId === "3" || fromPieceId === "27"
+        );
+    }
+
+    function king() {
+        return (
+            getPieceId === '4' || getPieceId === '28' ||
+            fromPieceId === "4" || fromPieceId === "28"
+        );
+    }
+
+    function blackPawn() {
+        return (
+            (getPieceId >= 8 && getPieceId <= 15) || (parseInt(fromPieceId) >= 8 && parseInt(fromPieceId) <= 15)
+        );
+    }
+
     // =============================== Rook move  =========================================== //
-    if (getPieceId === '0' || getPieceId === '7' || getPieceId === '24' || getPieceId === '31') {
+    if (rook(fromPieceId)) {
         horizontalVertical();
     }
 
     // ===================================== Night Move =========================================== // 
-    else if (getPieceId === '1' || getPieceId === '6' || getPieceId === '25' || getPieceId === '30' ) {
+    else if (knight(fromPieceId)) {
         // knight move in fire and rank position
         const filePosition = [getFile - 1, getFile + 1, getFile - 1, getFile + 1, getFile - 2, getFile - 2, getFile + 2, getFile + 2];
         const rankPosition = [getRank + 2, getRank + 2, getRank - 2, getRank - 2, getRank + 1, getRank - 1, getRank + 1, getRank - 1];
@@ -90,20 +131,20 @@ function validSquare(){
     }
 
     // ======================================= Bishop move ========================================= // 
-    else if (getPieceId === '2' || getPieceId === '5' || getPieceId === '26' || getPieceId === '29') {
+    else if (bishop(fromPieceId)) {
         // create diagonal move
         diagonal();  
     }
    
     // ======================================== Queen move ========================================= //  
-    else if (getPieceId === '3' || getPieceId === '27') {
+    else if (queen(fromPieceId)) {
         // create diagonal, horizontal and vertical move
         horizontalVertical();
         diagonal();
     }
 
     // ========================================= King move ========================================= // 
-    else if (getPieceId === '4' || getPieceId === '28') {
+    else if (king(fromPieceId)) {
         // all king move
         const filePosition = [getFile, getFile - 1, getFile + 1, getFile - 1, getFile + 1, getFile, getFile -1, getFile + 1];
         const rankPosition = [getRank - 1, getRank - 1, getRank - 1, getRank, getRank, getRank + 1, getRank + 1, getRank + 1];
@@ -143,11 +184,12 @@ function validSquare(){
     // ======================================= Pawn move =========================================== //
     else {
         // ================================= black pawn ======================================= // 
-        if (getPieceId >= 8 && getPieceId <= 15 ) {
+        if (blackPawn(fromPieceId)) {
             let pawnRank = pieces[getPieceId].position.rank;
+            // let pawnRank_fromEngine = pieces[fromPieceId].position.rank;
 
             // check if first move of black pawn
-            if (pawnRank * 100 === 100) {
+            if (pawnRank * 100 === 100 || pieces[fromPieceId]?.position.rank * 100 === 100) {
                 // generate two valid square  
                 for (let i = 1; i <= 2; i++) {
                     const filePosition = getFile;
@@ -218,8 +260,11 @@ function validSquare(){
          else {
             let pawnRank = pieces[getPieceId].position.rank;
 
+            // console.log("from piece id ", fromPieceId);
+
+
             // check if first move of white pawn 
-            if ( (pawnRank) * 100 === 600) {
+            if ( pawnRank * 100 === 600 || pieces[fromPieceId]?.position.rank * 100 === 600) {
                
                 // create two valid square 
                 for (let i = 1; i <= 2; i++) {
@@ -714,20 +759,28 @@ let isSamePiece = "";
 let turn = 'white'
 let playerTurn;
 let storeFR;
-let firstPosition = [getRank, getFile];
-let secondPosition = storeFR;
 
 
-function handleClick(event){
-    pieceIdBackup = event.target.id;
-    playerTurn = event.target.classList.contains(turn);
+function playerSide() {
+    return turn === 'white';
+}
+
+export function handleClick(event, squareToGoFromEngine){
+    if (playerSide()) {
+        pieceIdBackup = event.target.id;
+        playerTurn = event.target.classList.contains(turn);
+    } else {
+        pieceIdBackup = event.id;
+        playerTurn = event.classList.contains(turn);
+    }
+
     // when click same piece it unstate
     if (pieceIdBackup === isSamePiece) {    
         removeValidMove();
         return;
     } 
     if (playerTurn) {
-        handlePlay();
+        handlePlay(event, squareToGoFromEngine);
     }
   
     // test
@@ -737,11 +790,16 @@ function handleClick(event){
 
 }
 
-function handlePlay() {
+function handlePlay(event, squareToGoFromEngine) {
     removeValidMove();
-    getPieceId = event.target.id;
+    if (playerSide()) {
+        getPieceId = event.target.id;
+    } else {
+        getPieceId = event.id;
+    }
+    console.log("get valid square from engine", squareToGoFromEngine);
     getPiece = document.getElementById(getPieceId);
-    console.log('getPieceId ', getPieceId);
+    console.log('getPieceId ', getPiece);
     
     // let selectedPiece = pieces[getPieceId];
     let selectedPiece = pieces[getPieceId];
@@ -751,32 +809,43 @@ function handlePlay() {
     getRank = selectedPiece.position.rank;
     // generate and calculate valid square
     validSquare();
+    
     isSamePiece = getPieceId; 
+
+    if (!playerSide()) {
+        changePosition(undefined, squareToGoFromEngine);
+    }
 }
 
 let getValidSquareID;
 export let getFilePosition;
 export let getRankPosition;
 
-function changePosition(twoSquare){ 
-    
-    // sendMoveToEngine(fen);
-    
-    // get valid square element 
-    let squareToGo = event.target;
-    
-    // get id
-    getValidSquareID = squareToGo.id;
-    
-    // saparate file and rank
-    let [filePart, rankPart] = getValidSquareID.split(" ");
-    
-    // convert to number
-    getFilePosition = parseInt(filePart);
+function changePosition(twoSquare, squareToGoFromEngine){ 
+    let squareToGo, getPosition, getSquareToGoFromEngine;
+
+    if (playerSide()) {
+        squareToGo = event.target; // get valid square element    
+        getValidSquareID = squareToGo.id; 
+        console.log("id!!!!!", getValidSquareID);
+
+    } else {
+        getSquareToGoFromEngine = document.getElementById(`${squareToGoFromEngine[0]} ${squareToGoFromEngine[1]}`);
+        getValidSquareID = getSquareToGoFromEngine.id;
+        
+    }
+        
+    let [filePart, rankPart] = getValidSquareID.split(" "); // saparate file and rank
+    getFilePosition = parseInt(filePart); // convert to number
     getRankPosition = parseInt(rankPart);
-    
+        
     // change position
-    let getPosition = squareToGo.style.transform;
+    if (playerSide()) {
+        getPosition = squareToGo.style.transform;
+    } else {
+        getPosition = getSquareToGoFromEngine.style.transform;
+    }
+    
     getPiece.style.transform = getPosition;
 
     // when move delete 'tw'
@@ -793,22 +862,23 @@ function changePosition(twoSquare){
     // handle piece capture
     capture(getFilePosition, getRankPosition, filePart, rankPart);
     
-     // remove valid square
-     removeValidMove();
+    // remove valid square
+    removeValidMove();
+ 
+    // calculateAttackSquare(blackPosition, whitePosition);
 
-     
-    calculateAttackSquare(blackPosition, whitePosition);
+    if (playerSide()) {
+        let FEN = generateFen(getFile, getRank, getFilePosition, getRankPosition, turn, undefined, handleEnPosition(), take, pawnMove);
+        sendMoveToEngine(FEN);
+    } else {
+        generateFen(getFile, getRank, getFilePosition, getRankPosition, turn, undefined, handleEnPosition(), take, pawnMove);    
+    }
     
-    // change player turn
-    turn === "white" ? turn = "black" : turn = "white";
-
-    // let fen = generateFen(getFile, getRank, getFilePosition, getRankPosition, turn);
-    // sendMoveToEngine(fen);
-    // en = handleEnPosition();
-    generateFen(getFile, getRank, getFilePosition, getRankPosition, turn, undefined, handleEnPosition(), take, pawnMove);
     take = false;
     pawnMove = false;
 
+    turn === "white" ? turn = "black" : turn = "white";  // change player turn
+    
 }
 
 function removeValidMove() {
@@ -907,23 +977,27 @@ function capture(getFilePosition, getRankPosition, filePart, rankPart) {
 }
 
 
+import { handleEngineResponse } from "./handleEngineResponse.js"; 
 
 let blackPosition = overlapBlack;
 let whitePosition = overlapWhite;
-
+let best_move;
 // send player move to stockfish to calculate the best move. then send back best move
-function sendMoveToEngine(fen) {
-    // let fen = "2r3k1/5pp1/p2qp1p1/Np1nN3/4n3/1Q2P3/PP3PPP/5RK1 w - - 0 22";
-
+function sendMoveToEngine(FEN) {
     fetch('http://localhost:5500/engine/move', {
         method: 'POST',
-        body: JSON.stringify({ data: fen }),
+        body: JSON.stringify({ data: FEN }),
         headers: { 'Content-Type': 'application/json' }
     })
         .then(response => response.json())
-        .then(data => {
-            console.log(data);
-        })
-        .catch(error => console.error('Error', error));
+        .then(bestMove => {
+            console.log(bestMove);
+            best_move = bestMove
+            handleEngineResponse(best_move);
 
+            // generateFen(getFile, getRank, getFilePosition, getRankPosition, turn, undefined, undefined, take, pawnMove);
+            // handleEngineResponse(bestMove);
+        })
+        // .catch(error => console.error('Error here!!!!', error));
+    
 }

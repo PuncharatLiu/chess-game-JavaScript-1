@@ -1,4 +1,5 @@
 import { handleClick } from "./main.js";   
+import { checkCastleEvenForEngine } from "./main.js";
 
 export function handleEngineResponse (bestMove) {
    engineResponse();
@@ -23,7 +24,7 @@ export function handleEngineResponse (bestMove) {
             break;
         case "f":
             strFilePosition = "5";
-            break;
+            break;``
         case "g":
             strFilePosition = "6";
             break;
@@ -47,7 +48,11 @@ export function handleEngineResponse (bestMove) {
         const fromPiece = document.querySelector(`[position="${fromSquare}"]`);
         const fromPieceId = fromPiece.id;
         
+        // checkCastleEvenForEngine();
+        if (checkCastleEvenForEngine(bestMove)) { return; }
+        
         handleClick(fromPiece, toSquare);
+        
 
     }
 }

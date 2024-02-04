@@ -648,7 +648,7 @@ function longCastlesquare(filePosition, rankPosition){
 }
 
 // short castle for black and white
-function shortCastle(){
+function shortCastle(invertTurn){
     let getWhiteRook = document.getElementById("31"); // get white rook element
     let getWhiteKing = document.getElementById("28"); // get white element
     
@@ -668,8 +668,15 @@ function shortCastle(){
         overlapWhite = [];
         getCurrentPosition();
         removeValidMove();
-        generateFen(4, 7, 6, 7, 'black', isCastle);
-        generateFen(7, 7, 5, 7, 'black', isCastle);
+        
+        if (playerSide()) {
+            console.log('####################');
+            generateFen(4, 7, 6, 7, 'white', isCastle);
+            sendMoveToEngine( generateFen(7, 7, 5, 7, 'white', isCastle));
+        } else {
+            generateFen(4, 7, 6, 7, 'white', isCastle);
+            generateFen(7, 7, 5, 7, 'white', isCastle);
+        }
         turn = 'black';
         console.log('rook castle', overlapWhite)
         return;
@@ -687,8 +694,13 @@ function shortCastle(){
         overlapBlack = [];
         getCurrentPosition();
         removeValidMove();
-        generateFen(4, 0, 6, 0, 'white', isCastle);
-        generateFen(7, 0, 5, 0, 'white', isCastle);
+        if (playerSide()) {
+            generateFen(4, 0, 6, 0, 'black', isCastle);
+            sendMoveToEngine(generateFen(7, 0, 5, 0, 'black', isCastle));
+        } else {
+            generateFen(4, 0, 6, 0, 'black', isCastle);
+            generateFen(7, 0, 5, 0, 'black', isCastle);
+        }
         turn = 'white';
         console.log('rook castle', overlapBlack)
         return;
@@ -696,7 +708,7 @@ function shortCastle(){
     
 }
 
-function longCastle(){
+function longCastle(invertTurn){
     let getWhiteRook = document.getElementById("24"); // get white rook element
     let getWhiteKing = document.getElementById("28"); // get white king element
     
@@ -756,8 +768,10 @@ export let getFile;
 export let getRank
 let getPiece, pieceIdBackup;
 let isSamePiece = "";
-let turn = 'white'
+let turn = 'white';
 let playerTurn;
+let invertTurn;
+invertTurn = turn === 'white' ? invertTurn = 'black' : invertTurn = 'white'; 
 let storeFR;
 
 
@@ -867,17 +881,20 @@ function changePosition(twoSquare, squareToGoFromEngine){
  
     // calculateAttackSquare(blackPosition, whitePosition);
 
-    if (playerSide()) {
-        let FEN = generateFen(getFile, getRank, getFilePosition, getRankPosition, turn, undefined, handleEnPosition(), take, pawnMove);
+    let keepTurn = turn
+    turn === "white" ? turn = "black" : turn = "white";  // change player turn
+
+    if (!playerSide()) { 
+        let FEN = generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);
         sendMoveToEngine(FEN);
     } else {
-        generateFen(getFile, getRank, getFilePosition, getRankPosition, turn, undefined, handleEnPosition(), take, pawnMove);    
+        generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);    
     }
     
     take = false;
     pawnMove = false;
 
-    turn === "white" ? turn = "black" : turn = "white";  // change player turn
+    // turn === "white" ? turn = "black" : turn = "white";  // change player turn
     
 }
 
@@ -993,11 +1010,30 @@ function sendMoveToEngine(FEN) {
         .then(bestMove => {
             console.log(bestMove);
             best_move = bestMove
+            
             handleEngineResponse(best_move);
 
             // generateFen(getFile, getRank, getFilePosition, getRankPosition, turn, undefined, undefined, take, pawnMove);
             // handleEngineResponse(bestMove);
         })
         // .catch(error => console.error('Error here!!!!', error));
+    
+}
+
+
+
+export function checkCastleEvenForEngine (best_move) {
+    if (best_move.bestMove === "e8g8" || best_move.bestMove === "e1g1") {
+        console.log("short true!!!!")
+        shortCastle(invertTurn);
+        return true;       
+    } else if (best_move.bestMove === "e8c8" || best_move.bestMove === "e1c1") {
+        console.log("long true!!!!")
+        longCastle(invertTurn);
+        return true;
+    } else {
+        return false;
+    }
+
     
 }

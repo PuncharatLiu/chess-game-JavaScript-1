@@ -48,11 +48,9 @@ export function handleEngineResponse (bestMove) {
         const fromPiece = document.querySelector(`[position="${fromSquare}"]`);
         const fromPieceId = fromPiece.id;
         
-        // checkCastleEvenForEngine();
         if (checkCastleEvenForEngine(bestMove)) { return; }
         
         handleClick(fromPiece, toSquare);
         
-
     }
 }

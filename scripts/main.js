@@ -155,17 +155,17 @@ export function validSquare(fromPieceId){
         let isEmptyBlackRight = overlapBlack.includes( ( ( (getFile + 1).toString() + getRank.toString() ) && (getFile + 2).toString() + getRank.toString() ) );
         let isEmptyBlackLeft = overlapBlack.includes( ( ( (getFile - 2).toString() + getRank.toString() ) && (getFile - 2).toString() + getRank.toString() && (getFile - 2).toString() + getRank.toString() ));
         
-        if (!isEmptyWhiteRight && turn === 'white') {
+        if (!isEmptyWhiteRight && turn === 'white' && !isWhiteCastle) {
             shortCastleSquare(getFile + 2, getRank);
             console.log('ready to short castle');
-        } else if (!isEmptyWhiteLeft && turn === 'white') {
+        } else if (!isEmptyWhiteLeft && turn === 'white' && !isWhiteCastle) {
             longCastlesquare(getFile - 2, getRank);
             console.log('ready for long castle');
         } 
 
-        if (!isEmptyBlackRight && turn === 'black') {
+        if (!isEmptyBlackRight && turn === 'black' && !isBlackCastle) {
             shortCastleSquare(getFile + 2, getRank);
-        } else if (!isEmptyBlackLeft && turn === 'black') {
+        } else if (!isEmptyBlackLeft && turn === 'black' && !isBlackCastle) {
             longCastlesquare(getFile - 2, getRank);
         }
 
@@ -618,6 +618,14 @@ function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,paw
     }
 }
 
+function castleDone() {
+    return isCastle === 'true';
+}
+
+let isWhiteCastle = false;
+let isBlackCastle = false;
+
+
 // create short castle square for black and white
 function shortCastleSquare(filePosition, rankPosition) {
     const chessBoard = document.getElementById('chess-board');
@@ -664,18 +672,18 @@ function shortCastle(invertTurn){
         pieces[31].position.rank = 7;
         pieces[28].position.file = 6;
         pieces[28].position.rank = 7;
-        let isCastle = true;
+        isWhiteCastle = true;
         overlapWhite = [];
         getCurrentPosition();
         removeValidMove();
         
         if (playerSide()) {
             console.log('####################');
-            generateFen(4, 7, 6, 7, 'white', isCastle);
-            sendMoveToEngine( generateFen(7, 7, 5, 7, 'white', isCastle));
+            generateFen(4, 7, 6, 7, 'white', isWhiteCastle);
+            sendMoveToEngine( generateFen(7, 7, 5, 7, 'white', isWhiteCastle));
         } else {
-            generateFen(4, 7, 6, 7, 'white', isCastle);
-            generateFen(7, 7, 5, 7, 'white', isCastle);
+            generateFen(4, 7, 6, 7, 'white', isWhiteCastle);
+            generateFen(7, 7, 5, 7, 'white', isWhiteCastle);
         }
         turn = 'black';
         console.log('rook castle', overlapWhite)
@@ -690,16 +698,16 @@ function shortCastle(invertTurn){
         pieces[7].position.rank = 0;
         pieces[4].position.file = 6;
         pieces[4].position.rank = 0;
-        let isCastle = true;
+        isBlackCastle = true;
         overlapBlack = [];
         getCurrentPosition();
         removeValidMove();
         if (playerSide()) {
-            generateFen(4, 0, 6, 0, 'black', isCastle);
-            sendMoveToEngine(generateFen(7, 0, 5, 0, 'black', isCastle));
+            generateFen(4, 0, 6, 0, 'black', isBlackCastle);
+            sendMoveToEngine(generateFen(7, 0, 5, 0, 'black', isBlackCastle));
         } else {
-            generateFen(4, 0, 6, 0, 'black', isCastle);
-            generateFen(7, 0, 5, 0, 'black', isCastle);
+            generateFen(4, 0, 6, 0, 'black', isBlackCastle);
+            generateFen(7, 0, 5, 0, 'black', isBlackCastle);
         }
         turn = 'white';
         console.log('rook castle', overlapBlack)
@@ -724,7 +732,7 @@ function longCastle(invertTurn){
         pieces[24].position.rank = 7;
         pieces[28].position.file = 2;
         pieces[28].position.rank = 7;
-        let isCastle = true;
+        isCastle = true;
         getCurrentPosition();
         removeValidMove();
         generateFen(4, 7, 2, 7, 'black', isCastle);
@@ -741,7 +749,7 @@ function longCastle(invertTurn){
         pieces[0].position.rank = 0;
         pieces[4].position.file = 2;
         pieces[4].position.rank = 0;
-        let isCastle = true;
+        isCastle = true;
         getCurrentPosition();
         removeValidMove();
         generateFen(4, 0, 2, 0, 'white', isCastle);
@@ -996,12 +1004,11 @@ function capture(getFilePosition, getRankPosition, filePart, rankPart) {
 
 import { handleEngineResponse } from "./handleEngineResponse.js"; 
 
-let blackPosition = overlapBlack;
-let whitePosition = overlapWhite;
+
 let best_move;
-// send player move to stockfish to calculate the best move. then send back best move
+
 function sendMoveToEngine(FEN) {
-    fetch('http://localhost:5500/engine/move', {
+    fetch('http://localhost:5500/engine/move', { // send player move to stockfish to calculate the best move. then send back best move
         method: 'POST',
         body: JSON.stringify({ data: FEN }),
         headers: { 'Content-Type': 'application/json' }

@@ -1,4 +1,4 @@
-// import { calculateAttackSquare } from "./AttackSquare.js";
+import { calculateAttackSquare } from "./AttackSquare.js";
 import { generateFen } from "./generateFen.js";
 import { pieces } from "./pieces.js";
 // const { engineMove } = require('./../sever/engine/index.js');
@@ -862,9 +862,11 @@ function changePosition(twoSquare, squareToGoFromEngine){
     getRankPosition = parseInt(rankPart);
         
     // change position
-    if (playerSide()) {
+    if (playerSide()) 
+    {
         getPosition = squareToGo.style.transform;
-    } else {
+    } else 
+    {
         getPosition = getSquareToGoFromEngine.style.transform;
     }
     
@@ -877,36 +879,36 @@ function changePosition(twoSquare, squareToGoFromEngine){
     });
 
     // mark that tw
-    if (twoSquare) {
-        getPiece.setAttribute("tw", "tw");
-    } 
+    if (twoSquare) { getPiece.setAttribute("tw", "tw"); } 
     
     // handle piece capture
     capture(getFilePosition, getRankPosition, filePart, rankPart);
     
-    // remove valid square
-    removeValidMove();
+    removeValidMove(); // remove valid square
  
-    // calculateAttackSquare(blackPosition, whitePosition);
 
     let keepTurn = turn
     turn === "white" ? turn = "black" : turn = "white";  // change player turn
 
-    if (!playerSide()) { 
+    if (!playerSide()) 
+    { 
         let FEN = generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);
         sendMoveToEngine(FEN);
-    } else {
+    } 
+    else 
+    {
         generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);    
     }
     
+    calculateAttackSquare();
+
     take = false;
     pawnMove = false;
-
-    // turn === "white" ? turn = "black" : turn = "white";  // change player turn
     
 }
 
-function removeValidMove() {
+function removeValidMove() 
+{
     // Remove existing highlighted squares
     const getValidSquare = document.querySelectorAll('.valid-square');
     
@@ -915,13 +917,12 @@ function removeValidMove() {
         div.remove();
     });
 
-    // set to default
-    isSamePiece = "";
-    // startPosition = true;
+    isSamePiece = ""; // set to default
+    
 }
 
 
-function changeDefualtPosition(getFilePosition, getRankPosition, /*pieceAttribute*/ filePart, rankPart, squareToGo) {
+function changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart) {
     pieces[getPieceId].position.file = getFilePosition;
     pieces[getPieceId].position.rank = getRankPosition;
 
@@ -933,8 +934,6 @@ function changeDefualtPosition(getFilePosition, getRankPosition, /*pieceAttribut
 
     getCurrentPosition();
     
-
-   
     console.log("overlapblack", overlapBlack);
     console.log("overlapwhite", overlapWhite);
     
@@ -1044,3 +1043,5 @@ export function checkCastleEvenForEngine (best_move) {
 
     
 }
+
+export { overlapBlack, overlapWhite};

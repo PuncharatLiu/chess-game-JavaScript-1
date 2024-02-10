@@ -1,6 +1,8 @@
 import { calculateAttackSquare } from "./AttackSquare.js";
 import { generateFen } from "./generateFen.js";
 import { pieces } from "./pieces.js";
+// import { attackEvent } from "./check.js";
+import { getAttackDirectionFromObject, isAttackSquare, whatEventOccur } from "./check.js";
 // const { engineMove } = require('./../sever/engine/index.js');
 
 
@@ -14,6 +16,9 @@ let pawnMove = false;
 
 
 getCurrentPosition();
+calculateAttackSquare();
+getAttackDirectionFromObject();
+
 
 /* ==================================================================================================== */
 /* ====================================== CREATE PIECES ================================================*/
@@ -149,34 +154,47 @@ export function validSquare(fromPieceId){
         const filePosition = [getFile, getFile - 1, getFile + 1, getFile - 1, getFile + 1, getFile, getFile -1, getFile + 1];
         const rankPosition = [getRank - 1, getRank - 1, getRank - 1, getRank, getRank, getRank + 1, getRank + 1, getRank + 1];
         
+        
+
         // check if beside king is empty
         let isEmptyWhiteRight = overlapWhite.includes( ( ( (getFile + 1).toString() + getRank.toString() ) && (getFile + 2).toString() + getRank.toString() ) );
         let isEmptyWhiteLeft = overlapWhite.includes( ( ( (getFile - 1).toString() + getRank.toString() ) && (getFile - 2).toString() + getRank.toString() && (getFile - 2).toString() + getRank.toString() ));
         let isEmptyBlackRight = overlapBlack.includes( ( ( (getFile + 1).toString() + getRank.toString() ) && (getFile + 2).toString() + getRank.toString() ) );
         let isEmptyBlackLeft = overlapBlack.includes( ( ( (getFile - 2).toString() + getRank.toString() ) && (getFile - 2).toString() + getRank.toString() && (getFile - 2).toString() + getRank.toString() ));
         
-        if (!isEmptyWhiteRight && turn === 'white' && !isWhiteCastle) {
+        if (!isEmptyWhiteRight && turn === 'white' && !isWhiteCastle) 
+        {
             shortCastleSquare(getFile + 2, getRank);
-            console.log('ready to short castle');
-        } else if (!isEmptyWhiteLeft && turn === 'white' && !isWhiteCastle) {
+        } 
+        else if (!isEmptyWhiteLeft && turn === 'white' && !isWhiteCastle) 
+        {
             longCastlesquare(getFile - 2, getRank);
-            console.log('ready for long castle');
         } 
 
-        if (!isEmptyBlackRight && turn === 'black' && !isBlackCastle) {
+        if (!isEmptyBlackRight && turn === 'black' && !isBlackCastle) 
+        {
             shortCastleSquare(getFile + 2, getRank);
-        } else if (!isEmptyBlackLeft && turn === 'black' && !isBlackCastle) {
+        } 
+        else if (!isEmptyBlackLeft && turn === 'black' && !isBlackCastle) 
+        {
             longCastlesquare(getFile - 2, getRank);
         }
 
         // calculate valid square
-        for (let i = 0; i <= 7; i++) {
-            // check if piece block the valid square
-            if ( ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'white') || ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'black' ) )  {
+        for (let i = 0; i <= 7; i++) 
+        {
+            if // check if piece block the valid square
+            ( 
+                ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'white') ||
+                ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'black' ) 
+            )  
+            {
                 continue;
             }
 
-            createValidSquare(filePosition[i], rankPosition[i]);
+            
+            
+            createValidSquare(filePosition[i], rankPosition[i], undefined, undefined, undefined, "king");
         }
 
     } 
@@ -445,7 +463,6 @@ export function validSquare(fromPieceId){
         for (let i = 1; i <= getFile; i++) {
             const filePosition = (getFile - i);
             const rankPosition = (getRank + i);
-            console.log('left down bishop')
             if ( ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') || ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && turn === 'black' ) )  {
                 break;
             }
@@ -586,17 +603,38 @@ function enPassant(pawnId) {
 /**======================================= CREATE VALID SQUARE ======================================== */
 /**==================================================================================================== */
 
+let occurEvent, atDirection, pinedPiece;
+
 // create valid move 
-function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,pawnId) {
+function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,pawnId, clickedPiece) {
     const chessBoard = document.getElementById('chess-board');
-    console.log('pawn id', pawnId);
     getCurrentPosition();
+
+    
+
+    if (occurEvent === "check" && atDirection.includes((filePosition.toString() + rankPosition.toString() ).toString() ) && clickedPiece === "king"){
+        console.log("ckeck occur");
+        return;
+    }
+    else if (occurEvent === "check" && clickedPiece === undefined && !atDirection.includes((filePosition.toString() + rankPosition.toString() )) ) {
+        console.log("protect the king!");
+        return;
+    }
+    else if (occurEvent === "check with pawn or knight" && clickedPiece === undefined){
+        return;
+    } 
+
+    if(isAttackSquare(filePosition, rankPosition) && clickedPiece === "king") { 
+        console.log("get in")
+        return; 
+    }
 
     // check if valid square outside board 
     if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
         return;
 
     }
+
     
     // create valid square
     else {
@@ -656,7 +694,7 @@ function longCastlesquare(filePosition, rankPosition){
 }
 
 // short castle for black and white
-function shortCastle(invertTurn){
+function shortCastle(){
     let getWhiteRook = document.getElementById("31"); // get white rook element
     let getWhiteKing = document.getElementById("28"); // get white element
     
@@ -713,10 +751,9 @@ function shortCastle(invertTurn){
         console.log('rook castle', overlapBlack)
         return;
     }
-    
 }
 
-function longCastle(invertTurn){
+function longCastle(){
     let getWhiteRook = document.getElementById("24"); // get white rook element
     let getWhiteKing = document.getElementById("28"); // get white king element
     
@@ -732,11 +769,11 @@ function longCastle(invertTurn){
         pieces[24].position.rank = 7;
         pieces[28].position.file = 2;
         pieces[28].position.rank = 7;
-        isCastle = true;
+        isWhiteCastle = true;
         getCurrentPosition();
         removeValidMove();
-        generateFen(4, 7, 2, 7, 'black', isCastle);
-        generateFen(0, 7, 3, 7, 'black', isCastle);
+        generateFen(4, 7, 2, 7, 'black', isWhiteCastle);
+        generateFen(0, 7, 3, 7, 'black', isWhiteCastle);
         turn = 'black';
         return;
     }
@@ -749,11 +786,11 @@ function longCastle(invertTurn){
         pieces[0].position.rank = 0;
         pieces[4].position.file = 2;
         pieces[4].position.rank = 0;
-        isCastle = true;
+        isBlackCastle = true;
         getCurrentPosition();
         removeValidMove();
-        generateFen(4, 0, 2, 0, 'white', isCastle);
-        generateFen(0, 0, 3, 0, 'white', isCastle);
+        generateFen(4, 0, 2, 0, 'white', isBlackCastle);
+        generateFen(0, 0, 3, 0, 'white', isBlackCastle);
         turn = 'white';
         return;
     }
@@ -804,12 +841,6 @@ export function handleClick(event, squareToGoFromEngine){
     if (playerTurn) {
         handlePlay(event, squareToGoFromEngine);
     }
-  
-    // test
-    console.log(getPieceId); 
-    console.log('file ', getFile);
-    console.log('rank ', getRank );
-
 }
 
 function handlePlay(event, squareToGoFromEngine) {
@@ -819,9 +850,7 @@ function handlePlay(event, squareToGoFromEngine) {
     } else {
         getPieceId = event.id;
     }
-    console.log("get valid square from engine", squareToGoFromEngine);
     getPiece = document.getElementById(getPieceId);
-    console.log('getPieceId ', getPiece);
     
     // let selectedPiece = pieces[getPieceId];
     let selectedPiece = pieces[getPieceId];
@@ -843,13 +872,13 @@ let getValidSquareID;
 export let getFilePosition;
 export let getRankPosition;
 
-function changePosition(twoSquare, squareToGoFromEngine){ 
+function changePosition(twoSquare, squareToGoFromEngine)
+{ 
     let squareToGo, getPosition, getSquareToGoFromEngine;
 
     if (playerSide()) {
         squareToGo = event.target; // get valid square element    
         getValidSquareID = squareToGo.id; 
-        console.log("id!!!!!", getValidSquareID);
 
     } else {
         getSquareToGoFromEngine = document.getElementById(`${squareToGoFromEngine[0]} ${squareToGoFromEngine[1]}`);
@@ -900,10 +929,17 @@ function changePosition(twoSquare, squareToGoFromEngine){
         generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);    
     }
     
-    calculateAttackSquare();
-
+    
+    occurEvent = whatEventOccur();
+    occurEvent = occurEvent?.occurEvent;
+    atDirection = whatEventOccur();
+    atDirection = atDirection?.atDirection;
+    pinedPiece = whatEventOccur();
+    pinedPiece = pinedPiece?.pinedPiece;
     take = false;
     pawnMove = false;
+    
+    console.log("occur event: ", occurEvent);
     
 }
 
@@ -933,10 +969,6 @@ function changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankP
     overlapBlack = [];
 
     getCurrentPosition();
-    
-    console.log("overlapblack", overlapBlack);
-    console.log("overlapwhite", overlapWhite);
-    
 }
 
 /* ==================================================================================================== */
@@ -944,11 +976,7 @@ function changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankP
 /* ==================================================================================================== */
 
 function capture(getFilePosition, getRankPosition, filePart, rankPart) {
-
-
-
     storeFR = filePart + rankPart;
-    console.log("storeFR", storeFR);
     if (turn === 'white') {
         if ( overlapBlack.includes(storeFR) ) {
             let getEnemyPosition = document.querySelector(`[position="${filePart}${rankPart}"]`);
@@ -956,9 +984,6 @@ function capture(getFilePosition, getRankPosition, filePart, rankPart) {
             
             let getEnemyElement = document.getElementById(getEnemyId);
             getEnemyElement.setAttribute("position", "taken");
-
-            console.log('enemy id', getEnemyId);
-            console.log('getEnemyPosition', getEnemyPosition);
 
             if (getEnemyPosition) {
                 getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
@@ -968,8 +993,6 @@ function capture(getFilePosition, getRankPosition, filePart, rankPart) {
                 changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
 
                 take = true;
-
-                console.log('being capture from white');
             }
         }
     } else {
@@ -980,9 +1003,6 @@ function capture(getFilePosition, getRankPosition, filePart, rankPart) {
             let getEnemyElement = document.getElementById(getEnemyId);
             getEnemyElement.setAttribute("position", "taken");
 
-            console.log('enemy id', getEnemyId);
-            console.log('getEnemyPosition', getEnemyPosition);
-            
             if (getEnemyPosition) {
                 getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
                 
@@ -991,8 +1011,6 @@ function capture(getFilePosition, getRankPosition, filePart, rankPart) {
                 changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
 
                 take = true;
-
-                console.log('being capture from black');
             }
         }
     }
@@ -1044,4 +1062,5 @@ export function checkCastleEvenForEngine (best_move) {
     
 }
 
-export { overlapBlack, overlapWhite};
+export { overlapBlack, overlapWhite, turn};
+whatEventOccur();

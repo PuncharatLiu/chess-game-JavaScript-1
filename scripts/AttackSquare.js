@@ -1,17 +1,17 @@
 import { getCurrentPosition } from "./main.js";
 import { overlapBlack, overlapWhite } from "./main.js";
+import { attackDirectionStorage } from "./attackDirection.js";
+
 
 export function calculateAttackSquare()
 {
     // getCurrentPosition();
-
     let pieceAttackId, attackFile, attackRank;
     let allPosition = overlapBlack.concat(overlapWhite); // merge black and white position
-    let blackAttackSquare; // store black attack square
-    let whiteAttackSquare; // store white attack square
     let index = 0;
     let getAttackSquare;
     let turn;
+    let attack_direction = attackDirectionStorage();
 
     function createAttackSquare(filePosition, rankPosition, direction) 
     {
@@ -31,42 +31,43 @@ export function calculateAttackSquare()
             
             switch (index) // black attack square
             {
-                case 0: // rook l
+                case 0:                                                                         // black left rook 
                     switch (direction) 
                     {
                         case "l": // rook left move
-                            blackAttackSquare[0][0].push(getAttackSquare);    
+                            // blackAttackSquare[0][0].push(getAttackSquare);    
+                            attack_direction.rook.black.left.leftMove.push(getAttackSquare);
                             break;
                         case "r":
-                            blackAttackSquare[0][1].push(getAttackSquare);
+                            attack_direction.rook.black.left.rightMove.push(getAttackSquare);
                             break;
                         case "u":
-                            blackAttackSquare[0][2].push(getAttackSquare);
+                            attack_direction.rook.black.left.upMove.push(getAttackSquare);
                             break;
                         case "d":
-                            blackAttackSquare[0][3].push(getAttackSquare);
+                            attack_direction.rook.black.left.downMove.push(getAttackSquare);
                             break;
                         default:
                             break;
                     }
                     break;
-                case 1: // knight l
-                    blackAttackSquare[1].push(getAttackSquare);
+                case 1:                                                                         // black left knight
+                    attack_direction.knight.black.left.moves.push(getAttackSquare);
                     break;
                 case 2: // bishop l
                     switch (direction) 
                     {
                         case "dul":
-                            blackAttackSquare[2][0].push(getAttackSquare);
+                            attack_direction.bishop.black.left.diagonalUpLeft.push(getAttackSquare);
                             break;
                         case "dur":
-                            blackAttackSquare[2][1].push(getAttackSquare);
+                            attack_direction.bishop.black.left.diagonalUpRigth.push(getAttackSquare);
                             break;
                         case "ddl": 
-                            blackAttackSquare[2][2].push(getAttackSquare);
+                            attack_direction.bishop.black.left.diagonalDownLeft.push(getAttackSquare);
                             break;
                         case "ddr":
-                            blackAttackSquare[2][3].push(getAttackSquare);
+                            attack_direction.bishop.black.left.diagonalDownRight.push(getAttackSquare);
                             break;
                         default:
                             break;
@@ -76,28 +77,28 @@ export function calculateAttackSquare()
                     switch (direction) 
                     {
                         case "dul":
-                            blackAttackSquare[3][0].push(getAttackSquare);
+                            attack_direction.queen.black.diagonalUpLeft.push(getAttackSquare);
                             break;
                         case "dur":
-                            blackAttackSquare[3][1].push(getAttackSquare);
+                            attack_direction.queen.black.diagonalUpRigth.push(getAttackSquare);
                             break;
                         case "ddl": 
-                            blackAttackSquare[3][2].push(getAttackSquare);
+                            attack_direction.queen.black.diagonalDownLeft.push(getAttackSquare);
                             break;
                         case "ddr":
-                            blackAttackSquare[3][3].push(getAttackSquare);
+                            attack_direction.queen.black.diagonalDownRight.push(getAttackSquare);
                             break;
                         case "l":
-                            blackAttackSquare[3][4].push(getAttackSquare);
+                            attack_direction.queen.black.leftMove.push(getAttackSquare);
                             break;
                         case "r":
-                            blackAttackSquare[3][5].push(getAttackSquare);
+                            attack_direction.queen.black.rightMove.push(getAttackSquare);
                             break;
                         case "u":
-                            blackAttackSquare[3][6].push(getAttackSquare);
+                            attack_direction.queen.black.upMove.push(getAttackSquare);
                             break;
                         case "d":
-                            blackAttackSquare[3][7].push(getAttackSquare);
+                            attack_direction.queen.black.downMove.push(getAttackSquare);
                             break;
                         default:
                             break;
@@ -107,48 +108,48 @@ export function calculateAttackSquare()
                     switch (direction) 
                     {
                         case "dul":
-                            blackAttackSquare[4][0].push(getAttackSquare);
+                            attack_direction.bishop.black.right.diagonalUpLeft.push(getAttackSquare);
                             break;
                         case "dur":
-                            blackAttackSquare[4][1].push(getAttackSquare);
+                            attack_direction.bishop.black.right.diagonalUpRigth.push(getAttackSquare);
                             break;
                         case "ddl": 
-                            blackAttackSquare[4][2].push(getAttackSquare);
+                        attack_direction.bishop.black.right.diagonalDownLeft.push(getAttackSquare);
                             break;
                         case "ddr":
-                            blackAttackSquare[4][3].push(getAttackSquare);
+                            attack_direction.bishop.black.right.diagonalDownRight.push(getAttackSquare);
                             break;
                         default:
                             break;
                     }
                     break;
                 case 6: // knight r
-                    blackAttackSquare[5].push(getAttackSquare);
+                    attack_direction.knight.black.right.moves.push(getAttackSquare);
                     break;
                 case 7: // rook r
                     switch (direction) 
                     {
                         case "l": // left move
-                            blackAttackSquare[6][0].push(getAttackSquare);    
+                            attack_direction.rook.black.right.leftMove.push(getAttackSquare);
                             break;
                         case "r": // right move
-                            blackAttackSquare[6][1].push(getAttackSquare);
+                        attack_direction.rook.black.right.rightMove.push(getAttackSquare);
                             break;
                         case "u": // up move
-                            blackAttackSquare[6][2].push(getAttackSquare);
+                        attack_direction.rook.black.right.upMove.push(getAttackSquare);
                             break;
                         case "d": // down move
-                            blackAttackSquare[6][3].push(getAttackSquare);
+                        attack_direction.rook.black.right.downMove.push(getAttackSquare);
                             break;
                         default:
                             break;
                     }
                     break;
                 case 4: // king
-                    blackAttackSquare[7].push(getAttackSquare);
+                    attack_direction.king.black.move.push(getAttackSquare);
                     break;
                 case blackPawn[ index - 8 ] : // pawn
-                    blackAttackSquare[8].push(getAttackSquare);
+                    attack_direction.pawn.black.move.push(getAttackSquare);
                     break;
                 default:
                     break;
@@ -161,42 +162,42 @@ export function calculateAttackSquare()
             
             switch (index) // white attack square
             {
-                case 24:
+                case 24:                                                             // white left rook
                     switch (direction) 
                     {
                         case "l": // rook left move
-                            whiteAttackSquare[0][0].push(getAttackSquare);    
+                            attack_direction.rook.white.left.leftMove.push(getAttackSquare);
                             break;
                         case "r":
-                            whiteAttackSquare[0][1].push(getAttackSquare);
+                            attack_direction.rook.white.left.rightMove.push(getAttackSquare);
                             break;
                         case "u":
-                            whiteAttackSquare[0][2].push(getAttackSquare);
+                            attack_direction.rook.white.left.upMove.push(getAttackSquare);
                             break;
                         case "d":
-                            whiteAttackSquare[0][3].push(getAttackSquare);
+                            attack_direction.rook.white.left.downMove.push(getAttackSquare);
                             break;
                         default:
                             break;
                     }
                     break;
                 case 25:
-                    whiteAttackSquare[1].push(getAttackSquare);
+                    attack_direction.knight.white.left.moves.push(getAttackSquare);
                     break;
                 case 26:
                     switch (direction) 
                     {
                         case "dul":
-                            whiteAttackSquare[2][0].push(getAttackSquare);
+                            attack_direction.bishop.white.left.diagonalUpLeft.push(getAttackSquare);
                             break;
                         case "dur":
-                            whiteAttackSquare[2][1].push(getAttackSquare);
+                            attack_direction.bishop.white.left.diagonalUpRigth.push(getAttackSquare);
                             break;
                         case "ddl": 
-                            whiteAttackSquare[2][2].push(getAttackSquare);
+                            attack_direction.bishop.white.left.diagonalDownLeft.push(getAttackSquare);
                             break;
                         case "ddr":
-                            whiteAttackSquare[2][3].push(getAttackSquare);
+                            attack_direction.bishop.white.left.diagonalDownRight.push(getAttackSquare);
                             break;
                         default:
                             break;
@@ -206,28 +207,28 @@ export function calculateAttackSquare()
                     switch (direction) 
                     {
                         case "dul":
-                            whiteAttackSquare[3][0].push(getAttackSquare);
+                            attack_direction.queen.white.diagonalUpLeft.push(getAttackSquare);
                             break;
                         case "dur":
-                            whiteAttackSquare[3][1].push(getAttackSquare);
+                            attack_direction.queen.white.diagonalUpRigth.push(getAttackSquare);
                             break;
                         case "ddl": 
-                            whiteAttackSquare[3][2].push(getAttackSquare);
+                            attack_direction.queen.white.diagonalDownLeft.push(getAttackSquare);
                             break;
                         case "ddr":
-                            whiteAttackSquare[3][3].push(getAttackSquare);
+                            attack_direction.queen.white.diagonalDownRight.push(getAttackSquare);
                             break;
                         case "l":
-                            whiteAttackSquare[3][4].push(getAttackSquare);
+                            attack_direction.queen.white.leftMove.push(getAttackSquare);
                             break;
                         case "r":
-                            whiteAttackSquare[3][5].push(getAttackSquare);
+                            attack_direction.queen.white.rightMove.push(getAttackSquare);
                             break;
                         case "u":
-                            whiteAttackSquare[3][6].push(getAttackSquare);
+                            attack_direction.queen.white.upMove.push(getAttackSquare);
                             break;
                         case "d":
-                            whiteAttackSquare[3][7].push(getAttackSquare);
+                            attack_direction.queen.white.downMove.push(getAttackSquare);
                             break;
                         default:
                             break;
@@ -237,48 +238,48 @@ export function calculateAttackSquare()
                     switch (direction) 
                     {
                         case "dul":
-                            whiteAttackSquare[4][0].push(getAttackSquare);
+                            attack_direction.bishop.white.right.diagonalUpLeft.push(getAttackSquare);
                             break;
                         case "dur":
-                            whiteAttackSquare[4][1].push(getAttackSquare);
+                            attack_direction.bishop.white.right.diagonalUpRigth.push(getAttackSquare);
                             break;
                         case "ddl": 
-                            whiteAttackSquare[4][2].push(getAttackSquare);
+                            attack_direction.bishop.white.right.diagonalDownLeft.push(getAttackSquare);
                             break;
                         case "ddr":
-                            whiteAttackSquare[4][3].push(getAttackSquare);
+                            attack_direction.bishop.white.right.diagonalDownRight.push(getAttackSquare);
                             break;
                         default:
                             break;
                     }
                     break;
                 case 30:
-                    whiteAttackSquare[5].push(getAttackSquare);
+                    attack_direction.knight.white.right.moves.push(getAttackSquare);
                     break;
-                case 31:
+                case 31:                                                                // white right rook
                     switch (direction) 
                     {
                         case "l": // rook left move
-                            whiteAttackSquare[6][0].push(getAttackSquare);    
+                            attack_direction.rook.white.right.leftMove.push(getAttackSquare); 
                             break;
                         case "r":
-                            whiteAttackSquare[6][1].push(getAttackSquare);
+                            attack_direction.rook.white.right.rightMove.push(getAttackSquare);
                             break;
                         case "u":
-                            whiteAttackSquare[6][2].push(getAttackSquare);
+                            attack_direction.rook.white.right.upMove.push(getAttackSquare);
                             break;
                         case "d":
-                            whiteAttackSquare[6][3].push(getAttackSquare);
+                            attack_direction.rook.white.right.downMove.push(getAttackSquare);
                             break;
                         default:
                             break;
                     }
                     break;
-                case 28:
-                    whiteAttackSquare[7].push(getAttackSquare);
+                case 28: // white king
+                    attack_direction.king.white.move.push(getAttackSquare);
                     break;
                 case whitePawn[index - 16] : // all pawn go in 7 array
-                    whiteAttackSquare[8].push(getAttackSquare);
+                    attack_direction.pawn.white.move.push(getAttackSquare);
                     break;
                 default:
                     break;
@@ -286,11 +287,7 @@ export function calculateAttackSquare()
         }
     }
 
-    console.log("black attack square", blackAttackSquare);
-    console.log("white attact square", whiteAttackSquare);
-    blackAttackSquare = [[[], [], [], []], [], [[], [], [], []], [[], [], [], [], [], [], [], []], [[], [], [], []], [], [[], [], [], []], [], []];
-    whiteAttackSquare = [[[], [], [], []], [], [[], [], [], []], [[], [], [], [], [], [], [], []], [[], [], [], []], [], [[], [], [], []], [], []];
-
+    
     // give piece id
     for (index = 0; index <= 31; index++ ) 
     {
@@ -544,10 +541,7 @@ export function calculateAttackSquare()
         }
     }
 
-    // test
-    console.log('black attack square', blackAttackSquare);
-    console.log("white attack square", whiteAttackSquare);
 
-    return blackAttackSquare, whiteAttackSquare;
+    return attack_direction
 }
 

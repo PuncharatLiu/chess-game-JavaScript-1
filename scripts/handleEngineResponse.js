@@ -42,9 +42,6 @@ export function handleEngineResponse (bestMove) {
         const fromSquare = convertEngineBestMove(0) + ((8 - parseInt(bestMove.bestMove[1])).toString());
         const toSquare = convertEngineBestMove(2) + ((8 - parseInt(bestMove.bestMove[3])).toString());
 
-        console.log("from square" , fromSquare);
-        console.log("to square ", toSquare);
-
         const fromPiece = document.querySelector(`[position="${fromSquare}"]`);
         const fromPieceId = fromPiece.id;
         

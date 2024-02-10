@@ -70,7 +70,6 @@ export function generateFen(getFile, getRank, filePart, rankPart, turn, isCastle
                     convert.push(sum);
                     convert.push(convertFen[rank][file]);
                     sum = 0;
-                    console.log("convert", convert);
 
                 } else if (file === 7) { // push char to convert[]
                     convert.push(convertFen[rank][file]);

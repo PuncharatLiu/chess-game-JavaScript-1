@@ -22,7 +22,8 @@
     height: 100px;
     background-size: contain;
     cursor: pointer;
-
+    /* background-color: #EA7F6B;   */
+    
 }
 
 .valid-square{
@@ -39,6 +40,11 @@
 
 body{
     background-color: #302E2B;
+}
+
+.check{
+      /* background-color: #ddb0a8;   */
+      background-color: #EA7F6B;  
 }
 
 

@@ -79,7 +79,7 @@ export function whatEventOccur() {
     direction: for (let piece = 0; piece < _getAttackDirection[directionOf].length; piece++) {
         let countBlank = 0;
         let activeDirection = 0;
-        for (let dr = 0; dr < _getAttackDirection[directionOf][piece].length; dr++) {                
+        for (let dr = 1; dr < _getAttackDirection[directionOf][piece].length; dr++) {                
             atDirection = _getAttackDirection[directionOf][piece];
             
             if (_getAttackDirection[directionOf][piece].includes(kingPosition)) {
@@ -135,7 +135,7 @@ export function whatEventOccur() {
 
                     } else if (
                         _getAttackDirection[directionOf][piece][dr + 1]?.toString() === kingPosition &&
-                        countBlank !== _getAttackDirection[directionOf][piece].indexOf(kingPosition)
+                        countBlank + 1 !== _getAttackDirection[directionOf][piece].indexOf(kingPosition)
                     ){
                         console.log("pin occur");
                         return {
@@ -191,5 +191,36 @@ export function pin(filePosition, rankPosition, atDirection){
         return true;
     }
 
+    return false;
+}
+
+export function captureAttackedPiece() {
+    const getAttackDirection = getAttackDirectionFromObject();
+    const opponent = turn === "white" ? "black" : "white";
+    direction: for (let direction = 0; direction < getAttackDirection[turn].length; direction++) {
+        let attackedPiece = getAttackDirection[turn][direction][0];
+
+        for (let square = 1; square < getAttackDirection[turn][direction].length; square++){
+            if (getAttackDirection[turn][direction].includes(attackedPiece)){
+                if (
+                    document.querySelector(`[position="${getAttackDirection[turn][direction][square]}"]`)?.classList.contains(turn)||
+                    (
+                    document.querySelector(`[position="${getAttackDirection[turn][direction][square]}"]`)?.classList.contains(opponent) &&
+                    getAttackDirection[turn][direction][square] !== attackedPiece
+                    )
+                ){
+                    continue direction;
+
+                } else if (document.querySelector(`[position="${getAttackDirection[turn][direction][square]}"]`) === null){
+                    continue;
+
+                } else {
+                    return true;
+                    console.log("########### attack ############");
+
+                }
+            }
+        }
+    }
     return false;
 }

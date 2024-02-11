@@ -305,14 +305,11 @@ export function calculateAttackSquare()
         // ===================================== Night Move =========================================== // 
         else if (pieceAttackId === '1' || pieceAttackId === '6' || pieceAttackId === '25' || pieceAttackId === '30' ) {
             // knight move in fire and rank position
-            const filePosition = [attackFile - 1, attackFile + 1, attackFile - 1, attackFile + 1, attackFile - 2, attackFile - 2, attackFile + 2, attackFile + 2];
-            const rankPosition = [attackRank + 2, attackRank + 2, attackRank - 2, attackRank - 2, attackRank + 1, attackRank - 1, attackRank + 1, attackRank - 1];
+            const filePosition = [attackFile, attackFile - 1, attackFile + 1, attackFile - 1, attackFile + 1, attackFile - 2, attackFile - 2, attackFile + 2, attackFile + 2];
+            const rankPosition = [attackRank, attackRank + 2, attackRank + 2, attackRank - 2, attackRank - 2, attackRank + 1, attackRank - 1, attackRank + 1, attackRank - 1];
             
             // create 7 square default if valid
-            for (let i = 0; i <= 7; i++ ) {
-                // if ( ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'white') || ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'black' ) )  {
-                //     continue;
-                // }
+            for (let i = 0; i <= 8; i++ ) {
                 createAttackSquare(filePosition[i], rankPosition[i]);
             } 
         }
@@ -333,11 +330,11 @@ export function calculateAttackSquare()
         // ========================================= King move ========================================= // 
         else if (pieceAttackId === '4' || pieceAttackId === '28') {
             // all king move
-            const filePosition = [attackFile, attackFile - 1, attackFile + 1, attackFile - 1, attackFile + 1, attackFile, attackFile -1, attackFile + 1];
-            const rankPosition = [attackRank - 1, attackRank - 1, attackRank - 1, attackRank, attackRank, attackRank + 1, attackRank + 1, attackRank + 1];
+            const filePosition = [attackFile, attackFile, attackFile - 1, attackFile + 1, attackFile - 1, attackFile + 1, attackFile, attackFile -1, attackFile + 1];
+            const rankPosition = [attackRank, attackRank - 1, attackRank - 1, attackRank - 1, attackRank, attackRank, attackRank + 1, attackRank + 1, attackRank + 1];
             
             // calculate valid square
-            for (let i = 0; i <= 7; i++) 
+            for (let i = 0; i <= 8; i++) 
             {
                 // check if piece block the valid square
                 if ( ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString())  && turn === 'white' ) || ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString())   && turn === 'black' ) )  
@@ -354,12 +351,14 @@ export function calculateAttackSquare()
         {
             if (index >= 8 && index <= 15 ) // ================================= black pawn ======================================= // 
             {
+                
                 createAttackSquare(attackFile - 1, attackRank + 1);
                 createAttackSquare(attackFile + 1, attackRank + 1);
             }
             
             else if (index >= 16 && index <= 23 ) // ======================================= White pawn ======================================== // 
             {
+                
                 createAttackSquare(attackFile - 1, attackRank - 1);
                 createAttackSquare(attackFile + 1, attackRank - 1);   
             }
@@ -368,15 +367,15 @@ export function calculateAttackSquare()
         // ================================ horizontal and vertical move ================================ //
         function horizontalVertical() {        
             // left move 
-            for (let i = 1 ; i <= attackFile; i++) 
+            for (let i = 0 ; i <= attackFile + 1; i++) 
             {
                 const filePosition = (attackFile - i);
                 const rankPosition = attackRank;
                 let foundSelfpiece = false;
                 if (foundSelfpiece) { break }
                 if  ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'white' ) || 
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'black' ) 
+                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'white' ) || 
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'black' ) 
                     )  
                 {
                     createAttackSquare(filePosition, rankPosition, "l");
@@ -384,23 +383,15 @@ export function calculateAttackSquare()
                     break;
                 }
                 createAttackSquare(filePosition, rankPosition, "l");
-
-                if  ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'white' ) ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'black' ) 
-                    ) 
-                {
-                    break;
-                }
             }
             // right move 
-            for (let i = 1; i <= (7 - attackFile); i++ ) 
+            for (let i = 0; i <= (7 - attackFile) + 1; i++ ) 
             {
                 const filePosition = (attackFile + i);
                 const rankPosition = attackRank;
                 if  ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'white' ) ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'black' ) 
+                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'white' ) ||
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'black' ) 
                     )  
                 {
                     createAttackSquare(filePosition, rankPosition, "r");
@@ -408,22 +399,15 @@ export function calculateAttackSquare()
                 }
                 createAttackSquare(filePosition, rankPosition, "r");
 
-                if ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'white') ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'black') 
-                    ) 
-                {
-                    break;
-                }
             } 
             // up move
-            for (let i = 1; i <= attackRank; i++ ) 
+            for (let i = 0; i <= attackRank + 1; i++ ) 
             {
                 const filePosition = attackFile;
                 const rankPosition = (attackRank - i);
                 if  (
-                     ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'white') ||
-                     ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'black') 
+                     ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'white') ||
+                     ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'black') 
                     )  
                 {
                     createAttackSquare(filePosition, rankPosition, "u");
@@ -431,36 +415,23 @@ export function calculateAttackSquare()
                 }
                 createAttackSquare(filePosition, rankPosition, "u");
 
-                if ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'white') ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'black') 
-                    ) 
-                {
-                    break;
-                }
             }
             // down move 
-            for (let i = 1; i <= (7 - attackRank); i++) 
+            for (let i = 0; i <= (7 - attackRank) + 1; i++) 
             {
                 const filePosition = attackFile;
-                const rankPosition = (attackRank + i);
+                const rankPosition = attackRank + i;
                 if  (
-                     ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'white') ||
-                     ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'black') 
+                     ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'white') ||
+                     ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'black') 
                     )  
                 {
                     createAttackSquare(filePosition, rankPosition, "d");
+                    // console.log("break");
                     break;
                 }
                 createAttackSquare(filePosition, rankPosition, "d");
-
-                if ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'white') ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() )  && turn === 'black') 
-                    ) 
-                {
-                    break;
-                }
+                                
             }
         
         }
@@ -468,80 +439,64 @@ export function calculateAttackSquare()
         // ========================================== diagonal move ===================================== // 
         function diagonal() {
             // up left diagonal
-            for (let i = 1; i <= attackFile; i ++) {
+            for (let i = 0; i <= attackFile + 1; i ++) {
                 const filePosition = (attackFile - i);
                 const rankPosition = (attackRank - i);
             
-                if ( ( overlapWhite.includes(filePosition.toString() + rankPosition.toString())  && turn === 'white') || ( overlapBlack.includes(filePosition.toString() + rankPosition.toString())  && turn === 'black') )  {
+                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'white') ||
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'black') 
+                ){
                     createAttackSquare(filePosition, rankPosition, "dul");
                     break;    
                 } 
                 createAttackSquare(filePosition, rankPosition, "dul");
                 
-                if ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString())  && turn === 'white') ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString())  && turn === 'black') 
-                    ) {
-                    break;
-                }
             }
             // up right diagonal  
-            for (let i = 1; i <= (7 - attackFile); i++) {
+            for (let i = 0; i <= (7 - attackFile) + 1; i++) {
                 const filePosition = (attackFile + i);
                 const rankPosition = (attackRank - i);
                 
-                if ( ( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && turn === 'white') || ( overlapBlack.includes(filePosition.toString() + rankPosition.toString())  && turn === 'black') )  {
+                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'white') ||
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'black') 
+                    ){
                     createAttackSquare(filePosition, rankPosition, "dur");
                     break;
                 }
                 createAttackSquare(filePosition, rankPosition, "dur");
 
-                if ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString())  && turn === 'white' ) ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString())  && turn === 'black') 
-                    ) {
-                    break;
-                }
             }
             // down left diagonal
-            for (let i = 1; i <= attackFile; i++) {
+            for (let i = 0; i <= attackFile + 1; i++) {
                 const filePosition = (attackFile - i);
                 const rankPosition = (attackRank + i);
-                if ( ( overlapWhite.includes(filePosition.toString() + rankPosition.toString())  && turn === 'white') || ( overlapBlack.includes(filePosition.toString() + rankPosition.toString())  && turn === 'black' ) )  {
+                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'white') ||
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'black' ) 
+                    ){
                     createAttackSquare(filePosition, rankPosition, "ddl");
                     break;
                 }
                 createAttackSquare(filePosition, rankPosition, "ddl");
 
-                if ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString())  && turn === 'white' ) ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString())  && turn === 'black') 
-                    ) {
-                    break;
-                }
             }
         
             // down right diagonal
-            for (let i = 1; i <= (7 - attackFile); i++) {
+            for (let i = 0; i <= (7 - attackFile) + 1; i++) {
                 const filePosition = (attackFile + i);
                 const rankPosition = (attackRank + i);
-                if ( ( overlapWhite.includes(filePosition.toString() + rankPosition.toString())  && turn === 'white') || ( overlapBlack.includes(filePosition.toString() + rankPosition.toString())  && turn === 'black') )  {
+                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'white') ||
+                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'black') 
+                    ){
                     createAttackSquare(filePosition, rankPosition, "ddr");
                     break;
                 }
                 createAttackSquare(filePosition, rankPosition, "ddr");
                 
-                if ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString())  && turn === 'white') ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString())  && turn === 'black') 
-                    ) {
-                    break;
-                }
             }
         }
     }
 
-
+    console.log("attack square: ", attack_direction);
     return attack_direction
 }
 

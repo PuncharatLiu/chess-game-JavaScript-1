@@ -75,92 +75,83 @@ export function whatEventOccur() {
     let isPieceBlock = false;
     let atDirection;
     
-    
-    
     direction: for (let piece = 0; piece < _getAttackDirection[directionOf].length; piece++) {
         let countBlank = 0;
+        let activeDirection = 0;
         for (let dr = 0; dr < _getAttackDirection[directionOf][piece].length; dr++) {                
             atDirection = _getAttackDirection[directionOf][piece];
             
             if (_getAttackDirection[directionOf][piece].includes(kingPosition)) {
-                if (document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`)?.classList.contains(opponent)) 
-                {
+                if (document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`)?.classList.contains(opponent)) {
                     continue direction;
                 } 
 
-                else if 
-                (
+                else if ( // if self piece(not king) or black square and not knight or pawn
                     (
-                        document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`)?.classList.contains(turn) ||
-                        document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`) === null 
+                    document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`)?.classList.contains(turn) ||
+                    document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`) === null 
                     ) &&
                     (
-                        _getAttackDirection[directionOf][piece][dr].toString() !== kingPosition ||
-                        isPieceBlock 
+                    _getAttackDirection[directionOf][piece][dr].toString() !== kingPosition ||
+                    isPieceBlock 
                     ) &&
                     !_getAttackDirection[directionOf][piece].includes("exclude")
-                )
-                {
-                    if (document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`)?.classList.contains(turn))
-                    {
+                ){
+                    if (document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`)?.classList.contains(turn)){
+                        let pieceIndex = _getAttackDirection[directionOf][piece].indexOf(_getAttackDirection[directionOf][piece][dr])
+                        let kingIndex = _getAttackDirection[directionOf][piece].indexOf(kingPosition);
                         isPieceBlock = true;
+                        
+                        activeDirection = _getAttackDirection[directionOf][piece].slice(pieceIndex + 1, kingIndex);
+                        console.log("activeDirection: ", activeDirection);
                     }
                     if (document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`) === null){
                         countBlank++;
-                        console.log("countBlank++; ", countBlank)
-                        if 
+                    }
+                    if 
                         (
-                            document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`) !== null &&
-                            _getAttackDirection[directionOf][piece][dr]?.toString() !== kingPosition
+                        document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`) !== null &&
+                        _getAttackDirection[directionOf][piece][dr]?.toString() !== kingPosition
                         ){
                             console.log("count black: ", countBlank )
                             countBlank = 0;
                         }
-                    }
 
-                    if 
-                    (
+                    if (
                         document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr + 1]}"]`)?.classList.contains(opponent) ||
                         (
-                            document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr + 1]}"]`)?.classList.contains(turn) &&
-                            _getAttackDirection[directionOf][piece][dr + 1].toString() !== kingPosition
+                        document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr + 1]}"]`)?.classList.contains(turn) &&
+                        _getAttackDirection[directionOf][piece][dr + 1].toString() !== kingPosition
                         )
                     ){
                         continue direction;
-                    }
 
-                    else if 
-                    (
+                    } else if (
                         document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr + 1]}"]`) === null
                         && !_getAttackDirection[directionOf][piece][dr + 1]?.toString() === kingPosition
                     ){
                         continue;
-                    }
 
-                    else if 
-                    (
+                    } else if (
                         _getAttackDirection[directionOf][piece][dr + 1]?.toString() === kingPosition &&
                         countBlank !== _getAttackDirection[directionOf][piece].indexOf(kingPosition)
-                    )
-                    {
+                    ){
                         console.log("pin occur");
                         return {
                             occurEvent: "pin",
-                            atDirection: atDirection,
+                            atDirection: activeDirection,
                             pinedPiece: document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`)
                         }
                     }
                 }
                 else if (_getAttackDirection[directionOf][piece][dr].toString() === kingPosition)  
                 {
-                    if (_getAttackDirection[directionOf][piece].includes("exclude"))
-                    {
+                    if (_getAttackDirection[directionOf][piece].includes("exclude")){
                         console.log("check with pawn or knight");
                         return {
                             occurEvent: "check with pawn or knight",
                         }
-                    } else 
-                    {
+                    } else {
                         console.log("check")
                         return { 
                             occurEvent: "check",
@@ -173,19 +164,21 @@ export function whatEventOccur() {
     } 
 }
 
-export function isAttackSquare(filePosition, rankPosition, ) {
+export function isAttackSquare(filePosition, rankPosition, occurEvent, atDirection) {
     const getAttackDirection = getAttackDirectionFromObject();
     const concatFileRank = `${filePosition}${rankPosition}`;
-    if (turn === "white") {
-        for (let i = 0; i < getAttackDirection.black.length; i++ ) {
-            for (let j = 0; j < getAttackDirection.black[i].length; j++) {
-                if (getAttackDirection.black[i][j] === concatFileRank ) {
-                    console.log("there block square!!!!!!!!!!");
-                    return true;
-                }
+    for (let i = 0; i < getAttackDirection.black.length; i++ ) {
+        for (let j = 0; j < getAttackDirection.black[i].length; j++) {
+            if (occurEvent === "pin" && atDirection.includes(concatFileRank)){
+                return false;
+            }
+            if (getAttackDirection.black[i][j] === concatFileRank ) {
+                console.log("there block square!!!!!!!!!!");
+                return true;
             }
         }
     }
+
     return false;
     
 }

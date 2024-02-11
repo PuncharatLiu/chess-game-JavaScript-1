@@ -623,9 +623,8 @@ function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,paw
     else if (occurEvent === "check with pawn or knight" && clickedPiece === undefined){
         return;
     } 
-
-    if(isAttackSquare(filePosition, rankPosition) && clickedPiece === "king") { 
-        console.log("get in")
+    
+    if(isAttackSquare(filePosition, rankPosition, occurEvent, atDirection) && clickedPiece === "king") { 
         return; 
     }
 
@@ -928,8 +927,8 @@ function changePosition(twoSquare, squareToGoFromEngine)
     {
         generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);    
     }
-    
-    
+
+    // get occur event, direction, pined piece
     occurEvent = whatEventOccur();
     occurEvent = occurEvent?.occurEvent;
     atDirection = whatEventOccur();
@@ -943,8 +942,7 @@ function changePosition(twoSquare, squareToGoFromEngine)
     
 }
 
-function removeValidMove() 
-{
+function removeValidMove() {
     // Remove existing highlighted squares
     const getValidSquare = document.querySelectorAll('.valid-square');
     
@@ -956,7 +954,6 @@ function removeValidMove()
     isSamePiece = ""; // set to default
     
 }
-
 
 function changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart) {
     pieces[getPieceId].position.file = getFilePosition;
@@ -1036,12 +1033,8 @@ function sendMoveToEngine(FEN) {
             best_move = bestMove
             
             handleEngineResponse(best_move);
-
-            // generateFen(getFile, getRank, getFilePosition, getRankPosition, turn, undefined, undefined, take, pawnMove);
-            // handleEngineResponse(bestMove);
         })
         // .catch(error => console.error('Error here!!!!', error));
-    
 }
 
 
@@ -1058,8 +1051,6 @@ export function checkCastleEvenForEngine (best_move) {
     } else {
         return false;
     }
-
-    
 }
 
 export { overlapBlack, overlapWhite, turn};

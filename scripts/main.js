@@ -608,7 +608,7 @@ function enPassant(pawnId) {
 /**==================================================================================================== */
 
 let occurEvent, atDirection, pinedPiece;
-import { pin } from "./check.js";
+import { pin, captureAttackedPiece } from "./check.js";
 
 // create valid move 
 function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,pawnId, clickedPiece) {
@@ -621,11 +621,15 @@ function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,paw
         console.log("ckeck occur");
         return;
     }
-    else if (occurEvent === "check" && clickedPiece === undefined && !atDirection.includes((filePosition.toString() + rankPosition.toString() )) ) {
+    else if (occurEvent === "check" && clickedPiece === undefined && (!atDirection.includes((filePosition.toString() + rankPosition.toString())))) {
         console.log("protect the king!");
-        return;
+        if (!captureAttackedPiece()){
+            return;    
+        }
+        // return;
     }
     else if (occurEvent === "check with pawn or knight" && clickedPiece === undefined){
+        console.log("check with pawn or knight");
         return;
     } 
     

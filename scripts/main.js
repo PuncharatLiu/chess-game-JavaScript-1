@@ -71,8 +71,12 @@ initializeBoard();
 /* =========================== This function use to calculate valid square ============================ */
 // ==================================================================================================== //
 
+let _clickedPiece 
+
 export function validSquare(fromPieceId){
     getCurrentPosition();
+
+    _clickedPiece = event?.target;
 
     function rook() { // white and black rook
         return (
@@ -604,6 +608,7 @@ function enPassant(pawnId) {
 /**==================================================================================================== */
 
 let occurEvent, atDirection, pinedPiece;
+import { pin } from "./check.js";
 
 // create valid move 
 function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,pawnId, clickedPiece) {
@@ -624,7 +629,11 @@ function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,paw
         return;
     } 
     
-    if(isAttackSquare(filePosition, rankPosition, occurEvent, atDirection) && clickedPiece === "king") { 
+    else if (occurEvent === "pin" && _clickedPiece === pinedPiece && !pin(filePosition, rankPosition, atDirection)) {
+        return;
+    }
+
+    if(isAttackSquare(filePosition, rankPosition, occurEvent, whatEventOccur()?.activeDirection) && clickedPiece === "king") { 
         return; 
     }
 
@@ -935,10 +944,12 @@ function changePosition(twoSquare, squareToGoFromEngine)
     atDirection = atDirection?.atDirection;
     pinedPiece = whatEventOccur();
     pinedPiece = pinedPiece?.pinedPiece;
+    
     take = false;
     pawnMove = false;
     
     console.log("occur event: ", occurEvent);
+    console.log("pined piece: ", pinedPiece);
     
 }
 

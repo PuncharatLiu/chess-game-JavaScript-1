@@ -73,6 +73,7 @@ export function whatEventOccur() {
     const kingPosition = turn === "white" ? overlapWhite[12] : overlapBlack[4];
     const opponent = turn === "white" ? "black" : "white";
     let isPieceBlock = false;
+    let pinnedPiece;
     let atDirection;
     
     direction: for (let piece = 0; piece < _getAttackDirection[directionOf].length; piece++) {
@@ -101,7 +102,7 @@ export function whatEventOccur() {
                         let pieceIndex = _getAttackDirection[directionOf][piece].indexOf(_getAttackDirection[directionOf][piece][dr])
                         let kingIndex = _getAttackDirection[directionOf][piece].indexOf(kingPosition);
                         isPieceBlock = true;
-                        
+                        pinnedPiece = document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`);
                         activeDirection = _getAttackDirection[directionOf][piece].slice(pieceIndex + 1, kingIndex);
                         console.log("activeDirection: ", activeDirection);
                     }
@@ -139,8 +140,9 @@ export function whatEventOccur() {
                         console.log("pin occur");
                         return {
                             occurEvent: "pin",
-                            atDirection: activeDirection,
-                            pinedPiece: document.querySelector(`[position="${_getAttackDirection[directionOf][piece][dr]}"]`)
+                            atDirection: atDirection,
+                            activeDirection: activeDirection,
+                            pinedPiece: pinnedPiece
                         }
                     }
                 }
@@ -181,4 +183,13 @@ export function isAttackSquare(filePosition, rankPosition, occurEvent, atDirecti
 
     return false;
     
+}
+
+export function pin(filePosition, rankPosition, atDirection){
+    const concatFileRank = `${filePosition}${rankPosition}`;
+    if (atDirection.includes(concatFileRank)){
+        return true;
+    }
+
+    return false;
 }

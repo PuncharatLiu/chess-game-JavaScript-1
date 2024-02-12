@@ -169,12 +169,13 @@ export function whatEventOccur() {
 export function isAttackSquare(filePosition, rankPosition, occurEvent, atDirection) {
     const getAttackDirection = getAttackDirectionFromObject();
     const concatFileRank = `${filePosition}${rankPosition}`;
-    for (let i = 0; i < getAttackDirection.black.length; i++ ) {
-        for (let j = 0; j < getAttackDirection.black[i].length; j++) {
+    const directionOf = turn === "white" ? "black" : "white";
+    for (let i = 0; i < getAttackDirection[directionOf].length; i++ ) {
+        for (let j = 0; j < getAttackDirection[directionOf][i].length; j++) {
             if (occurEvent === "pin" && atDirection.includes(concatFileRank)){
                 return false;
             }
-            if (getAttackDirection.black[i][j] === concatFileRank ) {
+            if (getAttackDirection[directionOf][i][j] === concatFileRank ) {
                 console.log("there block square!!!!!!!!!!");
                 return true;
             }
@@ -216,7 +217,6 @@ export function captureAttackedPiece() {
 
                 } else {
                     return true;
-                    console.log("########### attack ############");
 
                 }
             }

@@ -1,4 +1,4 @@
-import { getCurrentPosition } from "./main.js";
+import { getCurrentPosition, changeDefualtPosition } from "./main.js";
 import { overlapBlack, overlapWhite } from "./main.js";
 import { attackDirectionStorage } from "./attackDirection.js";
 
@@ -12,6 +12,8 @@ export function calculateAttackSquare()
     let getAttackSquare;
     let turn;
     let attack_direction = attackDirectionStorage();
+
+    console.log(overlapWhite, overlapBlack);
 
     function createAttackSquare(filePosition, rankPosition, direction) 
     {
@@ -297,6 +299,7 @@ export function calculateAttackSquare()
         attackFile = parseInt(attackFile);
         attackRank = parseInt(attackRank);
 
+
         // =============================== Rook move  =========================================== //
         if (pieceAttackId === '0' || pieceAttackId === '7' || pieceAttackId === '24' || pieceAttackId === '31') {
             horizontalVertical();
@@ -371,15 +374,12 @@ export function calculateAttackSquare()
             {
                 const filePosition = (attackFile - i);
                 const rankPosition = attackRank;
-                let foundSelfpiece = false;
-                if (foundSelfpiece) { break }
                 if  ( 
                     ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'white' ) || 
                     ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'black' ) 
                     )  
                 {
                     createAttackSquare(filePosition, rankPosition, "l");
-                    foundSelfpiece = true;
                     break;
                 }
                 createAttackSquare(filePosition, rankPosition, "l");
@@ -497,6 +497,7 @@ export function calculateAttackSquare()
     }
 
     console.log("attack square: ", attack_direction);
+    // changeDefualtPosition();
     return attack_direction
 }
 

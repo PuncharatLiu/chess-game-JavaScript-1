@@ -1,5 +1,9 @@
-import { overlapBlack, overlapWhite } from "./main.js";
-import { whitePieceIndex, blackPieceIndex } from "./main.js";
+// import { overlapBlack, overlapWhite } from "./main.js";
+
+import { overlapBlack, overlapWhite } from "./position.js";
+import { whitePieceIndex, blackPieceIndex } from "./position.js";
+
+// import { whitePieceIndex, blackPieceIndex } from "./main.js";
 import { isSelfPiece, isOpponentPiece } from "./pieces.js";
 
 export function calculateAttackSquare(){
@@ -324,8 +328,31 @@ export function calculateAttackSquare(){
             pushPinDirection(PIN_DDR);
         }
     }
+    
+    let re = {
+        attackDirection: {
+            black: blackAttackSquare, white: whiteAttackSquare
+        },
+        pinDirection: {
+            black: blackPinDirection, white: whitePinDirection
+        }
+    }
+    
+    let test = "white";
+
+    let op = turn === "white" ? 'black' : 'white';
+
     console.log("white pin direction: ", whitePinDirection);
     console.log("black pin direction: ", blackPinDirection);
-    
-    return {black: blackAttackSquare, white: whiteAttackSquare}
+    console.log("white attack direction: ", blackAttackSquare);
+    console.log(re.pinDirection[op].length);
+
+    return {
+        attackDirection: {
+            black: blackAttackSquare, white: whiteAttackSquare
+        },
+        pinDirection: {
+            black: blackPinDirection, white: whitePinDirection
+        }
+    }
 }

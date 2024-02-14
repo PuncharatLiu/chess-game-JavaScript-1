@@ -1,614 +1,17 @@
 import { calculateAttackSquare } from "./AttackSquare.js";
 import { generateFen } from "./generateFen.js";
 import { pieces, isSelfPiece, isOpponentPiece, Is } from "./pieces.js";
+// import { handleCheck } from "./handleKingEvent.js";
 
-let overlapBlack = [];
-let overlapWhite = [];
-let whitePieceIndex = [];
-let blackPieceIndex = [];
-let take = false;
-let pawnMove = false;
+import {overlapBlack, overlapWhite, changeDefualtPosition, getCurrentPosition} from "./position.js"
+import { validSquare } from "./handleValidMove.js";
+import { initializeBoard } from "./initBoard.js";
+import { capture } from "./capture.js";
 
-let i = 0;
-
-initializeBoard();
-getCurrentPosition();
-calculateAttackSquare();
-
-/* ==================================================================================================== */
-/* ====================================== CREATE PIECES ================================================*/
-/* ==================================================================================================== */
-// create pieces
-function renderPiece(piece){
-    // get chess board Id
-    const chessBoard = document.getElementById("chess-board");
-    const chessPiece = document.createElement('div');
-    
-    // add class to element
-    chessPiece.className = `chess-piece ${piece.color} ${piece.type}`;
-    
-    // set position
-    chessPiece.style.transform = `translate(${piece.position.file * 100}px , ${piece.position.rank * 100}px)`;
-    
-    // set attribute as position
-    let pieceAttribute = (piece.position.file).toString() + (piece.position.rank).toString();
-    chessPiece.setAttribute("position", pieceAttribute);
-
-    chessPiece.id = i;  // set id
-    
-    // set eventlistenner.
-    chessPiece.addEventListener('click', handleClick);
-    
-    // add to wrap "chess-Board" 
-    chessBoard.appendChild(chessPiece);
-    
-    i ++;
-}
-
-// setup board.
-// let i = 0;
-function initializeBoard(){
-    pieces.forEach(renderPiece);
-}
-// initializeBoard();
-
-// ==================================================================================================== //
-// ======================================== VALIDATE SQUARE =========================================== //
-/* =========================== This function use to calculate valid square ============================ */
-// ==================================================================================================== //
-let _clickedPiece 
-export function validSquare(fromPieceId){
-    _clickedPiece = event?.target;
-
-    // =============================== Rook move  =========================================== //
-    if (Is.rook(getPieceId, fromPieceId)) {
-        horizontalVertical();
-    }
-
-    // ===================================== Night Move =========================================== // 
-    else if (Is.knight(getPieceId, fromPieceId)) {
-        // knight move in fire and rank position
-        const filePosition = [getFile - 1, getFile + 1, getFile - 1, getFile + 1, getFile - 2, getFile - 2, getFile + 2, getFile + 2];
-        const rankPosition = [getRank + 2, getRank + 2, getRank - 2, getRank - 2, getRank + 1, getRank - 1, getRank + 1, getRank - 1];
-        
-        // create 7 square default if valid
-        for (let i = 0; i <= 7; i++ ) {
-            if ( ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'white') || ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'black' ) )  {
-                continue;
-            }
-            createValidSquare(filePosition[i], rankPosition[i]);
-        } 
-    }
-
-    // ======================================= Bishop move ========================================= // 
-    else if (Is.bishop(getPieceId, fromPieceId)) {
-        // create diagonal move
-        diagonal();  
-    }
-   
-    // ======================================== Queen move ========================================= //  
-    else if (Is.queen(getPieceId, fromPieceId)) {
-        // create diagonal, horizontal and vertical move
-        horizontalVertical();
-        diagonal();
-    }
-
-    // ========================================= King move ========================================= // 
-    else if (Is.king(getPieceId, fromPieceId)) {
-        // all king move
-        const filePosition = [getFile, getFile - 1, getFile + 1, getFile - 1, getFile + 1, getFile, getFile -1, getFile + 1];
-        const rankPosition = [getRank - 1, getRank - 1, getRank - 1, getRank, getRank, getRank + 1, getRank + 1, getRank + 1];
-        
-        
-
-        // check if beside king is empty
-        let isEmptyWhiteRight = overlapWhite.includes( ( ( (getFile + 1).toString() + getRank.toString() ) && (getFile + 2).toString() + getRank.toString() ) );
-        let isEmptyWhiteLeft = overlapWhite.includes( ( ( (getFile - 1).toString() + getRank.toString() ) && (getFile - 2).toString() + getRank.toString() && (getFile - 2).toString() + getRank.toString() ));
-        let isEmptyBlackRight = overlapBlack.includes( ( ( (getFile + 1).toString() + getRank.toString() ) && (getFile + 2).toString() + getRank.toString() ) );
-        let isEmptyBlackLeft = overlapBlack.includes( ( ( (getFile - 2).toString() + getRank.toString() ) && (getFile - 2).toString() + getRank.toString() && (getFile - 2).toString() + getRank.toString() ));
-        
-        if (!isEmptyWhiteRight && turn === 'white' && !isWhiteCastle) 
-        {
-            shortCastleSquare(getFile + 2, getRank);
-        } 
-        else if (!isEmptyWhiteLeft && turn === 'white' && !isWhiteCastle) 
-        {
-            longCastlesquare(getFile - 2, getRank);
-        } 
-
-        if (!isEmptyBlackRight && turn === 'black' && !isBlackCastle) 
-        {
-            shortCastleSquare(getFile + 2, getRank);
-        } 
-        else if (!isEmptyBlackLeft && turn === 'black' && !isBlackCastle) 
-        {
-            longCastlesquare(getFile - 2, getRank);
-        }
-
-        // calculate valid square
-        for (let i = 0; i <= 7; i++) 
-        {
-            if // check if piece block the valid square
-            ( 
-                ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'white') ||
-                ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'black' ) 
-            )  
-            {
-                continue;
-            }
-            createValidSquare(filePosition[i], rankPosition[i], undefined, undefined, undefined, "king");
-        }
-    } 
-
-    // ======================================= Pawn move =========================================== //
-    else {
-        // ================================= black pawn ======================================= // 
-        if (Is.blackPawn(getPieceId, fromPieceId)) {
-            let pawnRank = pieces[getPieceId].position.rank;
-            // let pawnRank_fromEngine = pieces[fromPieceId].position.rank;
-
-            // check if first move of black pawn
-            if (pawnRank * 100 === 100 || pieces[fromPieceId]?.position.rank * 100 === 100) {
-                // generate two valid square  
-                for (let i = 1; i <= 2; i++) {
-                    const filePosition = getFile;
-                    const rankPosition = (getRank + i);
-
-                    let blackPawnCaptueRightSquare = (getFile + 1).toString() + (getRank + 1).toString();
-                    let blackPawnCaptueLeftSquare = (getFile - 1).toString() + (getRank + 1).toString();
-
-                    if (overlapWhite.includes(blackPawnCaptueLeftSquare) && turn === 'black') {
-                        createValidSquare(getFile - 1, getRank + 1);
-                    } 
-                    if (overlapWhite.includes(blackPawnCaptueRightSquare) && turn === 'black') {
-                        createValidSquare(getFile + 1, getRank + 1);
-                    }
-
-                    if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break; 
-                    if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-                    
-                    if (i === 1){
-                        createValidSquare(filePosition, rankPosition);
-                        pawnMove = true;    
-                    } 
-                    
-                    else if (i === 2) {
-                        createValidSquare(filePosition, rankPosition, true);
-                        pawnMove = true;
-                    }
-                }
-            }
-            
-            // if not a first move, create one valid square
-            else {
-                const filePosition = getFile;
-                const rankPosition = getRank + 1;
-
-                let blackPawnCaptueRightSquare = (getFile + 1).toString() + (getRank + 1).toString();
-                let blackPawnCaptueLeftSquare = (getFile - 1).toString() + (getRank + 1).toString();
-
-                if (overlapWhite.includes(blackPawnCaptueLeftSquare) && turn === 'black') {
-                    createValidSquare(getFile - 1, getRank + 1);
-                } 
-                if (overlapWhite.includes(blackPawnCaptueRightSquare) && turn === 'black') {
-                    createValidSquare(getFile + 1, getRank + 1);
-                }
-
-                if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) return; 
-                if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) return;
-                createValidSquare(filePosition, rankPosition);
-                enPassantState();
-                pawnMove = true;
-            }
-        }
-         
-         // ======================================= White pawn ======================================== // 
-         else {
-            let pawnRank = pieces[getPieceId].position.rank;
-
-            // check if first move of white pawn 
-            if ( pawnRank * 100 === 600 || pieces[fromPieceId]?.position.rank * 100 === 600) {
-               
-                // create two valid square 
-                for (let i = 1; i <= 2; i++) {
-                    const filePosition = (getFile);
-                    const rankPosition = (getRank - i);
-
-                    let whitePawnCaptueRightSquare = (getFile + 1).toString() + (getRank - 1).toString();
-                    let whitePawnCaptueLeftSquare = (getFile - 1).toString() + (getRank - 1).toString();
-
-                    if (overlapBlack.includes(whitePawnCaptueLeftSquare) && turn === 'white') {
-                        createValidSquare(getFile - 1, getRank - 1);
-                    } 
-                    if (overlapBlack.includes(whitePawnCaptueRightSquare) && turn === 'white') {
-                        createValidSquare(getFile + 1, getRank - 1);
-                    }
-
-                    if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break; 
-                    if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-                    
-                    if (i === 1){
-                        createValidSquare(filePosition, rankPosition);   
-                        pawnMove = true; 
-                    } 
-                    
-                    else if (i === 2) {
-                        createValidSquare(filePosition, rankPosition, true);
-                        pawnMove = true;
-                        
-                    }
-                }
-            }
-
-            // create one valid square 
-            else {
-                const filePosition = getFile;
-                const rankPosition = getRank - 1;
-
-                let whitePawnCaptueRightSquare = (getFile + 1).toString() + (getRank - 1).toString();
-                let whitePawnCaptueLeftSquare = (getFile - 1).toString() + (getRank - 1).toString();
-
-                if (overlapBlack.includes(whitePawnCaptueLeftSquare) && turn === 'white') {
-                    createValidSquare(getFile - 1, getRank - 1);
-                } 
-                if (overlapBlack.includes(whitePawnCaptueRightSquare) && turn === 'white') {
-                    createValidSquare(getFile + 1, getRank - 1);
-                }
-
-                if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) return; 
-                if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) return;
-                
-                createValidSquare(filePosition, rankPosition);
-                enPassantState();
-                pawnMove = true;
-            }
-        }
-    }
-
-    // ================================ horizontal and vertical move ================================ //
-    function horizontalVertical() {        
-        // left move 
-        for (let i = 1 ; i <= getFile; i++) {
-            const filePosition = (getFile - i);
-            const rankPosition = getRank;
-
-            if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;            
-            createValidSquare(filePosition, rankPosition);
-            if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-        }
-        // right move 
-        for (let i = 1; i <= (7 - getFile); i++ ) {
-            const filePosition = (getFile + i);
-            const rankPosition = getRank;
-
-            if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;            
-            createValidSquare(filePosition, rankPosition);
-            if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-        } 
-        // up move
-        for (let i = 1; i <= getRank; i++ ) {
-            const filePosition = getFile;
-            const rankPosition = (getRank - i);
-
-            if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-            createValidSquare(filePosition, rankPosition);
-            if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-        }
-        // down move 
-        for (let i = 1; i <= (7 - getRank); i++) {
-            const filePosition = getFile;
-            const rankPosition = (getRank + i);
-
-            if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-            createValidSquare(filePosition, rankPosition);
-            if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-        }
-    }
-
-    // ========================================== diagonal move ===================================== // 
-    function diagonal() {
-        // up left diagonal
-        for (let i = 1; i <= getFile; i ++) {
-            const filePosition = (getFile - i);
-            const rankPosition = (getRank - i);
-        
-            if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-            createValidSquare(filePosition, rankPosition);
-            if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-        }
-        // up right diagonal  
-        for (let i = 1; i <= (7 - getFile); i++) {
-            const filePosition = (getFile + i);
-            const rankPosition = (getRank - i);
-            
-            if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-            createValidSquare(filePosition, rankPosition);
-            if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-        }
-        // down left diagonal
-        for (let i = 1; i <= getFile; i++) {
-            const filePosition = (getFile - i);
-            const rankPosition = (getRank + i);
-
-            if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-            createValidSquare(filePosition, rankPosition);
-            if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-        }
-       
-        // down right diagonal
-        for (let i = 1; i <= (7 - getFile); i++) {
-            const filePosition = (getFile + i);
-            const rankPosition = (getRank + i);
-
-            if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-            createValidSquare(filePosition, rankPosition); 
-            if (isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn)) break;
-        }
-    }   
-}
-
-export function getCurrentPosition() {
-
-    for (let i = 16; i <= 31; i++) {
-        let pair = (pieces[i].position.file).toString() + (pieces[i].position.rank).toString();
-        overlapWhite.push(pair);
-        
-        let getPiece = document.querySelector(`[position="${pair}"]`);
-        let getId = getPiece?.id;
-        whitePieceIndex.push(getId);
-    }
-
-    for (let i = 0; i <= 15; i++) {
-        let pair = (pieces[i].position.file).toString() + (pieces[i].position.rank).toString();
-        overlapBlack.push(pair);
-        
-        let getPiece = document.querySelector(`[position="${pair}"]`);
-        let getId = getPiece?.id;
-        blackPieceIndex.push(getId);
-    }
-}
-
-let isEnPassant = false;
-function enPassantState(twoSquare){
-    if (!isEnPassant) {
-        if (getPieceId >= 16 && getPieceId <= 23 && getRank === 3) {
-            const leftBPiece = document.querySelector(`[position="${getFile - 1}${getRank}"]`);
-            const rightBPiece = document.querySelector(`[position="${getFile + 1}${getRank}"]`);
-            
-            const isLeftBPawn = leftBPiece?.classList.contains('black', 'pawn');
-            const isRightBPawn = leftBPiece?.classList.contains('black', 'pawn');
-            const isTwLpawn = leftBPiece?.hasAttribute('tw');
-            const isTwRpawn = rightBPiece?.hasAttribute('tw');
-            const lPawnId = leftBPiece?.id;
-            const rPawnId = rightBPiece?.id; 
-
-            if (isLeftBPawn && isTwLpawn) {
-                console.log('get In twl', getFile, getRank);
-                createValidSquare(getFile - 1, getRank - 1, undefined, true, lPawnId);
-                en = `${getFile - 1}${getRank - 1}`;
-            }
-            if (isRightBPawn && isTwRpawn) {
-                createValidSquare(getFile + 1, getRank - 1, undefined, true, rPawnId);
-                en = `${getFile + 1}${getRank - 1}`;
-            }
-        }
-        else if (getPieceId >= 8 && getPieceId <= 15 && getRank === 4) {
-            const leftWPiece = document.querySelector(`[position="${getFile - 1}${getRank}"]`);
-            const rightWPiece = document.querySelector(`[position="${getFile + 1}${getRank}"]`);
-            
-            const isLeftWPawn = leftWPiece?.classList.contains('white', 'pawn');
-            const isRightWPawn = leftWPiece?.classList.contains('white', 'pawn');
-            const isTwLpawn = leftWPiece?.hasAttribute('tw');
-            const isTwRpawn = rightWPiece?.hasAttribute('tw');
-            const lPawnId = leftWPiece?.id;
-            const rPawnId = rightWPiece?.id;
-
-            if (isLeftWPawn && isTwLpawn) {
-                createValidSquare(getFile - 1, getRank + 1, undefined, true, lPawnId);
-                en = `${getFile - 1}${getRank + 1}`; 
-            } 
-            if (isRightWPawn && isTwRpawn) {
-                createValidSquare(getFile + 1, getRank + 1, undefined, true, rPawnId);
-                en = `${getFile + 1}${getRank + 1}`;
-            }
-        }
-    }
-}
-
-function enPassant(pawnId) {
-    const getPawnEle = document.getElementById(pawnId);
-    getPawnEle.style.transform = `translate(${-1000}px, ${-1000}px)`;
-    getPawnEle.setAttribute('position', 'taken');
-    
-    if (getPawnEle.classList.contains('black', 'pawn')) {
-        pieces[getPieceId].position.rank = (pieces[pawnId].position.rank) - 1;     
-    } else {
-        pieces[getPieceId].position.rank = (pieces[pawnId].position.rank) + 1;     
-    }
-    
-    pieces[getPieceId].position.file = pieces[pawnId].position.file;
-    pieces[pawnId].position.file = -100;
-    pieces[pawnId].position.rank = -100;
-    
-
-    console.log('piece', pieces);
-
-    changeDefualtPosition();
-    getCurrentPosition();
-
-    isEnPassant = true;
-    
-}
-
-/**==================================================================================================== */
-/**======================================= CREATE VALID SQUARE ======================================== */
-/**==================================================================================================== */
-// create valid move 
-function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,pawnId, clickedPiece) {
-    const chessBoard = document.getElementById('chess-board');
-    // check if valid square outside board 
-    if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
-        return;
-    }
-
-    // create valid square
-    else {
-        const validSquare = document.createElement('div'); 
-        validSquare.style.transform = `translate(${ filePosition * 100 }px, ${ rankPosition * 100 }px)`;
-        validSquare.className = 'valid-square';
-        validSquare.id = `${filePosition} ${rankPosition}`;
-        validSquare.addEventListener("click", function() {
-            changePosition(twoSquare);
-        });
-        
-        if (inEnState) {
-            validSquare.addEventListener('click', function() {
-                enPassant(pawnId);
-            });
-        }
-
-        chessBoard.appendChild(validSquare);
-    }
-}
-
-let isWhiteCastle = false;
-let isBlackCastle = false;
-// create short castle square for black and white
-function shortCastleSquare(filePosition, rankPosition) {
-    const chessBoard = document.getElementById('chess-board');
-    const validSquare = document.createElement('div');
-    validSquare.style.transform = `translate(${ filePosition * 100 }px, ${ rankPosition * 100 }px)`;
-    validSquare.className = 'valid-square';
-    validSquare.id = `${filePosition} ${rankPosition}`;
-
-    validSquare.addEventListener("click", function(event) {
-        shortCastle(event);
-    });
-    
-    chessBoard.appendChild(validSquare);
-} 
-
-function longCastlesquare(filePosition, rankPosition){
-    const chessBoard = document.getElementById('chess-board');
-    const validSquare = document.createElement('div');
-    validSquare.style.transform = `translate(${ filePosition * 100 }px, ${ rankPosition * 100 }px)`;
-    validSquare.className = 'valid-square';
-    validSquare.id = `${filePosition} ${rankPosition}`;
-
-    validSquare.addEventListener("click", function(event) {
-        longCastle(event);
-    });
-    
-    chessBoard.appendChild(validSquare);
-}
-
-// short castle for black and white
-function shortCastle(){
-    let getWhiteRook = document.getElementById("31"); // get white rook element
-    let getWhiteKing = document.getElementById("28"); // get white element
-    
-    let getBlackRook = document.getElementById("7"); // get black rook elment
-    let getBlackKing = document.getElementById("4"); // get black king element
-    
-    if (turn === 'white') {
-        getWhiteRook.style.transform = `translate(${500}px, ${700}px)`;
-        getWhiteRook.setAttribute("position", "57");
-        getWhiteKing.style.transform = `translate(${600}px, ${700}px)`;
-        getWhiteKing.setAttribute("position", "67");
-        pieces[31].position.file = 5;
-        pieces[31].position.rank = 7;
-        pieces[28].position.file = 6;
-        pieces[28].position.rank = 7;
-        isWhiteCastle = true;
-        overlapWhite = [];
-        overlapBlack = [];
-        getCurrentPosition();
-        removeValidMove();
-        if (playWithEngine){
-            if (playerSide()) {
-                generateFen(4, 7, 6, 7, 'white', isWhiteCastle);
-                sendMoveToEngine( generateFen(7, 7, 5, 7, 'white', isWhiteCastle));
-            } else {
-                generateFen(4, 7, 6, 7, 'white', isWhiteCastle);
-                generateFen(7, 7, 5, 7, 'white', isWhiteCastle);
-            }
-        }
-        turn = 'black';
-        console.log('rook castle', overlapWhite)
-        return;
-    }
-    if (turn === 'black') {
-        getBlackRook.style.transform = `translate(${500}px, ${0}px)`;
-        getBlackRook.setAttribute("position", "50");
-        getBlackKing.style.transform = `translate(${600}px, ${0}px)`;
-        getBlackKing.setAttribute("position", "60");
-        pieces[7].position.file = 5;
-        pieces[7].position.rank = 0;
-        pieces[4].position.file = 6;
-        pieces[4].position.rank = 0;
-        isBlackCastle = true;
-        overlapBlack = [];
-        overlapBlack = [];
-        getCurrentPosition();
-        removeValidMove();
-        if (playWithEngine){
-            if (playerSide()) {
-                generateFen(4, 0, 6, 0, 'black', isBlackCastle);
-                sendMoveToEngine(generateFen(7, 0, 5, 0, 'black', isBlackCastle));
-            } else {
-                generateFen(4, 0, 6, 0, 'black', isBlackCastle);
-                generateFen(7, 0, 5, 0, 'black', isBlackCastle);
-            }
-        }
-        turn = 'white';
-        console.log('rook castle', overlapBlack)
-        return;
-    }
-}
-
-function longCastle(){
-    let getWhiteRook = document.getElementById("24"); // get white rook element
-    let getWhiteKing = document.getElementById("28"); // get white king element
-    
-    let getBlackRook = document.getElementById("0"); // get black rook element
-    let getBlackKing = document.getElementById("4"); // get black king element
-    
-    if (turn === 'white') {
-        getWhiteRook.style.transform = `translate(${300}px, ${700}px)`;
-        getWhiteRook.setAttribute("position", "37");
-        getWhiteKing.style.transform = `translate(${200}px, ${700}px)`;
-        getWhiteKing.setAttribute("position", "27");
-        pieces[24].position.file = 3;
-        pieces[24].position.rank = 7;
-        pieces[28].position.file = 2;
-        pieces[28].position.rank = 7;
-        isWhiteCastle = true;
-        getCurrentPosition();
-        removeValidMove();
-        generateFen(4, 7, 2, 7, 'black', isWhiteCastle);
-        generateFen(0, 7, 3, 7, 'black', isWhiteCastle);
-        turn = 'black';
-        return;
-    }
-    if (turn === 'black') {
-        getBlackRook.style.transform = `translate(${300}px, ${0}px)`;
-        getBlackRook.setAttribute("position", "30");
-        getBlackKing.style.transform = `translate(${200}px, ${0}px)`;
-        getBlackKing.setAttribute("position", "20");
-        pieces[0].position.file = 3;
-        pieces[0].position.rank = 0;
-        pieces[4].position.file = 2;
-        pieces[4].position.rank = 0;
-        isBlackCastle = true;
-        getCurrentPosition();
-        removeValidMove();
-        generateFen(4, 0, 2, 0, 'white', isBlackCastle);
-        generateFen(0, 0, 3, 0, 'white', isBlackCastle);
-        turn = 'white';
-        return;
-    }
-    
-    getCurrentPosition();
+export let take = false;
+export let pawnMove = false;
+export function TAKE(bool){
+    return take = bool
 }
 // =================================================================================================== // 
 // ===================================== PIECE MOVEMENT ============================================== //
@@ -620,12 +23,16 @@ export let getFile;
 export let getRank
 let getPiece, pieceIdBackup;
 let isSamePiece = "";
+
 let turn = 'white';
+export function SWITCH_TURN(color) {
+    turn = color === "white" ? "black" : "white"; 
+}
 let playerTurn;
 let invertTurn;
 invertTurn = turn === 'white' ? invertTurn = 'black' : invertTurn = 'white'; 
 let storeFR;
-let playWithEngine = false;
+export let playWithEngine = false;
 function playerSide() {
     return turn === 'white';
 }
@@ -642,7 +49,6 @@ export function handleClick(event, squareToGoFromEngine){
     } else { // controll for white and black
         pieceIdBackup = event.target.id;
         playerTurn = event.target.classList.contains(turn);
-
     }
 
     // when click same piece it unstate
@@ -658,15 +64,10 @@ export function handleClick(event, squareToGoFromEngine){
 function handlePlay(event, squareToGoFromEngine) {
     removeValidMove();
     if (playWithEngine){
-        if (playerSide()) {
-            getPieceId = event.target.id;
-        } else {
-            getPieceId = event.id;
-        }
-    } else {
-        getPieceId = event.target.id;
-
-    }
+        if (playerSide()) getPieceId = event.target.id;
+        else getPieceId = event.id;
+    } 
+    else getPieceId = event.target.id;
 
     getPiece = document.getElementById(getPieceId);
     
@@ -676,8 +77,9 @@ function handlePlay(event, squareToGoFromEngine) {
     // get file and column 
     getFile = selectedPiece.position.file;
     getRank = selectedPiece.position.rank;
+    
     // generate and calculate valid square
-    validSquare();
+    validSquare(getPieceId, undefined, turn, getFile, getRank, pawnMove);
     
     isSamePiece = getPieceId; 
 
@@ -691,7 +93,7 @@ function handlePlay(event, squareToGoFromEngine) {
 let getValidSquareID;
 export let getFilePosition;
 export let getRankPosition;
-function changePosition(twoSquare, squareToGoFromEngine)
+export function changePosition(twoSquare, squareToGoFromEngine)
 { 
     let squareToGo, getPosition, getSquareToGoFromEngine;
 
@@ -699,16 +101,13 @@ function changePosition(twoSquare, squareToGoFromEngine)
         if (playerSide()) {
             squareToGo = event.target; // get valid square element    
             getValidSquareID = squareToGo.id; 
-
         } else {
             getSquareToGoFromEngine = document.getElementById(`${squareToGoFromEngine[0]} ${squareToGoFromEngine[1]}`);
             getValidSquareID = getSquareToGoFromEngine.id;
-            
         }
     } else {
         squareToGo = event.target; // get valid square element    
         getValidSquareID = squareToGo.id; 
-
     }
         
     let [filePart, rankPart] = getValidSquareID.split(" "); // saparate file and rank
@@ -717,17 +116,10 @@ function changePosition(twoSquare, squareToGoFromEngine)
         
     // change position
     if (playWithEngine){
-        if (playerSide()) 
-        {
-            getPosition = squareToGo.style.transform;
-        } else 
-        {
-            getPosition = getSquareToGoFromEngine.style.transform;
-        }
-    } else {
-        getPosition = squareToGo.style.transform;
-
-    }
+        if (playerSide()) { getPosition = squareToGo.style.transform;}
+        else { getPosition = getSquareToGoFromEngine.style.transform;}
+    } 
+    else {getPosition = squareToGo.style.transform;}
     
     getPiece.style.transform = getPosition;
 
@@ -737,37 +129,29 @@ function changePosition(twoSquare, squareToGoFromEngine)
         element.removeAttribute('tw');
     });
 
-    // mark that tw
-    if (twoSquare) { getPiece.setAttribute("tw", "tw"); } 
-    
-    // handle piece capture
-    capture(getFilePosition, getRankPosition, filePart, rankPart);
-    
+    if (twoSquare) { getPiece.setAttribute("tw", "tw"); }  // mark that tw
+
+    capture(getFilePosition, getRankPosition, filePart, rankPart);   // handle piece capture
     removeValidMove(); // remove valid square
  
-
     let keepTurn = turn
     turn === "white" ? turn = "black" : turn = "white";  // change player turn
 
     if (playWithEngine){
-        if (!playerSide()) 
-        { 
+        if (!playerSide()){ 
             let FEN = generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);
             sendMoveToEngine(FEN);
-        } 
-        else 
-        {
+        } else {
             generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);    
         }
     }
 
     calculateAttackSquare();
-
     take = false;
     pawnMove = false;
 }
 
-function removeValidMove() {
+export function removeValidMove() {
     // Remove existing highlighted squares
     const getValidSquare = document.querySelectorAll('.valid-square');
     
@@ -780,66 +164,53 @@ function removeValidMove() {
     
 }
 
-export function changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart) {
-    pieces[getPieceId].position.file = getFilePosition;
-    pieces[getPieceId].position.rank = getRankPosition;
-
-    let getPieceElement = document.getElementById(getPieceId);
-    getPieceElement.setAttribute("position", filePart+rankPart);
-
-    overlapWhite = [];
-    overlapBlack = [];
-
-    getCurrentPosition();
-}
-
 /* ==================================================================================================== */
 /* ============================================= PIECE CAPTURE ======================================== */
 /* ==================================================================================================== */
-function capture(getFilePosition, getRankPosition, filePart, rankPart) {
-    storeFR = filePart + rankPart;
-    console.log(storeFR);
-    if (turn === 'white') {
-        if ( overlapBlack.includes(storeFR) ) {
-            let getEnemyPosition = document.querySelector(`[position="${filePart}${rankPart}"]`);
-            let getEnemyId = getEnemyPosition.id;
+// function capture(getFilePosition, getRankPosition, filePart, rankPart) {
+//     storeFR = filePart + rankPart;
+//     console.log(storeFR);
+//     if (turn === 'white') {
+//         if ( overlapBlack.includes(storeFR) ) {
+//             let getEnemyPosition = document.querySelector(`[position="${filePart}${rankPart}"]`);
+//             let getEnemyId = getEnemyPosition.id;
             
-            let getEnemyElement = document.getElementById(getEnemyId);
-            getEnemyElement.setAttribute("position", "taken");
+//             let getEnemyElement = document.getElementById(getEnemyId);
+//             getEnemyElement.setAttribute("position", "taken");
 
-            if (getEnemyPosition) {
-                getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
+//             if (getEnemyPosition) {
+//                 getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
                 
-                pieces[getEnemyId].position.file = -1000;
-                pieces[getEnemyId].position.rank = -1000;
-                changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
+//                 pieces[getEnemyId].position.file = -1000;
+//                 pieces[getEnemyId].position.rank = -1000;
+//                 changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
 
-                take = true;
-            }
-        }
-    } else {
-        if ( overlapWhite.includes(storeFR) ) {
-            let getEnemyPosition = document.querySelector(`[position="${filePart}${rankPart}"]`);
-            let getEnemyId = getEnemyPosition.id;
+//                 take = true;
+//             }
+//         }
+//     } else {
+//         if ( overlapWhite.includes(storeFR) ) {
+//             let getEnemyPosition = document.querySelector(`[position="${filePart}${rankPart}"]`);
+//             let getEnemyId = getEnemyPosition.id;
 
-            let getEnemyElement = document.getElementById(getEnemyId);
-            getEnemyElement.setAttribute("position", "taken");
+//             let getEnemyElement = document.getElementById(getEnemyId);
+//             getEnemyElement.setAttribute("position", "taken");
 
-            if (getEnemyPosition) {
-                getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
+//             if (getEnemyPosition) {
+//                 getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
                 
-                pieces[getEnemyId].position.file = -1000;
-                pieces[getEnemyId].position.rank = -1000;
-                changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
+//                 pieces[getEnemyId].position.file = -1000;
+//                 pieces[getEnemyId].position.rank = -1000;
+//                 changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
 
-                take = true;
-            }
-        }
-    }
+//                 take = true;
+//             }
+//         }
+//     }
 
-    changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
+//     changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
  
-}
+// }
 
 import { handleEngineResponse } from "./handleEngineResponse.js"; 
 
@@ -874,4 +245,5 @@ export function checkCastleEvenForEngine (best_move) {
     }
 }
 
-export { overlapBlack, overlapWhite, turn, whitePieceIndex, blackPieceIndex};
+// export { overlapBlack, overlapWhite, turn, whitePieceIndex, blackPieceIndex};
+export { turn };

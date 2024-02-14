@@ -1,9 +1,5 @@
-// import { overlapBlack, overlapWhite } from "./main.js";
-
 import { overlapBlack, overlapWhite } from "./position.js";
 import { whitePieceIndex, blackPieceIndex } from "./position.js";
-
-// import { whitePieceIndex, blackPieceIndex } from "./main.js";
 import { isSelfPiece, isOpponentPiece } from "./pieces.js";
 
 export function calculateAttackSquare(){

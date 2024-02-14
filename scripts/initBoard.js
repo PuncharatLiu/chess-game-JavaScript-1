@@ -1,7 +1,7 @@
 import { getCurrentPosition } from "./position.js";
 import { calculateAttackSquare } from "./AttackSquare.js";
 import { pieces } from "./pieces.js";
-import { handleClick } from "./main.js";
+import { handleClick } from "./piecesControl.js";
 
 let i = 0;
 

@@ -1,4 +1,4 @@
-import { getPieceId, getFile, getRank, getRankPosition } from "./main.js";
+import { getPieceId, getFile, getRank, getRankPosition } from "./piecesControl.js";
 import { createValidSquare } from "./createValidMove.js";
 
 export function handleEnPosition() {

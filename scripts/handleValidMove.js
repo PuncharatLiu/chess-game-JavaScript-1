@@ -1,14 +1,43 @@
 import { Is, isSelfPiece, isOpponentPiece } from "./pieces.js";
 import { overlapBlack, overlapWhite } from "./position.js";
 import { pieces } from "./pieces.js";
-import { createValidSquare } from "./createValidMove.js";
-import { pawnMove } from "./main.js";
+// import { createValidSquare } from "./createValidMove.js";
+import { pawnMove } from "./piecesControl.js";
 import { shortCastleSquare, longCastlesquare, isBlackCastle, isWhiteCastle } from "./castle.js";
 import { enPassantState, handleEnPosition, enPassant } from "./enPassant.js";
+import { changePosition } from "./piecesControl.js";
 
 let _clickedPiece 
 export function validSquare(getPieceId, fromPieceId, turn, getFile, getRank, pawnMove){
     _clickedPiece = event?.target;
+
+    // create valid move 
+    function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,pawnId, clickedPiece) {
+        const chessBoard = document.getElementById('chess-board');
+        // check if valid square outside board 
+        if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
+            return;
+        }
+
+        // create valid square
+        else {
+            const validSquare = document.createElement('div'); 
+            validSquare.style.transform = `translate(${ filePosition * 100 }px, ${ rankPosition * 100 }px)`;
+            validSquare.className = 'valid-square';
+            validSquare.id = `${filePosition} ${rankPosition}`;
+            validSquare.addEventListener("click", function() {
+                changePosition(twoSquare);
+            });
+            
+            if (inEnState) {
+                validSquare.addEventListener('click', function() {
+                    enPassant(pawnId);
+                });
+            }
+
+            chessBoard.appendChild(validSquare);
+        }
+    }
 
     // =============================== Rook move  =========================================== //
     if (Is.rook(getPieceId, fromPieceId)) {
@@ -48,8 +77,6 @@ export function validSquare(getPieceId, fromPieceId, turn, getFile, getRank, paw
         // all king move
         const filePosition = [getFile, getFile - 1, getFile + 1, getFile - 1, getFile + 1, getFile, getFile -1, getFile + 1];
         const rankPosition = [getRank - 1, getRank - 1, getRank - 1, getRank, getRank, getRank + 1, getRank + 1, getRank + 1];
-        
-        
 
         // check if beside king is empty
         let isEmptyWhiteRight = overlapWhite.includes( ( ( (getFile + 1).toString() + getRank.toString() ) && (getFile + 2).toString() + getRank.toString() ) );

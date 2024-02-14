@@ -1,8 +1,8 @@
-import { removeValidMove, turn } from "./main.js";
+import { removeValidMove, turn } from "./piecesControl.js";
 import { pieces } from "./pieces.js";
 import { getCurrentPosition } from "./position.js";
-import { playWithEngine } from "./main.js";
-import { SWITCH_TURN } from "./main.js";
+import { playWithEngine } from "./piecesControl.js";
+import { SWITCH_TURN } from "./piecesControl.js";
 import { overlapBlack, overlapWhite } from "./position.js";
 import { clearPosition } from "./position.js";
 import { overlap } from "./position.js";

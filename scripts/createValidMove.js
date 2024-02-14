@@ -1,4 +1,4 @@
-import { changePosition } from "./main.js";
+import { changePosition } from "./piecesControl.js";
 import { enPassant } from "./enPassant.js";
 
 // create valid move 

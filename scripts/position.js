@@ -1,5 +1,5 @@
 import { pieces } from "./pieces.js";
-import { getPieceId } from "./main.js";
+import { getPieceId } from "./piecesControl.js";
 
 export let overlapBlack = [];
 export let overlapWhite = [];

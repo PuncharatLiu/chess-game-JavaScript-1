@@ -1,4 +1,4 @@
-import { TAKE, turn } from "./main.js";
+import { TAKE, turn } from "./piecesControl.js";
 import { overlapBlack, overlapWhite, changeDefualtPosition } from "./position.js";
 import { pieces } from "./pieces.js";
 

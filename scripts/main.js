@@ -9,8 +9,6 @@ import KingEvent from "./handleKingEvent.js";
 import { handleEngineResponse } from "./handleEngineResponse.js"; 
 // import { isCheck } from "./handleKingEvent.js";
 
-console.log("hi");
-
 let best_move;
 function sendMoveToEngine(FEN) {
     fetch('http://localhost:5500/engine/move', { // send player move to stockfish to calculate the best move. then send back best move

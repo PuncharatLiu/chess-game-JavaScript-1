@@ -22,7 +22,6 @@ class KingEvent {
         let stack = [];
         dr: for (let direc = 0; direc < this.direction.pinDirection[this.opponentDirection].length; direc++) {
             let getDirection = this.direction.pinDirection[this.opponentDirection][direc];
-            
             for (let square = 2; square < this.direction.pinDirection[this.opponentDirection][direc].length; square++) {
                 let getSquare = this.direction.pinDirection[this.opponentDirection][direc][square];
                 let getPiece = document.querySelector(`[position="${getSquare}"]`);
@@ -50,11 +49,10 @@ class KingEvent {
                         
                         // debug
                         console.log("pin!");
-                        
+                
                         let result = true;
-                        return {result, stack};
+                        return {result, stack, getDirection};
                     }
-                    console.log("stack: ", stack)
                 }
             }            
         }

@@ -1,298 +1,53 @@
-import { getCurrentPosition } from "./main.js";
-import { overlapBlack, overlapWhite } from "./main.js";
-import { attackDirectionStorage } from "./attackDirection.js";
+import { overlapBlack, overlapWhite } from "./position.js";
+import { whitePieceIndex, blackPieceIndex } from "./position.js";
+import { isSelfPiece, isOpponentPiece } from "./pieces.js";
+import { getCurrentPosition } from "./position.js";
 
-
-export function calculateAttackSquare()
-{
-    // getCurrentPosition();
+export function calculateAttackSquare(){
     let pieceAttackId, attackFile, attackRank;
     let allPosition = overlapBlack.concat(overlapWhite); // merge black and white position
     let index = 0;
     let getAttackSquare;
     let turn;
-    let attack_direction = attackDirectionStorage();
-
-    function createAttackSquare(filePosition, rankPosition, direction) 
-    {
-        // check if attack square outside board 
-        if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) 
-        {
+    let blackAttackSquare = [];
+    let whiteAttackSquare = [];
+    let blackPinDirection = [];
+    let whitePinDirection = [];
+    let blackKingAtkDirec = [];
+    let whiteKingAtkDirec = [];
+    
+    function pushSquare(direction, filePosition, rankPosition){
+        if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
             return;
-        } 
+        }
+        getAttackSquare = `${filePosition}${rankPosition}`;
+        direction.push(getAttackSquare);
+    }
 
-        let blackPawn = [8, 9, 10, 11, 12, 13, 14, 15];
-        let whitePawn = [16, 17, 18, 19, 20, 21, 22, 23];
+    function pushAttackDirection(direction){
+        0 <= index && index <= 15 ? blackAttackSquare.push(direction) : whiteAttackSquare.push(direction);
+    }
 
-        // get black attack square
-        if (0 <= index && index <= 15) 
-        {
-            getAttackSquare = filePosition.toString()+rankPosition.toString();
-            
-            switch (index) // black attack square
-            {
-                case 0:                                                                         // black left rook 
-                    switch (direction) 
-                    {
-                        case "l": // rook left move
-                            // blackAttackSquare[0][0].push(getAttackSquare);    
-                            attack_direction.rook.black.left.leftMove.push(getAttackSquare);
-                            break;
-                        case "r":
-                            attack_direction.rook.black.left.rightMove.push(getAttackSquare);
-                            break;
-                        case "u":
-                            attack_direction.rook.black.left.upMove.push(getAttackSquare);
-                            break;
-                        case "d":
-                            attack_direction.rook.black.left.downMove.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 1:                                                                         // black left knight
-                    attack_direction.knight.black.left.moves.push(getAttackSquare);
-                    break;
-                case 2: // bishop l
-                    switch (direction) 
-                    {
-                        case "dul":
-                            attack_direction.bishop.black.left.diagonalUpLeft.push(getAttackSquare);
-                            break;
-                        case "dur":
-                            attack_direction.bishop.black.left.diagonalUpRigth.push(getAttackSquare);
-                            break;
-                        case "ddl": 
-                            attack_direction.bishop.black.left.diagonalDownLeft.push(getAttackSquare);
-                            break;
-                        case "ddr":
-                            attack_direction.bishop.black.left.diagonalDownRight.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 3: // queen l 
-                    switch (direction) 
-                    {
-                        case "dul":
-                            attack_direction.queen.black.diagonalUpLeft.push(getAttackSquare);
-                            break;
-                        case "dur":
-                            attack_direction.queen.black.diagonalUpRigth.push(getAttackSquare);
-                            break;
-                        case "ddl": 
-                            attack_direction.queen.black.diagonalDownLeft.push(getAttackSquare);
-                            break;
-                        case "ddr":
-                            attack_direction.queen.black.diagonalDownRight.push(getAttackSquare);
-                            break;
-                        case "l":
-                            attack_direction.queen.black.leftMove.push(getAttackSquare);
-                            break;
-                        case "r":
-                            attack_direction.queen.black.rightMove.push(getAttackSquare);
-                            break;
-                        case "u":
-                            attack_direction.queen.black.upMove.push(getAttackSquare);
-                            break;
-                        case "d":
-                            attack_direction.queen.black.downMove.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 5: // bishop r
-                    switch (direction) 
-                    {
-                        case "dul":
-                            attack_direction.bishop.black.right.diagonalUpLeft.push(getAttackSquare);
-                            break;
-                        case "dur":
-                            attack_direction.bishop.black.right.diagonalUpRigth.push(getAttackSquare);
-                            break;
-                        case "ddl": 
-                        attack_direction.bishop.black.right.diagonalDownLeft.push(getAttackSquare);
-                            break;
-                        case "ddr":
-                            attack_direction.bishop.black.right.diagonalDownRight.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 6: // knight r
-                    attack_direction.knight.black.right.moves.push(getAttackSquare);
-                    break;
-                case 7: // rook r
-                    switch (direction) 
-                    {
-                        case "l": // left move
-                            attack_direction.rook.black.right.leftMove.push(getAttackSquare);
-                            break;
-                        case "r": // right move
-                        attack_direction.rook.black.right.rightMove.push(getAttackSquare);
-                            break;
-                        case "u": // up move
-                        attack_direction.rook.black.right.upMove.push(getAttackSquare);
-                            break;
-                        case "d": // down move
-                        attack_direction.rook.black.right.downMove.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 4: // king
-                    attack_direction.king.black.move.push(getAttackSquare);
-                    break;
-                case blackPawn[ index - 8 ] : // pawn
-                    attack_direction.pawn.black.move.push(getAttackSquare);
-                    break;
-                default:
-                    break;
-            }
-        } 
-        // get white attack square
-        else if (16 <= index && index <= 31) 
-        {
-            getAttackSquare = filePosition.toString()+rankPosition.toString();
-            
-            switch (index) // white attack square
-            {
-                case 24:                                                             // white left rook
-                    switch (direction) 
-                    {
-                        case "l": // rook left move
-                            attack_direction.rook.white.left.leftMove.push(getAttackSquare);
-                            break;
-                        case "r":
-                            attack_direction.rook.white.left.rightMove.push(getAttackSquare);
-                            break;
-                        case "u":
-                            attack_direction.rook.white.left.upMove.push(getAttackSquare);
-                            break;
-                        case "d":
-                            attack_direction.rook.white.left.downMove.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 25:
-                    attack_direction.knight.white.left.moves.push(getAttackSquare);
-                    break;
-                case 26:
-                    switch (direction) 
-                    {
-                        case "dul":
-                            attack_direction.bishop.white.left.diagonalUpLeft.push(getAttackSquare);
-                            break;
-                        case "dur":
-                            attack_direction.bishop.white.left.diagonalUpRigth.push(getAttackSquare);
-                            break;
-                        case "ddl": 
-                            attack_direction.bishop.white.left.diagonalDownLeft.push(getAttackSquare);
-                            break;
-                        case "ddr":
-                            attack_direction.bishop.white.left.diagonalDownRight.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 27:
-                    switch (direction) 
-                    {
-                        case "dul":
-                            attack_direction.queen.white.diagonalUpLeft.push(getAttackSquare);
-                            break;
-                        case "dur":
-                            attack_direction.queen.white.diagonalUpRigth.push(getAttackSquare);
-                            break;
-                        case "ddl": 
-                            attack_direction.queen.white.diagonalDownLeft.push(getAttackSquare);
-                            break;
-                        case "ddr":
-                            attack_direction.queen.white.diagonalDownRight.push(getAttackSquare);
-                            break;
-                        case "l":
-                            attack_direction.queen.white.leftMove.push(getAttackSquare);
-                            break;
-                        case "r":
-                            attack_direction.queen.white.rightMove.push(getAttackSquare);
-                            break;
-                        case "u":
-                            attack_direction.queen.white.upMove.push(getAttackSquare);
-                            break;
-                        case "d":
-                            attack_direction.queen.white.downMove.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 29:
-                    switch (direction) 
-                    {
-                        case "dul":
-                            attack_direction.bishop.white.right.diagonalUpLeft.push(getAttackSquare);
-                            break;
-                        case "dur":
-                            attack_direction.bishop.white.right.diagonalUpRigth.push(getAttackSquare);
-                            break;
-                        case "ddl": 
-                            attack_direction.bishop.white.right.diagonalDownLeft.push(getAttackSquare);
-                            break;
-                        case "ddr":
-                            attack_direction.bishop.white.right.diagonalDownRight.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 30:
-                    attack_direction.knight.white.right.moves.push(getAttackSquare);
-                    break;
-                case 31:                                                                // white right rook
-                    switch (direction) 
-                    {
-                        case "l": // rook left move
-                            attack_direction.rook.white.right.leftMove.push(getAttackSquare); 
-                            break;
-                        case "r":
-                            attack_direction.rook.white.right.rightMove.push(getAttackSquare);
-                            break;
-                        case "u":
-                            attack_direction.rook.white.right.upMove.push(getAttackSquare);
-                            break;
-                        case "d":
-                            attack_direction.rook.white.right.downMove.push(getAttackSquare);
-                            break;
-                        default:
-                            break;
-                    }
-                    break;
-                case 28: // white king
-                    attack_direction.king.white.move.push(getAttackSquare);
-                    break;
-                case whitePawn[index - 16] : // all pawn go in 7 array
-                    attack_direction.pawn.white.move.push(getAttackSquare);
-                    break;
-                default:
-                    break;
-            }
+    function pushPinDirection(direction){
+        0 <= index && index <= 15 ? blackPinDirection.push(direction) : whitePinDirection.push(direction); 
+    }
+
+    function pushKingAtkDirec(direction){
+        0 <= index && index <= 15 ? blackKingAtkDirec.push(direction) : whiteKingAtkDirec.push(direction);  
+    }
+
+    function ifEmpty(atkDirec, pinDirec){
+        if (atkDirec.length === 1){
+            atkDirec.splice(0, atkDirec.length, ...pinDirec);
         }
     }
 
-    
     // give piece id
     for (index = 0; index <= 31; index++ ) 
     {
         (index >= 0 && index <= 15) ? turn = 'black' : turn = 'white';
-        pieceAttackId = (index).toString();
+        pieceAttackId = `${turn === "white" ? whitePieceIndex[index - 16] : blackPieceIndex[index]}`;
+        [attackFile, attackRank] = ((allPosition[index]).toString()).split("");
         [attackFile, attackRank] = ((allPosition[index]).toString()).split("");
         attackFile = parseInt(attackFile);
         attackRank = parseInt(attackRank);
@@ -309,9 +64,11 @@ export function calculateAttackSquare()
             const rankPosition = [attackRank, attackRank + 2, attackRank + 2, attackRank - 2, attackRank - 2, attackRank + 1, attackRank - 1, attackRank + 1, attackRank - 1];
             
             // create 7 square default if valid
+            let KNIGHT = ["KNIGHT"];
             for (let i = 0; i <= 8; i++ ) {
-                createAttackSquare(filePosition[i], rankPosition[i]);
+                pushSquare(KNIGHT, filePosition[i], rankPosition[i]);
             } 
+            pushAttackDirection(KNIGHT);
         }
 
         // ======================================= Bishop move ========================================= // 
@@ -333,170 +90,257 @@ export function calculateAttackSquare()
             const filePosition = [attackFile, attackFile, attackFile - 1, attackFile + 1, attackFile - 1, attackFile + 1, attackFile, attackFile -1, attackFile + 1];
             const rankPosition = [attackRank, attackRank - 1, attackRank - 1, attackRank - 1, attackRank, attackRank, attackRank + 1, attackRank + 1, attackRank + 1];
             
-            // calculate valid square
-            for (let i = 0; i <= 8; i++) 
-            {
-                // check if piece block the valid square
-                if ( ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString())  && turn === 'white' ) || ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString())   && turn === 'black' ) )  
-                {
-                    continue;
-                }
-
-                createAttackSquare(filePosition[i], rankPosition[i]);
+            let KING = ["KING"];
+            for (let i = 0; i <= 8; i++) {
+                pushSquare(KING, filePosition[i], rankPosition[i]);
             }
-
+            pushKingAtkDirec(KING)
         } 
 
         else  // ======================================= Pawn move =========================================== //
         {
+            let PAWN = ["PAWN"];
+            
             if (index >= 8 && index <= 15 ) // ================================= black pawn ======================================= // 
             {
-                
-                createAttackSquare(attackFile - 1, attackRank + 1);
-                createAttackSquare(attackFile + 1, attackRank + 1);
+                pushSquare(PAWN, attackFile - 1, attackRank + 1);
+                pushSquare(PAWN, attackFile + 1, attackRank + 1);
             }
             
             else if (index >= 16 && index <= 23 ) // ======================================= White pawn ======================================== // 
             {
-                
-                createAttackSquare(attackFile - 1, attackRank - 1);
-                createAttackSquare(attackFile + 1, attackRank - 1);   
+                pushSquare(PAWN, attackFile - 1, attackRank - 1);
+                pushSquare(PAWN, attackFile + 1, attackRank - 1);
             }
+            pushAttackDirection(PAWN);
+            pushAttackDirection(PAWN);
         }
 
         // ================================ horizontal and vertical move ================================ //
         function horizontalVertical() {        
+            let OP = true;
+            
             // left move 
-            for (let i = 0 ; i <= attackFile + 1; i++) 
-            {
+            let L = ["L"];
+            let PIN_L = ["L"];
+            for (let i = 0 ; i <= attackFile + 1; i++){   
                 const filePosition = (attackFile - i);
                 const rankPosition = attackRank;
-                let foundSelfpiece = false;
-                if (foundSelfpiece) { break }
-                if  ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'white' ) || 
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'black' ) 
-                    )  
-                {
-                    createAttackSquare(filePosition, rankPosition, "l");
-                    foundSelfpiece = true;
+                
+                pushSquare(PIN_L, filePosition, rankPosition);
+
+                if(isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
+                    L = [...PIN_L];
                     break;
                 }
-                createAttackSquare(filePosition, rankPosition, "l");
+                
+                if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
+                    L = [...PIN_L];
+                    OP = false;
+                }
+                if(i === attackFile + 1) OP = true;
             }
+            ifEmpty(L, PIN_L);
+            pushAttackDirection(L);
+            pushPinDirection(PIN_L);
+            
             // right move 
-            for (let i = 0; i <= (7 - attackFile) + 1; i++ ) 
-            {
+            let R = ["R"];
+            let PIN_R = ["R"];
+            for (let i = 0; i <= (7 - attackFile) + 1; i++ ){
                 const filePosition = (attackFile + i);
                 const rankPosition = attackRank;
-                if  ( 
-                    ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'white' ) ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'black' ) 
-                    )  
-                {
-                    createAttackSquare(filePosition, rankPosition, "r");
+                
+                pushSquare(PIN_R, filePosition, rankPosition);
+
+                if(isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
+                    R = [...PIN_R];
                     break;
                 }
-                createAttackSquare(filePosition, rankPosition, "r");
+                
+                if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
+                    R = [...PIN_R];
+                    OP = false;
+                }
+                
+                if(i === (7 - attackFile) + 1) OP = true;
+            }
+            ifEmpty(R, PIN_R);
+            pushAttackDirection(R);
+            pushPinDirection(PIN_R);
 
-            } 
             // up move
-            for (let i = 0; i <= attackRank + 1; i++ ) 
-            {
+            let U = ["U"];
+            let PIN_U = ["U"];
+            for (let i = 0; i <= attackRank + 1; i++ ){
                 const filePosition = attackFile;
                 const rankPosition = (attackRank - i);
-                if  (
-                     ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'white') ||
-                     ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'black') 
-                    )  
-                {
-                    createAttackSquare(filePosition, rankPosition, "u");
+                
+                pushSquare(PIN_U, filePosition, rankPosition);
+
+                if(isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
+                    U = [...PIN_U]
                     break;
                 }
-                createAttackSquare(filePosition, rankPosition, "u");
+                
+                if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
+                    U = [...PIN_U];
+                    OP = false;
+                }
 
+                if(i === attackRank + 1) OP = true;
             }
+            ifEmpty(U, PIN_U);
+            pushAttackDirection(U);
+            pushPinDirection(PIN_U);
+
             // down move 
-            for (let i = 0; i <= (7 - attackRank) + 1; i++) 
-            {
+            let D = ["D"];
+            let PIN_D = ["D"];
+            for (let i = 0; i <= (7 - attackRank) + 1; i++){
                 const filePosition = attackFile;
                 const rankPosition = attackRank + i;
-                if  (
-                     ( overlapWhite.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'white') ||
-                     ( overlapBlack.includes(filePosition.toString() + rankPosition.toString() ) && i !== 0 && turn === 'black') 
-                    )  
-                {
-                    createAttackSquare(filePosition, rankPosition, "d");
-                    // console.log("break");
+                
+                pushSquare(PIN_D, filePosition, rankPosition);
+
+                if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
+                    D = [...PIN_D];
                     break;
                 }
-                createAttackSquare(filePosition, rankPosition, "d");
-                                
+                
+                if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
+                    D = [...PIN_D]
+                    OP = false;
+                }
+
+                if(i === (7 - attackRank) + 1) OP = true;
             }
+            ifEmpty(D, PIN_D);
+            pushAttackDirection(D);
+            pushPinDirection(PIN_D);
         
         }
 
         // ========================================== diagonal move ===================================== // 
         function diagonal() {
+            let OP = true;
+
             // up left diagonal
+            let DUL  = ["DUL"];
+            let PIN_DUL = ["DUL"];
             for (let i = 0; i <= attackFile + 1; i ++) {
                 const filePosition = (attackFile - i);
                 const rankPosition = (attackRank - i);
             
-                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'white') ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'black') 
-                ){
-                    createAttackSquare(filePosition, rankPosition, "dul");
-                    break;    
-                } 
-                createAttackSquare(filePosition, rankPosition, "dul");
-                
+                pushSquare(PIN_DUL, filePosition, rankPosition);
+
+                if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
+                    DUL = [...PIN_DUL];
+                    break;
+                }
+
+                if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
+                    DUL = [...PIN_DUL];
+                    OP = false;
+                }
+                if(i === attackFile + 1) OP = true;
             }
+            ifEmpty(DUL, PIN_DUL);
+            pushAttackDirection(DUL);
+            pushPinDirection(PIN_DUL);
+
             // up right diagonal  
+
+            let DUR  = ["DUR"];
+            let PIN_DUR = ["DUR"];
             for (let i = 0; i <= (7 - attackFile) + 1; i++) {
                 const filePosition = (attackFile + i);
                 const rankPosition = (attackRank - i);
                 
-                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'white') ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'black') 
-                    ){
-                    createAttackSquare(filePosition, rankPosition, "dur");
+                pushSquare(PIN_DUR, filePosition, rankPosition);
+
+                if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
+                    DUR = [...PIN_DUR];
                     break;
                 }
-                createAttackSquare(filePosition, rankPosition, "dur");
 
+                if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
+                    DUR = [...PIN_DUR];
+                    OP = false;
+                }
+
+                if (i === (7 - attackFile) + 1) OP = true;
             }
+            ifEmpty(DUR, PIN_DUR);
+            pushAttackDirection(DUR);
+            pushPinDirection(PIN_DUR);
+            
+            let DDL  = ["DDL"];
+            let PIN_DDL = ["DDL"];
             // down left diagonal
             for (let i = 0; i <= attackFile + 1; i++) {
                 const filePosition = (attackFile - i);
                 const rankPosition = (attackRank + i);
-                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'white') ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'black' ) 
-                    ){
-                    createAttackSquare(filePosition, rankPosition, "ddl");
+                
+                pushSquare(PIN_DDL, filePosition, rankPosition);
+
+                if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
+                    DDL = [...PIN_DDL];
                     break;
                 }
-                createAttackSquare(filePosition, rankPosition, "ddl");
 
+                if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
+                    DDL = [...PIN_DDL];
+                    OP = false;
+                }
+
+                if (i === attackFile + 1) {OP = true;}
             }
+            ifEmpty(DDL, PIN_DDL);
+            pushAttackDirection(DDL);
+            pushPinDirection(PIN_DDL);
         
+            let DDR  = ["DDR"];
+            let PIN_DDR = ["DDR"];
             // down right diagonal
             for (let i = 0; i <= (7 - attackFile) + 1; i++) {
                 const filePosition = (attackFile + i);
                 const rankPosition = (attackRank + i);
-                if (( overlapWhite.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'white') ||
-                    ( overlapBlack.includes(filePosition.toString() + rankPosition.toString()) && i !== 0 && turn === 'black') 
-                    ){
-                    createAttackSquare(filePosition, rankPosition, "ddr");
+                
+                pushSquare(PIN_DDR, filePosition, rankPosition);
+
+                if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
+                    DDR = [...PIN_DDR];
                     break;
                 }
-                createAttackSquare(filePosition, rankPosition, "ddr");
-                
+                                
+                if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
+                    DDR = [...PIN_DDR];
+                    OP = false;
+                }
+
+                if (i === (7 - attackFile) + 1) OP = true;
             }
+            ifEmpty(DDR, PIN_DDR);
+            pushAttackDirection(DDR);
+            pushPinDirection(PIN_DDR);
         }
     }
 
-    console.log("attack square: ", attack_direction);
-    return attack_direction
-}
+    // console.log("bas: ", blackAttackSquare);
+    // console.log("was: ", whiteAttackSquare);
+    // console.log("wp: ", whitePinDirection);
+    // console.log("bp: ", blackPinDirection);
 
+    return {
+        attackDirection: {
+            black: blackAttackSquare, white: whiteAttackSquare
+        },
+        pinDirection: {
+            black: blackPinDirection, white: whitePinDirection
+        },
+        kingDirection: {
+            black: blackKingAtkDirec, white: whiteKingAtkDirec
+        }
+    }
+}

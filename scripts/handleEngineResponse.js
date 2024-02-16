@@ -1,4 +1,4 @@
-import { handleClick } from "./main.js";   
+import { handleClick } from "./piecesControl.js";   
 import { checkCastleEvenForEngine } from "./main.js";
 
 export function handleEngineResponse (bestMove) {

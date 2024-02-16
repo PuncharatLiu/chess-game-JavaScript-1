@@ -41,6 +41,9 @@ export const isSelfPiece = (    // check self overlap
     rankPosition,
     turn
     ) => {
+        if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
+            return;
+        }
         let pair = `${filePosition}${rankPosition}`;
     return (
         (overlapWhite.includes(pair) && turn === 'white') ||
@@ -55,6 +58,9 @@ export const isOpponentPiece = (    // check opponent overlap
     rankPosition,
     turn
     ) => {
+        if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
+            return;
+        }
         let pair = `${filePosition}${rankPosition}`;
     return (
         (overlapWhite.includes(pair) && turn === 'black') ||

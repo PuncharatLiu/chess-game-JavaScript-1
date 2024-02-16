@@ -4,7 +4,7 @@ import { pieces } from "./pieces.js";
 
 export function capture(getFilePosition, getRankPosition, filePart, rankPart) {
     const storeFR = filePart + rankPart;
-    console.log(storeFR);
+    // console.log(storeFR);
     if (turn === 'white') {
         if ( overlapBlack.includes(storeFR) ) {
             let getEnemyPosition = document.querySelector(`[position="${filePart}${rankPart}"]`);

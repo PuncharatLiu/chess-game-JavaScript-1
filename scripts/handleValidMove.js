@@ -1,19 +1,31 @@
 import { Is, isSelfPiece, isOpponentPiece } from "./pieces.js";
-import { overlapBlack, overlapWhite } from "./position.js";
+import { overlapBlack, overlapWhite ,getCurrentPosition} from "./position.js";
 import { pieces } from "./pieces.js";
 // import { createValidSquare } from "./createValidMove.js";
 import { pawnMove } from "./piecesControl.js";
 import { shortCastleSquare, longCastlesquare, isBlackCastle, isWhiteCastle } from "./castle.js";
 import { enPassantState, handleEnPosition, enPassant } from "./enPassant.js";
 import { changePosition } from "./piecesControl.js";
+import KingEvent from "./handleKingEvent.js";
 
 let _clickedPiece 
+
+// const kingEvent = new KingEvent(overlapBlack, overlapWhite)
 export function validSquare(getPieceId, fromPieceId, turn, getFile, getRank, pawnMove){
+    // const kingEvent = new KingEvent(overlapBlack, overlapWhite)
     _clickedPiece = event?.target;
+
+    const kingEvent = new KingEvent(overlapBlack, overlapWhite);
+    const {result, stack} = kingEvent.isPin();
+    kingEvent.isCheck();
 
     // create valid move 
     function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,pawnId, clickedPiece) {
         const chessBoard = document.getElementById('chess-board');
+        // const kingEvent = new KingEvent(overlapBlack, overlapWhite);
+        // const {result, stack} = kingEvent.isPin();
+        // kingEvent.isCheck();
+        
         // check if valid square outside board 
         if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
             return;
@@ -109,11 +121,13 @@ export function validSquare(getPieceId, fromPieceId, turn, getFile, getRank, paw
             ( 
                 ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'white') ||
                 ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString()) && turn === 'black' ) 
-            )  
-            {
+            ) {
                 continue;
             }
-            createValidSquare(filePosition[i], rankPosition[i], undefined, undefined, undefined, "king");
+
+            if (kingEvent.canKingMove(filePosition[i], rankPosition[i])) {
+                createValidSquare(filePosition[i], rankPosition[i], undefined, undefined, undefined, "king");
+            }
         }
     } 
 

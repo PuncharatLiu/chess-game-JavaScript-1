@@ -5,8 +5,11 @@ import {overlapBlack, overlapWhite, changeDefualtPosition, getCurrentPosition} f
 import { validSquare } from "./handleValidMove.js";
 import { initializeBoard } from "./initBoard.js";
 import { capture } from "./capture.js";
-
+import KingEvent from "./handleKingEvent.js";
 import { handleEngineResponse } from "./handleEngineResponse.js"; 
+// import { isCheck } from "./handleKingEvent.js";
+
+console.log("hi");
 
 let best_move;
 function sendMoveToEngine(FEN) {
@@ -38,6 +41,3 @@ export function checkCastleEvenForEngine (best_move) {
         return false;
     }
 }
-
-// export { overlapBlack, overlapWhite, turn, whitePieceIndex, blackPieceIndex};
-// export { turn };

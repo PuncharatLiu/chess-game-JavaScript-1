@@ -1,6 +1,7 @@
 import { overlapBlack, overlapWhite } from "./position.js";
 import { whitePieceIndex, blackPieceIndex } from "./position.js";
 import { isSelfPiece, isOpponentPiece } from "./pieces.js";
+import { getCurrentPosition } from "./position.js";
 
 export function calculateAttackSquare(){
     let pieceAttackId, attackFile, attackRank;
@@ -12,8 +13,9 @@ export function calculateAttackSquare(){
     let whiteAttackSquare = [];
     let blackPinDirection = [];
     let whitePinDirection = [];
-    let L, R, U, D, DUL, DUR, DDL, DDR;
-
+    let blackKingAtkDirec = [];
+    let whiteKingAtkDirec = [];
+    
     function pushSquare(direction, filePosition, rankPosition){
         if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
             return;
@@ -22,12 +24,22 @@ export function calculateAttackSquare(){
         direction.push(getAttackSquare);
     }
 
-    function pushAttackDirection(direction, ){
+    function pushAttackDirection(direction){
         0 <= index && index <= 15 ? blackAttackSquare.push(direction) : whiteAttackSquare.push(direction);
     }
 
     function pushPinDirection(direction){
         0 <= index && index <= 15 ? blackPinDirection.push(direction) : whitePinDirection.push(direction); 
+    }
+
+    function pushKingAtkDirec(direction){
+        0 <= index && index <= 15 ? blackKingAtkDirec.push(direction) : whiteKingAtkDirec.push(direction);  
+    }
+
+    function ifEmpty(atkDirec, pinDirec){
+        if (atkDirec.length === 1){
+            atkDirec.splice(0, atkDirec.length, ...pinDirec);
+        }
     }
 
     // give piece id
@@ -78,19 +90,11 @@ export function calculateAttackSquare(){
             const filePosition = [attackFile, attackFile, attackFile - 1, attackFile + 1, attackFile - 1, attackFile + 1, attackFile, attackFile -1, attackFile + 1];
             const rankPosition = [attackRank, attackRank - 1, attackRank - 1, attackRank - 1, attackRank, attackRank, attackRank + 1, attackRank + 1, attackRank + 1];
             
-            // calculate valid square
-            for (let i = 0; i <= 8; i++) 
-            {
-                // check if piece block the valid square
-                if ( ( overlapWhite.includes(filePosition[i].toString() + rankPosition[i].toString())  && turn === 'white' ) || ( overlapBlack.includes(filePosition[i].toString() + rankPosition[i].toString())   && turn === 'black' ) )  
-                {
-                    continue;
-                }
-
-                // createAttackSquare(filePosition[i], rankPosition[i]);
-                // return;
+            let KING = ["KING"];
+            for (let i = 0; i <= 8; i++) {
+                pushSquare(KING, filePosition[i], rankPosition[i]);
             }
-
+            pushKingAtkDirec(KING)
         } 
 
         else  // ======================================= Pawn move =========================================== //
@@ -117,102 +121,101 @@ export function calculateAttackSquare(){
             let OP = true;
             
             // left move 
-            L = [];
-            let PIN_L = [];
+            let L = ["L"];
+            let PIN_L = ["L"];
             for (let i = 0 ; i <= attackFile + 1; i++){   
                 const filePosition = (attackFile - i);
                 const rankPosition = attackRank;
                 
+                pushSquare(PIN_L, filePosition, rankPosition);
+
                 if(isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
-                    pushSquare(L, filePosition, rankPosition);
-                    pushSquare(PIN_L, filePosition, rankPosition);
+                    L = [...PIN_L];
                     break;
                 }
                 
-                pushSquare(PIN_L, filePosition, rankPosition);
-                
                 if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
-                    L = PIN_L;
-                    pushSquare(L, filePosition, rankPosition);
+                    L = [...PIN_L];
                     OP = false;
                 }
                 if(i === attackFile + 1) OP = true;
             }
+            ifEmpty(L, PIN_L);
             pushAttackDirection(L);
             pushPinDirection(PIN_L);
             
             // right move 
-            R = [];
-            let PIN_R = [];
+            let R = ["R"];
+            let PIN_R = ["R"];
             for (let i = 0; i <= (7 - attackFile) + 1; i++ ){
                 const filePosition = (attackFile + i);
                 const rankPosition = attackRank;
                 
+                pushSquare(PIN_R, filePosition, rankPosition);
+
                 if(isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
-                    pushSquare(R, filePosition, rankPosition);
-                    pushSquare(PIN_R, filePosition, rankPosition);
+                    R = [...PIN_R];
                     break;
                 }
                 
-                pushSquare(PIN_R, filePosition, rankPosition);
-                
                 if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
-                    R = PIN_R;
-                    pushSquare(R, filePosition, rankPosition);
+                    R = [...PIN_R];
                     OP = false;
                 }
+                
                 if(i === (7 - attackFile) + 1) OP = true;
             }
+            ifEmpty(R, PIN_R);
             pushAttackDirection(R);
             pushPinDirection(PIN_R);
 
             // up move
-            U = [];
-            let PIN_U = [];
+            let U = ["U"];
+            let PIN_U = ["U"];
             for (let i = 0; i <= attackRank + 1; i++ ){
                 const filePosition = attackFile;
                 const rankPosition = (attackRank - i);
                 
+                pushSquare(PIN_U, filePosition, rankPosition);
+
                 if(isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
-                    pushSquare(U, filePosition, rankPosition);
-                    pushSquare(PIN_U, filePosition, rankPosition);
+                    U = [...PIN_U]
                     break;
                 }
                 
-                pushSquare(PIN_U, filePosition, rankPosition);
-                
                 if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
-                    U = PIN_U;
-                    pushSquare(U, filePosition, rankPosition);
+                    U = [...PIN_U];
                     OP = false;
                 }
+
                 if(i === attackRank + 1) OP = true;
             }
+            ifEmpty(U, PIN_U);
             pushAttackDirection(U);
             pushPinDirection(PIN_U);
 
             // down move 
-            D = [];
-            let PIN_D = [];
+            let D = ["D"];
+            let PIN_D = ["D"];
             for (let i = 0; i <= (7 - attackRank) + 1; i++){
                 const filePosition = attackFile;
                 const rankPosition = attackRank + i;
                 
+                pushSquare(PIN_D, filePosition, rankPosition);
+
                 if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
-                    pushSquare(D, filePosition, rankPosition);
-                    pushSquare(PIN_D, filePosition, rankPosition);
+                    D = [...PIN_D];
                     break;
                 }
                 
-                pushSquare(PIN_D, filePosition, rankPosition);
-                
                 if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
-                    D = PIN_D
-                    pushSquare(D, filePosition, rankPosition);
+                    D = [...PIN_D]
                     OP = false;
                 }
+
                 if(i === (7 - attackRank) + 1) OP = true;
             }
+            ifEmpty(D, PIN_D);
             pushAttackDirection(D);
             pushPinDirection(PIN_D);
         
@@ -223,125 +226,111 @@ export function calculateAttackSquare(){
             let OP = true;
 
             // up left diagonal
-            DUL  = [];
-            let PIN_DUL = [];
+            let DUL  = ["DUL"];
+            let PIN_DUL = ["DUL"];
             for (let i = 0; i <= attackFile + 1; i ++) {
                 const filePosition = (attackFile - i);
                 const rankPosition = (attackRank - i);
             
+                pushSquare(PIN_DUL, filePosition, rankPosition);
+
                 if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
-                    pushSquare(DUL, filePosition, rankPosition);
-                    pushSquare(PIN_DUL, filePosition, rankPosition);
+                    DUL = [...PIN_DUL];
                     break;
                 }
 
-                pushSquare(PIN_DUL, filePosition, rankPosition);
-
                 if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
-                    DUL = PIN_DUL
-                    pushSquare(DUL, filePosition, rankPosition);
+                    DUL = [...PIN_DUL];
                     OP = false;
                 }
                 if(i === attackFile + 1) OP = true;
             }
+            ifEmpty(DUL, PIN_DUL);
             pushAttackDirection(DUL);
             pushPinDirection(PIN_DUL);
 
             // up right diagonal  
 
-            DUR  = [];
-            let PIN_DUR = [];
+            let DUR  = ["DUR"];
+            let PIN_DUR = ["DUR"];
             for (let i = 0; i <= (7 - attackFile) + 1; i++) {
                 const filePosition = (attackFile + i);
                 const rankPosition = (attackRank - i);
                 
+                pushSquare(PIN_DUR, filePosition, rankPosition);
+
                 if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
-                    pushSquare(DUR, filePosition, rankPosition);
-                    pushSquare(PIN_DUR, filePosition, rankPosition);
+                    DUR = [...PIN_DUR];
                     break;
                 }
 
-                pushSquare(PIN_DUR, filePosition, rankPosition);
-
                 if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
-                    DUR = PIN_DUR;
-                    pushSquare(DUR, filePosition, rankPosition);
+                    DUR = [...PIN_DUR];
                     OP = false;
                 }
+
                 if (i === (7 - attackFile) + 1) OP = true;
             }
+            ifEmpty(DUR, PIN_DUR);
             pushAttackDirection(DUR);
             pushPinDirection(PIN_DUR);
             
-            DDL  = [];
-            let PIN_DDL = [];
+            let DDL  = ["DDL"];
+            let PIN_DDL = ["DDL"];
             // down left diagonal
             for (let i = 0; i <= attackFile + 1; i++) {
                 const filePosition = (attackFile - i);
                 const rankPosition = (attackRank + i);
                 
+                pushSquare(PIN_DDL, filePosition, rankPosition);
+
                 if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
-                    pushSquare(DDL, filePosition, rankPosition);
-                    pushSquare(PIN_DDL, filePosition, rankPosition);
+                    DDL = [...PIN_DDL];
                     break;
                 }
 
-                pushSquare(PIN_DDL, filePosition, rankPosition);
-                
                 if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
-                    DDL = PIN_DDL;
-                    pushSquare(DDL, filePosition, rankPosition);
+                    DDL = [...PIN_DDL];
                     OP = false;
                 }
-                if (i === attackFile + 1) OP = true;
+
+                if (i === attackFile + 1) {OP = true;}
             }
+            ifEmpty(DDL, PIN_DDL);
             pushAttackDirection(DDL);
             pushPinDirection(PIN_DDL);
         
-            DDR  = [];
-            let PIN_DDR = [];
+            let DDR  = ["DDR"];
+            let PIN_DDR = ["DDR"];
             // down right diagonal
             for (let i = 0; i <= (7 - attackFile) + 1; i++) {
                 const filePosition = (attackFile + i);
                 const rankPosition = (attackRank + i);
                 
+                pushSquare(PIN_DDR, filePosition, rankPosition);
+
                 if (isSelfPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && i !== 0){
-                    pushSquare(DDR, filePosition, rankPosition);
-                    pushSquare(PIN_DDR, filePosition, rankPosition);
+                    DDR = [...PIN_DDR];
                     break;
                 }
-                
-                pushSquare(PIN_DDR, filePosition, rankPosition);
-                
+                                
                 if(isOpponentPiece(overlapBlack, overlapWhite, filePosition, rankPosition, turn) && OP){
-                    DDR = PIN_DDR;
-                    pushSquare(DDR, filePosition, rankPosition);
+                    DDR = [...PIN_DDR];
                     OP = false;
                 }
+
                 if (i === (7 - attackFile) + 1) OP = true;
             }
+            ifEmpty(DDR, PIN_DDR);
             pushAttackDirection(DDR);
             pushPinDirection(PIN_DDR);
         }
     }
-    
-    let re = {
-        attackDirection: {
-            black: blackAttackSquare, white: whiteAttackSquare
-        },
-        pinDirection: {
-            black: blackPinDirection, white: whitePinDirection
-        }
-    }
-    
-    let test = "white";
 
-    let op = turn === "white" ? 'black' : 'white';
-
-    console.log("white pin direction: ", whitePinDirection);
-    console.log("black pin direction: ", blackPinDirection);
-    console.log("white attack direction: ", blackAttackSquare);
-    console.log(re.pinDirection[op].length);
+    // console.log("bas: ", blackAttackSquare);
+    // console.log("was: ", whiteAttackSquare);
+    // console.log("wp: ", whitePinDirection);
+    // console.log("bp: ", blackPinDirection);
 
     return {
         attackDirection: {
@@ -349,6 +338,9 @@ export function calculateAttackSquare(){
         },
         pinDirection: {
             black: blackPinDirection, white: whitePinDirection
+        },
+        kingDirection: {
+            black: blackKingAtkDirec, white: whiteKingAtkDirec
         }
     }
 }

@@ -13,7 +13,9 @@ class KingEvent {
             let getDirection = this.direction.attackDirection[this.opponentDirection][direc];
 
             if (getDirection?.includes(this.kingPosition)) {
-                return true;
+                let result = true;
+                let kingPo = this.kingPosition;
+                return {result, kingPo};
             }
         }
     }
@@ -70,6 +72,20 @@ class KingEvent {
             }
         }
         return true;
+    }
+
+    canPieceBlock(filePosition, rankPosition){
+        const pair = `${filePosition}${rankPosition}`;
+        for (let direc = 0; direc < this.direction.attackDirection[this.opponentDirection].length; direc++){
+            const getDirection = this.direction.attackDirection[this.opponentDirection][direc];
+
+            if (getDirection.includes(this.kingPosition) && getDirection.includes(pair)){
+                console.log("This piece can block!");
+                return true;
+            }
+        }
+        console.log("This piece can't block!");
+        return false;
     }
 }
 

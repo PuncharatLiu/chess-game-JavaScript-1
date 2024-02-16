@@ -1,7 +1,6 @@
 import { Is, isSelfPiece, isOpponentPiece } from "./pieces.js";
 import { overlapBlack, overlapWhite ,getCurrentPosition} from "./position.js";
 import { pieces } from "./pieces.js";
-// import { createValidSquare } from "./createValidMove.js";
 import { pawnMove } from "./piecesControl.js";
 import { shortCastleSquare, longCastlesquare, isBlackCastle, isWhiteCastle } from "./castle.js";
 import { enPassantState, handleEnPosition, enPassant } from "./enPassant.js";
@@ -10,20 +9,13 @@ import KingEvent from "./handleKingEvent.js";
 
 export function validSquare(getPieceId, fromPieceId, turn, getFile, getRank, pawnMove){
     const kingEvent = new KingEvent(overlapBlack, overlapWhite);
-    // const {result, stack} = kingEvent.isPin()
-    kingEvent.isCheck();
-
-    // console.log(kingEvent.isPin().stack);
-    
     const getClickPiece = () => {
         const clickPiece = document.getElementById(getPieceId);
         const getClickPiecePosition = clickPiece.getAttribute('position');
 
         return getClickPiecePosition;
     }
-
-    // console.log(getClickPiece());
-
+    
     function createValidSquare(filePosition, rankPosition, twoSquare, inEnState ,pawnId) { // create valid move 
         const chessBoard = document.getElementById('chess-board');
         
@@ -35,17 +27,21 @@ export function validSquare(getPieceId, fromPieceId, turn, getFile, getRank, paw
         if (kingEvent.isPin().result && getClickPiece() === kingEvent.isPin().stack[0]){
             const getPinnedPiece = document.querySelector(`[position="${kingEvent.isPin().stack[0]}"]`);
             const pair = `${filePosition}${rankPosition}`;
-            console.log("This is pin direction: ", kingEvent.isPin().getDirection);
+            
             if (!kingEvent.isPin().getDirection.includes(pair)){
-                console.log("This is allow square");
                 return;                
             }
-            console.log("this piece is pin");
+        }
+
+        if (kingEvent.isCheck()?.result){
+            if (!kingEvent.canPieceBlock(filePosition, rankPosition) && kingEvent.isCheck().kingPo !== getClickPiece()){
+                return;
+            }
         }
 
         // create valid square
-        
         const validSquare = document.createElement('div'); 
+        
         validSquare.style.transform = `translate(${ filePosition * 100 }px, ${ rankPosition * 100 }px)`;
         validSquare.className = 'valid-square';
         validSquare.id = `${filePosition} ${rankPosition}`;
@@ -60,7 +56,6 @@ export function validSquare(getPieceId, fromPieceId, turn, getFile, getRank, paw
         }
 
         chessBoard.appendChild(validSquare);
-        
     }
 
     // =============================== Rook move  =========================================== //

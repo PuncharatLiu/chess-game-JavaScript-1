@@ -14,7 +14,7 @@ export function capture(getFilePosition, getRankPosition, filePart, rankPart) {
             getEnemyElement.setAttribute("position", "taken");
 
             if (getEnemyPosition) {
-                getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
+                getEnemyPosition.style.transform = `translate(${-1000}px, ${-1000}px)`;
                 
                 pieces[getEnemyId].position.file = -1000;
                 pieces[getEnemyId].position.rank = -1000;
@@ -33,7 +33,7 @@ export function capture(getFilePosition, getRankPosition, filePart, rankPart) {
             getEnemyElement.setAttribute("position", "taken");
 
             if (getEnemyPosition) {
-                getEnemyPosition.style.transform = `translate(${filePart * -1000}px, ${rankPart * -1000}px)`;
+                getEnemyPosition.style.transform = `translate(${-1000}px, ${-1000}px)`;
                 
                 pieces[getEnemyId].position.file = -1000;
                 pieces[getEnemyId].position.rank = -1000;

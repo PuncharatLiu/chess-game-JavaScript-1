@@ -9,8 +9,11 @@ import KingEvent from "./handleKingEvent.js";
 import { handleEngineResponse } from "./handleEngineResponse.js"; 
 import { playWithEngine } from "./piecesControl.js"
 
+import {shortCastle, longCastle} from "./castle.js"
+import {invertTurn} from "./piecesControl.js"
+
 let best_move;
-export function sendMoveToEngine(FEN) {
+export function sendMoveToEngine(FEN, who) {
     fetch('http://localhost:5500/engine/move', { // send player move to stockfish to calculate the best move. then send back best move
         method: 'POST',
         body: JSON.stringify({ data: FEN }),
@@ -27,7 +30,7 @@ export function sendMoveToEngine(FEN) {
                 console.log("Game over");
             }
 
-            if (playWithEngine){
+            if (playWithEngine && who === "player"){
                 handleEngineResponse(best_move);    
             }
         })

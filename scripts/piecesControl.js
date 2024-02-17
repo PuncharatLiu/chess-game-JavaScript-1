@@ -20,11 +20,12 @@ let isSamePiece = "";
 export let turn = 'white';
 export function SWITCH_TURN(color) {turn = color === "white" ? "black" : "white";}
 let playerTurn;
-let invertTurn;
+export let invertTurn;
 invertTurn = turn === 'white' ? invertTurn = 'black' : invertTurn = 'white'; 
 let storeFR;
 export let playWithEngine = false;
-function playerSide() {return turn === 'white';}
+
+export function playerSide() {return turn === 'white';}
 
 export function handleClick(event, squareToGoFromEngine){
     if (playWithEngine){
@@ -129,19 +130,19 @@ export function changePosition(twoSquare, squareToGoFromEngine)
     if (playWithEngine){
         if (!playerSide()){ 
             let FEN = generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);
-            sendMoveToEngine(FEN);
+            sendMoveToEngine(FEN, "player");
         } else {
-            generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);    
+            let FEN = generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);    
+            sendMoveToEngine(FEN, "engine");
         }
     } else {
         let FEN = generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);
-        sendMoveToEngine(FEN);
+        sendMoveToEngine(FEN, "player");
     }
 
     calculateAttackSquare();
 
     const kingEvent = new KingEvent();
-    // console.log(kingEvent.isCheck()?.result && kingEvent.isCheckMate());
 
     take = false;
     pawnMove = false;

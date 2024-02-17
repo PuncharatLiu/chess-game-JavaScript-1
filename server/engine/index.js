@@ -27,7 +27,7 @@ async function engineMove(fen) {
   try {
     await engine.init();
     await engine.position(fen);
-    const result = await engine.go({ depth: 2 });
+    const result = await engine.go({ depth: 1 });
     const bestMove = result.bestmove;
     console.log('Best Move:', bestMove);
     await engine.quit();

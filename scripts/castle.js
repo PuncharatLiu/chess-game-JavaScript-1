@@ -6,6 +6,9 @@ import { SWITCH_TURN } from "./piecesControl.js";
 import { overlapBlack, overlapWhite } from "./position.js";
 import { clearPosition } from "./position.js";
 import { overlap } from "./position.js";
+import { playerSide } from "./piecesControl.js";
+import {generateFen} from "./generateFen.js";
+import {sendMoveToEngine} from "./main.js"
 
 export let isWhiteCastle = false;
 export let isBlackCastle = false;
@@ -39,7 +42,7 @@ export function longCastlesquare(filePosition, rankPosition){
 }
 
 // short castle for black and white
-function shortCastle(){
+export function shortCastle(){
     let getWhiteRook = document.getElementById("31"); // get white rook element
     let getWhiteKing = document.getElementById("28"); // get white element
     
@@ -63,11 +66,18 @@ function shortCastle(){
         if (playWithEngine){
             if (playerSide()) {
                 generateFen(4, 7, 6, 7, 'white', isWhiteCastle);
-                sendMoveToEngine( generateFen(7, 7, 5, 7, 'white', isWhiteCastle));
+
+                // generateFen(7, 7, 5, 7, 'white', isWhiteCastle);
+
+                sendMoveToEngine( generateFen(7, 7, 5, 7, 'white', isWhiteCastle), "player");
             } else {
                 generateFen(4, 7, 6, 7, 'white', isWhiteCastle);
-                generateFen(7, 7, 5, 7, 'white', isWhiteCastle);
+                // generateFen(7, 7, 5, 7, 'white', isWhiteCastle);
+                sendMoveToEngine( generateFen(7, 7, 5, 7, 'white', isWhiteCastle), "engine");
             }
+        } else {
+            generateFen(4, 7, 6, 7, 'white', isWhiteCastle);
+            sendMoveToEngine( generateFen(7, 7, 5, 7, 'white', isWhiteCastle), "player");
         }
         // turn = 'black';
         SWITCH_TURN("white");
@@ -90,11 +100,18 @@ function shortCastle(){
         if (playWithEngine){
             if (playerSide()) {
                 generateFen(4, 0, 6, 0, 'black', isBlackCastle);
-                sendMoveToEngine(generateFen(7, 0, 5, 0, 'black', isBlackCastle));
+
+                // generateFen(7, 0, 5, 0, 'black', isBlackCastle);
+
+                sendMoveToEngine(generateFen(7, 0, 5, 0, 'black', isBlackCastle), "player");
             } else {
                 generateFen(4, 0, 6, 0, 'black', isBlackCastle);
-                generateFen(7, 0, 5, 0, 'black', isBlackCastle);
-            }
+                // generateFen(7, 0, 5, 0, 'black', isBlackCastle);
+                sendMoveToEngine( generateFen(7, 0, 5, 0, 'white', isWhiteCastle), "engine");
+            } 
+        } else {
+            generateFen(4, 0, 6, 0, 'black', isBlackCastle);
+            sendMoveToEngine(generateFen(7, 0, 5, 0, 'black', isBlackCastle), "player");
         }
         // turn = 'white';
         SWITCH_TURN("black");
@@ -104,7 +121,7 @@ function shortCastle(){
     }
 }
 
-function longCastle(){
+export function longCastle(){
     let getWhiteRook = document.getElementById("24"); // get white rook element
     let getWhiteKing = document.getElementById("28"); // get white king element
     

@@ -1,14 +1,15 @@
 import { calculateAttackSquare } from "./AttackSquare.js";
 import { turn } from "./piecesControl.js";
+import {overlapBlack, overlapWhite} from "./position.js";
 
 class KingEvent {
-    constructor(overlapBlack, overlapWhite) {
+    constructor(/*overlapBlack, overlapWhite*/) {
         this.direction = calculateAttackSquare();
         this.opponentDirection = turn === "white" ? 'black' : 'white';
         this.kingPosition = turn === "white" ? overlapWhite[12] : overlapBlack[4];
     }    
 
-    isCheck(){
+    isCheck(){  // check if check event occur
         for (let direc = 0; direc < this.direction.attackDirection[this.opponentDirection].length; direc++){
             let getDirection = this.direction.attackDirection[this.opponentDirection][direc];
 
@@ -20,11 +21,15 @@ class KingEvent {
         }
     }
 
-    isPin(){
-        let stack = [];
+    isPin(){    // check if pin event occur
+        let stack = []; // store pinned piece
+
         dr: for (let direc = 0; direc < this.direction.pinDirection[this.opponentDirection].length; direc++) {
+            
             let getDirection = this.direction.pinDirection[this.opponentDirection][direc];
-            for (let square = 2; square < this.direction.pinDirection[this.opponentDirection][direc].length; square++) {
+            
+            for (let square = 2; square < this.direction.pinDirection[this.opponentDirection][direc].length; square++) {    
+                
                 let getSquare = this.direction.pinDirection[this.opponentDirection][direc][square];
                 let getPiece = document.querySelector(`[position="${getSquare}"]`);
                 let emptySquare = getPiece === null;
@@ -41,17 +46,12 @@ class KingEvent {
 
                 } else if (selfPiece && notKing) {  // if see self piece but not king, ubdate the stack.
                     stack.push(getSquare);
-                    console.log(stack)
 
                 } else if (emptySquare) {   // if empty, skip.
                     continue;
 
-                } else if (getSquare === this.kingPosition){ // id see self king, return true.
-                    if (stack.length === 1){
-                        
-                        // debug
-                        console.log("pin!");
-                
+                } else if (getSquare === this.kingPosition){    // id see self king, return true.
+                    if (stack.length === 1){                
                         let result = true;
                         return {result, stack, getDirection};
                     }
@@ -61,11 +61,12 @@ class KingEvent {
         return false;
     }
 
-    canKingMove(filePosition, rankPosition){
+    canKingMove(filePosition, rankPosition){    // check if valid king escape move
         const pair = `${filePosition}${rankPosition}`;
 
         dr: for (let direc = 0; direc < this.direction.attackDirection[this.opponentDirection].length; direc++){
-            let getDirection = this.direction.attackDirection[this.opponentDirection][direc].slice(2);
+            
+            let getDirection = this.direction.attackDirection[this.opponentDirection][direc].slice(2);  // not get first two  
 
             if (getDirection.includes(pair)) {
                 return false;
@@ -76,15 +77,15 @@ class KingEvent {
 
     canPieceBlock(filePosition, rankPosition){
         const pair = `${filePosition}${rankPosition}`;
+        
         for (let direc = 0; direc < this.direction.attackDirection[this.opponentDirection].length; direc++){
+            
             const getDirection = this.direction.attackDirection[this.opponentDirection][direc];
 
             if (getDirection.includes(this.kingPosition) && getDirection.includes(pair)){
-                console.log("This piece can block!");
                 return true;
             }
         }
-        console.log("This piece can't block!");
         return false;
     }
 }

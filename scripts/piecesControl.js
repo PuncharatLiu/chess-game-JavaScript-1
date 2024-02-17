@@ -3,6 +3,9 @@ import { pieces } from "./pieces.js";
 import { validSquare } from "./handleValidMove.js";
 import { capture } from "./capture.js";
 import { calculateAttackSquare } from "./AttackSquare.js";
+import KingEvent from "./handleKingEvent.js";
+import { generateFen } from "./generateFen.js";
+import {sendMoveToEngine} from "./main.js"
 
 export let take = false;
 export let pawnMove = false;
@@ -130,9 +133,16 @@ export function changePosition(twoSquare, squareToGoFromEngine)
         } else {
             generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);    
         }
+    } else {
+        let FEN = generateFen(getFile, getRank, getFilePosition, getRankPosition, keepTurn, undefined, handleEnPosition(), take, pawnMove);
+        sendMoveToEngine(FEN);
     }
 
     calculateAttackSquare();
+
+    const kingEvent = new KingEvent();
+    // console.log(kingEvent.isCheck()?.result && kingEvent.isCheckMate());
+
     take = false;
     pawnMove = false;
 }

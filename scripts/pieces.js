@@ -61,10 +61,13 @@ export const isOpponentPiece = (    // check opponent overlap
         if ((filePosition * 100) > 700 || (filePosition * 100) < 0 || (rankPosition * 100) < 0 || (rankPosition * 100 ) > 700) {
             return;
         }
-        let pair = `${filePosition}${rankPosition}`;
+        
+        const pair = `${filePosition}${rankPosition}`;
+        const kingPosition = turn === "white" ? overlapBlack[4] : overlapWhite[12];
+
     return (
-        (overlapWhite.includes(pair) && turn === 'black') ||
-        (overlapBlack.includes(pair) && turn === 'white') 
+        (overlapWhite.includes(pair) && turn === 'black' && kingPosition !== pair) ||
+        (overlapBlack.includes(pair) && turn === 'white' && kingPosition !== pair) 
     )
 }
 

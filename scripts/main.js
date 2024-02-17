@@ -7,10 +7,10 @@ import { initializeBoard } from "./initBoard.js";
 import { capture } from "./capture.js";
 import KingEvent from "./handleKingEvent.js";
 import { handleEngineResponse } from "./handleEngineResponse.js"; 
-// import { isCheck } from "./handleKingEvent.js";
+import { playWithEngine } from "./piecesControl.js"
 
 let best_move;
-function sendMoveToEngine(FEN) {
+export function sendMoveToEngine(FEN) {
     fetch('http://localhost:5500/engine/move', { // send player move to stockfish to calculate the best move. then send back best move
         method: 'POST',
         body: JSON.stringify({ data: FEN }),
@@ -18,10 +18,18 @@ function sendMoveToEngine(FEN) {
     })
         .then(response => response.json())
         .then(bestMove => {
-            console.log(bestMove);
+            // console.log(bestMove);
             best_move = bestMove
+            console.log(best_move.bestMove);
             
-            handleEngineResponse(best_move);
+            if (best_move.bestMove === "(none)"){
+                alert("Game over");
+                console.log("Game over");
+            }
+
+            if (playWithEngine){
+                handleEngineResponse(best_move);    
+            }
         })
         // .catch(error => console.error('Error here!!!!', error));
 }

@@ -33,7 +33,7 @@ export function validSquare(getPieceId, fromPieceId, turn, getFile, getRank, paw
             }
         }
 
-        if (kingEvent.isCheck()?.result){
+        if (kingEvent.isCheck()?.result){   // check for check event 
             if (!kingEvent.canPieceBlock(filePosition, rankPosition) && kingEvent.isCheck().kingPo !== getClickPiece()){
                 return;
             }

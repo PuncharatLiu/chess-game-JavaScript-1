@@ -115,14 +115,6 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
   getFilePosition = parseInt(filePart); // convert to number
   getRankPosition = parseInt(rankPart);
 
-  // // Covert to PGN
-  // const pgn = new PGN();
-  
-  // pgn.convertPosition(getFilePosition, getRankPosition);
-  // pgn.pieceNotation(squareToGo.id);
-  
-  // // end
-
   // change position
   if (playWithEngine) {
     if (playerSide()) {
@@ -147,7 +139,17 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
     getPiece.setAttribute("tw", "tw");
   } // mark that tw
 
-  capture(getFilePosition, getRankPosition, filePart, rankPart); // handle piece capture
+  // Covert to PGN
+  const pgn = new PGN(getFilePosition, getRankPosition);
+
+  pgn.pgn(
+    "capture",
+    capture(getFilePosition, getRankPosition, filePart, rankPart),
+  );
+
+  // end
+
+  //capture(getFilePosition, getRankPosition, filePart, rankPart); // handle piece capture
   removeValidMove(); // remove valid square
 
   let keepTurn = turn;
@@ -199,14 +201,6 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
   calculateAttackSquare();
 
   const kingEvent = new KingEvent();
-
-  // Covert to PGN
-  const pgn = new PGN();
-  
-  pgn.convertPosition(getFilePosition, getRankPosition);
-  pgn.pieceNotation();
-  
-  // end
 
   take = false;
   pawnMove = false;

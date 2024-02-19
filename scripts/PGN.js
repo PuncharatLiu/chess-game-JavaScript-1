@@ -1,90 +1,107 @@
-import {Is} from "./pieces.js"
-import {getPieceId} from "./piecesControl.js";
+import { Is } from "./pieces.js";
+import { getPieceId } from "./piecesControl.js";
 
 class PGN {
-  constructor() {
-    this.convertFile = "";
-    this.convertRank = "";
-    this.position = "";
-    this.strPiece = "";
+  constructor(file, rank) {
+    this.file = file;
+    this.rank = rank;
+    this.pgnPair = [];
+    this.pawnEle = document.getElementById(getPieceId);
+    this.pawnFile = this.pawnEle.getAttribute("position");
   }
 
-  convertPosition(file, rank) {
+  pgn(event, bool) {
+    const majorPiece = ["R", "N", "B", "Q", "K"];
+    const isMajor = majorPiece.includes(this.pieceNotation())
+
+    if (event === "capture" && bool) {
+      if (isMajor){
+        console.log("take: ", this.pieceNotation() + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank));            
+        
+        return this.pieceNotation() + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank);
+
+      } else {
+        console.log("take: ", this.pgnFile(parseInt(this.pawnFile[0])) + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank));          
+
+        return this.pgnFile(parseInt(this.pawnFile[0])) + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank);
+
+      }
+
+    } else {
+      
+      if (isMajor) {
+        console.log("move: ", this.pieceNotation() + this.pgnFile(this.file) + this.pgnRank(this.rank));
+        return this.pieceNotation() + this.pgnFile(this.file) + this.pgnRank(this.rank);  
+
+      } else {
+        console.log("move: ", this.pgnFile(this.file) + this.pgnRank(this.rank));
+        return this.pgnFile(this.file) + this.pgnRank(this.rank);
+
+      }
+
+    }
+  }
+
+  pgnFile(file) {
     switch (file) {
       case 0:
-        this.convertFile = "a";
-        break;
+        return "a";
       case 1:
-        this.convertFile = "b";
-        break;
+        return "b";
       case 2:
-        this.convertFile = "c";
-        break;
+        return "c";        
       case 3:
-        this.convertFile = "d";
-        break;
+        return "d";        
       case 4:
-        this.convertFile = "e";
-        break;
+        return "e";        
       case 5:
-        this.convertFile = "f";
-        break;
+        return "f";        
       case 6:
-        this.convertFile = "g";
-        break;
+        return "g";        
       case 7:
-        this.convertFile = "h";
-        break;
+        return "h";
       default:
         break;
     }
-
-    switch(rank){
-      case 0:
-        this.convertRank = "8";
-        break;
-      case 1:
-        this.convertRank = "7";
-        break;
-      case 2:
-        this.convertRank = "6";
-        break;
-      case 3:
-        this.convertRank = "5";
-        break;
-      case 4:
-        this.convertRank = "4";
-        break;
-      case 5:
-        this.convertRank = "3";
-        break;
-      case 6:
-        this.convertRank = "2";
-        break;
-      case 7:
-        this.convertRank = "1";
-        break;
-      default:
-        break;
-    }
-    
-    this.positon = this.convertFile + this.convertRank;
   }
 
-  pieceNotation(){  
-    if (Is.rook(getPieceId)){
-      this.strPiece = "R";
-    } else if (Is.knight(getPieceId)){
-      this.strPiece = "N"
-    } else if (Is.bishop(getPieceId)){
-      this.strPiece = "B";
-    } else if (Is.queen(getPieceId)){
-      this.strPiece = "Q";
-    } else if (Is.king(getPieceId)){
-      this.strPiece = "K"
+  pgnRank(rank) {
+    switch (rank) {
+      case 0:
+        return "8";
+      case 1:
+        return "7";      
+      case 2:
+        return "6";     
+      case 3:
+        return "5";      
+      case 4:
+        return "4";      
+      case 5:
+        return "3";      
+      case 6:
+        return "2";      
+      case 7:
+        return "1";      
+      default:
+        break;
     }
+  }
 
-    console.log("notation: ", this.strPiece + this.positon);
+  pieceNotation() {
+    if (Is.rook(getPieceId)) {
+      return "R";
+    } else if (Is.knight(getPieceId)) {
+      return "N";
+    } else if (Is.bishop(getPieceId)) {
+      return "B";
+    } else if (Is.queen(getPieceId)) {
+      return "Q";
+    } else if (Is.king(getPieceId)) {
+      return "K";
+    } else {
+      return this.pgnFile(parseInt(this.pawnFile[0]));
+    }
   }
 }
 

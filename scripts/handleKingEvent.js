@@ -16,7 +16,8 @@ class KingEvent {
             if (getDirection?.includes(this.kingPosition)) {
                 let result = true;
                 let kingPo = this.kingPosition;
-                return {result, kingPo};
+                let event = "ckeck";
+                return {result, kingPo, event};
             }
         }
     }

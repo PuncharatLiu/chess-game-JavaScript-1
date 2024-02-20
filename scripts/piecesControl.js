@@ -6,33 +6,38 @@ import { calculateAttackSquare } from "./AttackSquare.js";
 import KingEvent from "./handleKingEvent.js";
 import { generateFen } from "./generateFen.js";
 import { sendMoveToEngine } from "./main.js";
-
 import PGN from "./PGN.js";
+import moveReplay from "./game-control-panel/move-replay.js"
+
 export let take = false;
 export let pawnMove = false;
-export function TAKE(bool) {
-  return (take = bool);
-}
-
 export let getPieceId;
 export let getFile;
 export let getRank;
 let getPiece, pieceIdBackup;
 let isSamePiece = "";
-
 export let turn = "white";
-export function SWITCH_TURN(color) {
-  turn = color === "white" ? "black" : "white";
-}
 let playerTurn;
 export let invertTurn;
 invertTurn = turn === "white" ? (invertTurn = "black") : (invertTurn = "white");
 let storeFR;
 export let playWithEngine = false;
 
+
+export function TAKE(bool) {
+  return (take = bool);
+}
+
+
+export function SWITCH_TURN(color) {
+  turn = color === "white" ? "black" : "white";
+}
+
+
 export function playerSide() {
   return turn === "white";
 }
+
 
 export function handleClick(event, squareToGoFromEngine) {
   if (playWithEngine) {
@@ -58,6 +63,7 @@ export function handleClick(event, squareToGoFromEngine) {
     handlePlay(event, squareToGoFromEngine);
   }
 }
+
 
 function handlePlay(event, squareToGoFromEngine) {
   removeValidMove();
@@ -91,7 +97,13 @@ let getValidSquareID;
 export let getFilePosition;
 export let getRankPosition;
 
+
 export function changePosition(twoSquare, squareToGoFromEngine) {
+  const getPieceEle = document.getElementById(getPieceId);
+  let getAttri = getPieceEle.getAttribute("position");
+
+  console.log(getAttri);
+
   let squareToGo, getPosition, getSquareToGoFromEngine;
 
   if (playWithEngine) {
@@ -108,8 +120,6 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
     squareToGo = event.target; // get valid square element
     getValidSquareID = squareToGo.id;
   }
-
-  console.log("This is square to go: ", squareToGo);
 
   let [filePart, rankPart] = getValidSquareID.split(" "); // saparate file and rank
   getFilePosition = parseInt(filePart); // convert to number
@@ -128,8 +138,7 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
 
   getPiece.style.transform = getPosition;
 
-  //when move delete 'tw'
-  const getAllPawn = document.querySelectorAll("[tw]");
+  const getAllPawn = document.querySelectorAll("[tw]"); //when move delete 'tw'
 
   getAllPawn.forEach((element) => {
     element.removeAttribute("tw");
@@ -137,19 +146,10 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
 
   if (twoSquare) {
     getPiece.setAttribute("tw", "tw");
-  } // mark that tw
+  }
 
-  // Covert to PGN
-  const pgn = new PGN(getFilePosition, getRankPosition);
+  const captureResult = capture(getFilePosition, getRankPosition, filePart, rankPart);
 
-  pgn.pgn(
-    "capture",
-    capture(getFilePosition, getRankPosition, filePart, rankPart),
-  );
-
-  // end
-
-  //capture(getFilePosition, getRankPosition, filePart, rankPart); // handle piece capture
   removeValidMove(); // remove valid square
 
   let keepTurn = turn;
@@ -200,11 +200,29 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
 
   calculateAttackSquare();
 
-  const kingEvent = new KingEvent();
-
   take = false;
   pawnMove = false;
+
+  const kingEvent = new KingEvent();
+  const attack = kingEvent.isCheck()?.result;
+  const pgn = new PGN(getFilePosition, getRankPosition);
+
+  console.log("attack: ", attack, captureResult);  
+  
+  if (captureResult && !attack){ // capture but not check
+    moveReplay().displayReplayContent(pgn.pgn("capture", getAttri));
+
+  } else if (attack && captureResult === true) { // capture with check 
+    moveReplay().displayReplayContent(pgn.pgn("captureWithCheck")); 
+
+  } else if (attack && captureResult === undefined) { // only check
+    moveReplay().displayReplayContent(pgn.pgn("check"));
+
+  } else if (captureResult === undefined && !attack) { // just move 
+    moveReplay().displayReplayContent(pgn.pgn("", getAttri));
+  }
 }
+
 
 export function removeValidMove() {
   // Remove existing highlighted squares

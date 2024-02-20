@@ -1,5 +1,7 @@
 import { Is } from "./pieces.js";
 import { getPieceId } from "./piecesControl.js";
+import {overlapBlack, overlapWhite} from "./position.js"
+import KingEvent from "./handleKingEvent.js"
 
 class PGN {
   constructor(file, rank) {
@@ -7,39 +9,52 @@ class PGN {
     this.rank = rank;
     this.pgnPair = [];
     this.pawnEle = document.getElementById(getPieceId);
-    this.pawnFile = this.pawnEle.getAttribute("position");
+    this.kingEvent = new KingEvent(overlapBlack, overlapWhite);
   }
 
-  pgn(event, bool) {
+  pgn(event, fileBackUp) {
     const majorPiece = ["R", "N", "B", "Q", "K"];
     const isMajor = majorPiece.includes(this.pieceNotation())
-
-    if (event === "capture" && bool) {
-      if (isMajor){
-        console.log("take: ", this.pieceNotation() + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank));            
-        
-        return this.pieceNotation() + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank);
-
-      } else {
-        console.log("take: ", this.pgnFile(parseInt(this.pawnFile[0])) + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank));          
-
-        return this.pgnFile(parseInt(this.pawnFile[0])) + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank);
-
+    let pawnFile
+    
+    if (fileBackUp) {pawnFile = parseInt(fileBackUp[0])};
+    
+    console.log("event: ", event);
+    switch(event){
+      case "capture":
+        if (isMajor){
+          console.log("take: ", this.pieceNotation() + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank));                    
+          return this.pieceNotation() + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank);
+        } else {
+          console.log("take: ", this.pgnFile(parseInt(pawnFile)) + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank));          
+          return this.pgnFile(parseInt(pawnFile)) + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank);
+        }
+      case "check":
+        if (isMajor){
+          console.log(this.pieceNotation() + this.pgnFile(this.file) + this.pgnRank(this.rank) + "+");
+          return this.pieceNotation() + this.pgnFile(this.file) + this.pgnRank(this.rank) + "+"
+        } else {
+          console.log(this.pgnFile(this.file) + this.pgnRank(this.rank) + "+");
+          return this.pgnFile(this.file) + this.pgnRank(this.rank) + "+";
+        }
+      case "captureWithCheck":
+        console.log("in process");
+        if (isMajor){
+          console.log(this.pieceNotation() + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank) + "+");                
+          return this.pieceNotation() + "x" + this.pgnFile(this.file) + this.pgnRank(this.rank) + "+";
+        } else {
+          console.log("x" + this.pgnFile(this.file) + this.pgnRank(this.rank) + "+");
+          return "x" + this.pgnFile(this.file) + this.pgnRank(this.rank) + "+";
+        }
+      default:
+        if (isMajor){
+          console.log("move: ", this.pieceNotation() + this.pgnFile(this.file) + this.pgnRank(this.rank));
+          return this.pieceNotation() + this.pgnFile(this.file) + this.pgnRank(this.rank);   
+        } else {
+          console.log(`"move: " ${this.pgnFile(pawnFile)}${this.pgnRank(this.rank)}`);
+          return this.pgnFile(this.file) + this.pgnRank(this.rank);
+        }   
       }
-
-    } else {
-      
-      if (isMajor) {
-        console.log("move: ", this.pieceNotation() + this.pgnFile(this.file) + this.pgnRank(this.rank));
-        return this.pieceNotation() + this.pgnFile(this.file) + this.pgnRank(this.rank);  
-
-      } else {
-        console.log("move: ", this.pgnFile(this.file) + this.pgnRank(this.rank));
-        return this.pgnFile(this.file) + this.pgnRank(this.rank);
-
-      }
-
-    }
   }
 
   pgnFile(file) {
@@ -100,9 +115,9 @@ class PGN {
     } else if (Is.king(getPieceId)) {
       return "K";
     } else {
-      return this.pgnFile(parseInt(this.pawnFile[0]));
+      return this.pgnFile(parseInt(this.fileBackUp));
     }
-  }
+  } 
 }
 
 export default PGN;

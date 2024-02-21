@@ -107,21 +107,38 @@ body {
 
 /* Additional styling for the clock elements */
 .clock-top {
-  background-color: whitesmoke;
+  background-color: #262521;
   width: 200px;
   height: 70px;
-  /*    margin-bottom: 10px;  Added some spacing between the clock elements */
   margin-bottom: 10px;
   border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  
 }
 
 .clock-bottom {
-  background-color: whitesmoke;
+  background-color: #262521;
   width: 200px;
   height: 70px;
-  /*    margin-bottom: 10px;  Added some spacing between the clock elements */
   margin-top: 10px;
   border-radius: 5px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+ 
+
+.time{
+  color: #959494;
+  font-size: 3.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-family: Arial, Helvetica, sans-serif;
+  
 }
 
 .move-replay-wrap {
@@ -130,8 +147,8 @@ body {
 
 .control-btn {
   display: flex;
-  justify-content: center;
-  align-items: center;
+  /* justify-content: center; */
+  /* align-items: center; */
 }
 
 .first-btn, .prev-btn, .next-btn, .last-btn{

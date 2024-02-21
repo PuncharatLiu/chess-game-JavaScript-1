@@ -125,6 +125,10 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
   getFilePosition = parseInt(filePart); // convert to number
   getRankPosition = parseInt(rankPart);
 
+  // let CAPTURE = `${filePart}${rankPart}`;
+  let CAPTURE = document.querySelector(`[position="${filePart}${rankPart}"]`);
+  // console.log("captured position: ", CAPTURE);
+
   // change position
   if (playWithEngine) {
     if (playerSide()) {
@@ -208,10 +212,11 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
   const pgn = new PGN(getFilePosition, getRankPosition);
   const pair = `${filePart}${rankPart}`;
   console.log("attack: ", attack, captureResult);  
+  console.log("captured position: ", CAPTURE);
   
   if (captureResult && !attack){ // capture but not check
     Replay.displayPgnContent(pgn.pgn("capture", getAttri));
-    Replay.getPosition(getAttri, pair, "capture");
+    Replay.getPosition(getAttri, pair, "capture", CAPTURE);
 
   } else if (attack && captureResult === true) { // capture with check 
     Replay.displayPgnContent(pgn.pgn("captureWithCheck")); 
@@ -221,7 +226,7 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
 
   } else if (captureResult === undefined && !attack) { // just move 
     Replay.displayPgnContent(pgn.pgn("", getAttri));
-    Replay.getPosition(getAttri, pair, "move");
+    Replay.getPosition(getAttri, pair, "move", CAPTURE);
   }
 }
 

@@ -47,7 +47,7 @@ body {
 }
 
 body {
-  background-color: #302e2b;
+  background-color: #161512;
 }
 
 .check {
@@ -134,40 +134,27 @@ body {
   align-items: center;
 }
 
-.first-btn {
-  background-color: blue;
+.first-btn, .prev-btn, .next-btn, .last-btn{
+  background-color: #262521;
   width: 100%;
-  height: 50px;
+  height: 35px;
   border: 1px solid #000;
-}
-
-.prev-btn {
-  background-color: blue;
-  width: 100%;
-  height: 50px;
-  border: 1px solid #000;
-}
-
-.next-btn {
-  background-color: blue;
-  width: 100%;
-  height: 50px;
-  border: 1px solid #000;
-}
-
-.last-btn {
-  background-color: blue;
-  width: 100%;
-  height: 50px;
-  border: 1px solid #000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  color: #959494;
+  font-size: 1.8rem;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 .move-control {
   background-color: #262521;
   width: 200px;
-  height: 640px;
+  height: 600px;
   border-radius: 5px;
-  border: 3px solid #404040;
+  /* border: 3px solid #404040; */
 }
 
 .move-pair-wrap {
@@ -177,7 +164,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* border: 2px solid #000; */
 }
 
 .move-pair-index {
@@ -191,10 +177,6 @@ body {
   color: #5b5a59;
   font-size: 25px;
   font-family: Arial, Helvetica, sans-serif;
-  
-  /* Set border to solid, width to 1px, and color to #404040 */
-  /* border: 1px solid #404040; */
-
 }
 
 .move-pair {

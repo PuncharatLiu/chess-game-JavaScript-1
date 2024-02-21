@@ -1,44 +1,127 @@
-let moveList = [];
-let moveLeft, moveRight, movePairIndex;
+import { calculateAttackSquare } from "../AttackSquare.js";
+import { getCurrentPosition } from "../position.js";
+import { turn, SWITCH_TURN } from "../piecesControl.js";
+import { pieces } from "../pieces.js";
 
-function moveReplay() {
-  function createMoveList(move){
-    moveList.push(move);  
+let pgnList = [];
+let pgnLeft, pgnRight, pgnPairIndex;
+let moveList = ["start"];
+let currentMove = 0;
+let position;
+
+const prevBtn = document.querySelector(".prev-btn");
+const nextBtn = document.querySelector(".next-btn");
+prevBtn.addEventListener("click", previous);
+nextBtn.addEventListener("click", next);
+
+function createMoveList(move){
+  pgnList.push(move);  
+}
+
+function displayPgnContent (move){        
+  createMoveList(move);
+  
+  if (pgnList.length % 2 !== 0){
+    createReplayComponent();
+    pgnPairIndex.innerText = (pgnList.length + 1) / 2;
   }
+  
+  pgnList.length % 2 !== 0 ? pgnLeft.innerText = move : pgnRight.innerText = move;
+  currentMove++;
+}
 
-  function displayReplayContent (move){        
-    createMoveList(move);
-    
-    if (moveList.length % 2 !== 0){
-      createReplayComponent();
-      movePairIndex.innerText = (moveList.length + 1) / 2;
-    } 
+function createReplayComponent() {
+  const pgnReplayWrap = document.querySelector(".move-replay-wrap"); // get move-replay-wrap element
+  
+  const pgnPairWrap = document.createElement("div"); // create move-pair-wrap
+  pgnLeft = document.createElement("div"); // create move-pair
+  pgnRight = document.createElement("div"); // create move-pair
+  pgnPairIndex = document.createElement("div"); // create move-pair-index
+  
+  pgnPairWrap.classList.add("move-pair-wrap"); // add move-pair-wrap class to pgnPairWrap element
+  pgnLeft.classList.add("move-pair");
+  pgnRight.classList.add("move-pair");
+  pgnPairIndex.classList.add("move-pair-index");
 
-    moveList.length % 2 !== 0 ? moveLeft.innerText = move : moveRight.innerText = move;
-  }
+  pgnReplayWrap.appendChild(pgnPairWrap);
+  pgnPairWrap.appendChild(pgnPairIndex);
+  pgnPairWrap.appendChild(pgnLeft);
+  pgnPairWrap.appendChild(pgnRight);
+}
 
-  function createReplayComponent() {
-    const moveReplayWrap = document.querySelector(".move-replay-wrap"); // get move-replay-wrap element
-    
-    const movePairWrap = document.createElement("div"); // create move-pair-wrap
-    moveLeft = document.createElement("div"); // create move-pair
-    moveRight = document.createElement("div"); // create move-pair
-    movePairIndex = document.createElement("div"); // create move-pair-index
-    
-    movePairWrap.classList.add("move-pair-wrap"); // add move-pair-wrap class to movePairWrap element
-    moveLeft.classList.add("move-pair");
-    moveRight.classList.add("move-pair");
-    movePairIndex.classList.add("move-pair-index");
+function getPisition(fromPosition, toPosition, event){
+  position = [[],[]]
+  position[0].push(fromPosition, toPosition);
+  position[1].push(event);
+  moveList.push(position);  
+}
 
-    moveReplayWrap.appendChild(movePairWrap);
-    movePairWrap.appendChild(movePairIndex);
-    movePairWrap.appendChild(moveLeft);
-    movePairWrap.appendChild(moveRight);
-  }
+function previous (){  
+  replay("PREV");
+}
 
-  return {
-    displayReplayContent: displayReplayContent
+function next (){
+  replay("NEXT");
+}
+
+function replay(replayType){
+  const getEvent = position[1][0];    
+
+  if (getEvent === "move"){
+    if (replayType === "PREV") {
+      changePosition(replayType)
+      currentMove--;          
+    } else {
+      currentMove++;
+      changePosition(replayType)      
+    }
   }
 }
 
-export default moveReplay;
+
+function changePosition (replayType){
+  if (replayType === "PREV") {
+    const getMoveInfo = [...moveList[currentMove]];
+    const piece = document.querySelector(`[position="${getMoveInfo[0][1]}"]`);
+    const pieceId = piece.id;  
+    const toPosition = getMoveInfo[0][0];
+    const toFile = parseInt(toPosition[0]);
+    const toRank = parseInt(toPosition[1]);
+    
+    piece.style.transform = `translate(${toFile * 100}px, ${toRank * 100}px)`;
+
+    pieces[parseInt(pieceId)].position.file = toFile;
+    pieces[parseInt(pieceId)].position.rank = toRank;
+
+    piece.setAttribute("position", toPosition[0] + toPosition[1]);
+
+    SWITCH_TURN(turn);    
+    getCurrentPosition();
+    calculateAttackSquare();        
+  } else {    
+    const getMoveInfo = [...moveList[currentMove]];
+    const piece = document.querySelector(`[position="${getMoveInfo[0][0]}"]`);
+    const pieceId = piece.id;
+    const toPosition = getMoveInfo[0][1];
+    const toFile = parseInt(toPosition[0]);
+    const toRank = parseInt(toPosition[1]);
+    
+    piece.style.transform = `translate(${toFile * 100}px, ${toRank * 100}px)`;
+
+    pieces[parseInt(pieceId)].position.file = toFile;
+    pieces[parseInt(pieceId)].position.rank = toRank;
+
+    piece.setAttribute("position", toPosition[0] + toPosition[1]);
+
+    SWITCH_TURN(turn);
+    getCurrentPosition();
+    calculateAttackSquare();    
+  }
+}
+
+const Replay = {
+  displayPgnContent: displayPgnContent,
+  getPosition: getPisition
+}
+
+export default Replay;

@@ -11,6 +11,7 @@ export function changeDefualtPosition(getFilePosition, getRankPosition, filePart
     pieces[getPieceId].position.rank = getRankPosition;
 
     let getPieceElement = document.getElementById(getPieceId);
+    console.log(getPieceElement);
     getPieceElement.setAttribute("position", filePart+rankPart);
 
     overlapWhite = [];
@@ -20,6 +21,9 @@ export function changeDefualtPosition(getFilePosition, getRankPosition, filePart
 }
 
 export function getCurrentPosition() {
+    overlapWhite = [];
+    overlapBlack = [];
+
     for (let i = 16; i <= 31; i++) {
         let pair = (pieces[i].position.file).toString() + (pieces[i].position.rank).toString();
         overlapWhite.push(pair);

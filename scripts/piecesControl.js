@@ -7,7 +7,7 @@ import KingEvent from "./handleKingEvent.js";
 import { generateFen } from "./generateFen.js";
 import { sendMoveToEngine } from "./main.js";
 import PGN from "./PGN.js";
-import moveReplay from "./game-control-panel/move-replay.js"
+import Replay from "./game-control-panel/move-replay.js"
 
 export let take = false;
 export let pawnMove = false;
@@ -206,20 +206,22 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
   const kingEvent = new KingEvent();
   const attack = kingEvent.isCheck()?.result;
   const pgn = new PGN(getFilePosition, getRankPosition);
-
+  const pair = `${filePart}${rankPart}`;
   console.log("attack: ", attack, captureResult);  
   
   if (captureResult && !attack){ // capture but not check
-    moveReplay().displayReplayContent(pgn.pgn("capture", getAttri));
+    Replay.displayPgnContent(pgn.pgn("capture", getAttri));
+    Replay.getPosition(getAttri, pair, "capture");
 
   } else if (attack && captureResult === true) { // capture with check 
-    moveReplay().displayReplayContent(pgn.pgn("captureWithCheck")); 
+    Replay.displayPgnContent(pgn.pgn("captureWithCheck")); 
 
   } else if (attack && captureResult === undefined) { // only check
-    moveReplay().displayReplayContent(pgn.pgn("check"));
+    Replay.displayPgnContent(pgn.pgn("check"));
 
   } else if (captureResult === undefined && !attack) { // just move 
-    moveReplay().displayReplayContent(pgn.pgn("", getAttri));
+    Replay.displayPgnContent(pgn.pgn("", getAttri));
+    Replay.getPosition(getAttri, pair, "move");
   }
 }
 

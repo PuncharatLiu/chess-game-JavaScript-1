@@ -220,9 +220,11 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
 
   } else if (attack && captureResult === true) { // capture with check 
     Replay.displayPgnContent(pgn.pgn("captureWithCheck")); 
+    Replay.getPosition(getAttri, pair, "move", CAPTURE);
 
   } else if (attack && captureResult === undefined) { // only check
     Replay.displayPgnContent(pgn.pgn("check"));
+    Replay.getPosition(getAttri, pair, "move", CAPTURE);
 
   } else if (captureResult === undefined && !attack) { // just move 
     Replay.displayPgnContent(pgn.pgn("", getAttri));

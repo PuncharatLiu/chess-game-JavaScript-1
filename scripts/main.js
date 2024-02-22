@@ -8,10 +8,8 @@ import { capture } from "./capture.js";
 import KingEvent from "./handleKingEvent.js";
 import { handleEngineResponse } from "./handleEngineResponse.js"; 
 import { playWithEngine } from "./piecesControl.js"
-
 import {shortCastle, longCastle} from "./castle.js"
 import {invertTurn} from "./piecesControl.js"
-// import moveReplay from "./game-control-panel/move-replay.js"
 
 let best_move;
 export function sendMoveToEngine(FEN, who) {

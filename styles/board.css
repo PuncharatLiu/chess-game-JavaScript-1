@@ -208,3 +208,7 @@ body {
   font-size: 25px;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.move-pair-highlight {
+  background-color: #2a4053;
+}

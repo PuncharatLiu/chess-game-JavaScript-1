@@ -26,6 +26,14 @@ function createMoveList(move){
   pgnList.push(move);  
 }
 
+
+function highlightMovePair(currentRemove, currentAdd) {
+  const movePair = document.querySelectorAll(".move-pair");
+  console.log(movePair);
+  movePair[currentRemove]?.classList.remove("move-pair-highlight");
+  movePair[currentAdd]?.classList.add("move-pair-highlight");
+}
+
 function displayPgnContent (move){        
   createMoveList(move);
   
@@ -35,6 +43,9 @@ function displayPgnContent (move){
   }
   
   pgnList.length % 2 !== 0 ? pgnLeft.innerText = move : pgnRight.innerText = move;
+  
+  highlightMovePair(currentMove - 1, currentMove);
+
   currentMove++;
   console.log(currentMove);
 }
@@ -102,7 +113,9 @@ function replay(replayType){
 
 
 function changePosition (replayType, event){
-  if (replayType === "PREV") {
+  if (replayType === "PREV") {    
+    highlightMovePair(currentMove - 1, currentMove - 2);
+
     const getMoveInfo = [...moveList[currentMove]];
     const piece = document.querySelector(`[position="${getMoveInfo[0][1]}"]`);
     const pieceId = piece.id;  
@@ -134,6 +147,8 @@ function changePosition (replayType, event){
     getCurrentPosition();
     calculateAttackSquare();        
   } else if (replayType === "NEXT"){    
+    highlightMovePair(currentMove - 2, currentMove - 1);
+
     const getMoveInfo = [...moveList[currentMove]];
     const piece = document.querySelector(`[position="${getMoveInfo[0][0]}"]`);
     const pieceId = piece.id;

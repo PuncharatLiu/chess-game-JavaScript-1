@@ -8,6 +8,7 @@ import { generateFen } from "./generateFen.js";
 import { sendMoveToEngine } from "./main.js";
 import PGN from "./PGN.js";
 import Replay from "./game-control-panel/move-replay.js"
+import { overlapBlack, overlapWhite } from "./position.js";
 
 export let take = false;
 export let pawnMove = false;
@@ -209,7 +210,7 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
 
   const kingEvent = new KingEvent();
   const attack = kingEvent.isCheck()?.result;
-  const pgn = new PGN(getFilePosition, getRankPosition);
+  const pgn = new PGN(getFilePosition, getRankPosition, overlapBlack, overlapWhite);
   const pair = `${filePart}${rankPart}`;
   console.log("attack: ", attack, captureResult);  
   console.log("captured position: ", CAPTURE);

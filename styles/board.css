@@ -2,11 +2,11 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
 }
 
 body {
   overflow: hidden;
-  /*    background-color: #302E2B;*/
 }
 
 .chess-board {
@@ -18,21 +18,12 @@ body {
   border-radius: 5px;
 }
 
-.chess-board-wrap {
-  margin: 0;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
-
 .chess-piece {
   position: absolute;
   width: 100px;
   height: 100px;
   background-size: contain;
   cursor: pointer;
-  /* background-color: #EA7F6B;   */
   /* z-index: 2; */
 }
 
@@ -51,7 +42,6 @@ body {
 }
 
 .check {
-  /* background-color: #ddb0a8;   */
   background-color: #ea7f6b;
 }
 
@@ -97,12 +87,9 @@ body {
 /* move-control-panel */
 
 .move-control-panel-wrap {
-  position: absolute;
-  top: 50%;
-  left: 100%; /* Changed from left: 50% */
-  transform: translate(-145%, -50%); /* Adjusted to move it correctly */
   display: flex;
   flex-direction: column; /* To stack the clock elements vertically */
+  margin-left: 20px;
 }
 
 /* Additional styling for the clock elements */
@@ -115,7 +102,6 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  
 }
 
 .clock-bottom {
@@ -128,9 +114,8 @@ body {
   justify-content: center;
   align-items: center;
 }
- 
 
-.time{
+.time {
   color: #959494;
   font-size: 3.5rem;
   display: flex;
@@ -138,7 +123,6 @@ body {
   align-items: center;
   text-align: center;
   font-family: Arial, Helvetica, sans-serif;
-  
 }
 
 .move-replay-wrap {
@@ -147,31 +131,30 @@ body {
 
 .control-btn {
   display: flex;
-  /* justify-content: center; */
-  /* align-items: center; */
 }
 
-.first-btn, .prev-btn, .next-btn, .last-btn{
+.first-btn,
+.prev-btn,
+.next-btn,
+.last-btn {
   background-color: #262521;
   width: 100%;
   height: 35px;
-  border: 1px solid #000;
   display: flex;
   justify-content: center;
   align-items: center;
   text-align: center;
   color: #959494;
   font-size: 1.8rem;
-  border-radius: 5px;
   cursor: pointer;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #312e2c;
 }
 
 .move-control {
   background-color: #262521;
-  width: 200px;
+  width: 350px;
   height: 600px;
-  border-radius: 5px;
-  /* border: 3px solid #404040; */
 }
 
 .move-pair-wrap {
@@ -179,12 +162,11 @@ body {
   width: 100%;
   height: 40px;
   display: flex;
-  justify-content: center;
   align-items: center;
 }
 
 .move-pair-index {
-  background-color:#312e2c;
+  background-color: #312e2c;
   width: 70px;
   height: 40px;
   display: flex;
@@ -201,14 +183,14 @@ body {
   width: 100%;
   height: 40px;
   display: flex;
-  justify-content: center;
   align-items: center;
-  text-align: center;
   color: #959494;
-  font-size: 25px;
+  font-size: 20px;
   font-family: Arial, Helvetica, sans-serif;
+  padding-left: 15px;
 }
 
 .move-pair-highlight {
   background-color: #2a4053;
 }
+

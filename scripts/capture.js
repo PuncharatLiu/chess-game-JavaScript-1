@@ -33,11 +33,7 @@ export function capture(getFilePosition, getRankPosition, filePart, rankPart) {
           filePart,
           rankPart,
         );
-        console.log("there's take event");
-        // take = true;
         TAKE(true);
-        // pgn.capture(true);
-
         return true;
       }
     }
@@ -73,4 +69,3 @@ export function capture(getFilePosition, getRankPosition, filePart, rankPart) {
   }
   changeDefualtPosition(getFilePosition, getRankPosition, filePart, rankPart);
 }
-

@@ -29,7 +29,6 @@ function createMoveList(move) {
 
 function highlightMovePair(currentRemove, currentAdd) {
   const movePair = document.querySelectorAll(".move-pair");
-  console.log(movePair);
   movePair[currentRemove]?.classList.remove("move-pair-highlight");
   movePair[currentAdd]?.classList.add("move-pair-highlight");
 }
@@ -71,7 +70,6 @@ function getPisition(fromPosition, toPosition, event, CAPTURE) {
   position[1].push(event);
   position[1].push(CAPTURE);
   moveList.push(position);
-  console.log(moveList);
 }
 
 function previous() {
@@ -288,4 +286,3 @@ const Replay = {
 };
 
 export default Replay;
-

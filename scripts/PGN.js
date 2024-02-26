@@ -57,12 +57,47 @@ class PGN {
             "+"
           );
         } else {
-          return "x" + this.pgnFile(this.file) + this.pgnRank(this.rank) + "+";
+          return (
+            this.pgnFile(parseInt(pawnFile)) +
+            "x" +
+            this.pgnFile(this.file) +
+            this.pgnRank(this.rank) +
+            "+"
+          );
         }
       case "shortCastle":
         return "O-O";
       case "longCastle":
         return "O-O-O";
+      case "checkmate":
+        if (isMajor) {
+          return (
+            this.pieceNotation() +
+            this.pgnFile(this.file) +
+            this.pgnRank(this.rank) +
+            "#"
+          );
+        } else {
+          return this.pgnFile(this.file) + this.pgnRank(this.rank) + "#";
+        }
+      case "captureWithMate":
+        if (isMajor) {
+          return (
+            this.pieceNotation() +
+            "x" +
+            this.pgnFile(this.file) +
+            this.pgnRank(this.rank) +
+            "#"
+          );
+        } else {
+          return (
+            this.pgnFile(parseInt(pawnFile)) +
+            "x" +
+            this.pgnFile(this.file) +
+            this.pgnRank(this.rank) +
+            "+"
+          );
+        }
       default:
         if (isMajor) {
           return (

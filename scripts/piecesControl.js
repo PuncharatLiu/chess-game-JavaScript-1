@@ -7,7 +7,7 @@ import KingEvent from "./handleKingEvent.js";
 import { generateFen } from "./generateFen.js";
 import { sendMoveToEngine } from "./main.js";
 import PGN from "./PGN.js";
-import Replay from "./game-control-panel/move-replay.js"
+import Replay from "./game-control-panel/move-replay.js";
 import { overlapBlack, overlapWhite } from "./position.js";
 
 export let take = false;
@@ -24,21 +24,29 @@ invertTurn = turn === "white" ? (invertTurn = "black") : (invertTurn = "white");
 let storeFR;
 export let playWithEngine = false;
 
+export function removeValidMove() {
+  // Remove existing highlighted squares
+  const getValidSquare = document.querySelectorAll(".valid-square");
+
+  // remove all valid square
+  getValidSquare.forEach(function (div) {
+    div.remove();
+  });
+
+  isSamePiece = ""; // set to default
+}
 
 export function TAKE(bool) {
   return (take = bool);
 }
 
-
 export function SWITCH_TURN(color) {
   turn = color === "white" ? "black" : "white";
 }
 
-
 export function playerSide() {
   return turn === "white";
 }
-
 
 export function handleClick(event, squareToGoFromEngine) {
   if (playWithEngine) {
@@ -64,7 +72,6 @@ export function handleClick(event, squareToGoFromEngine) {
     handlePlay(event, squareToGoFromEngine);
   }
 }
-
 
 function handlePlay(event, squareToGoFromEngine) {
   removeValidMove();
@@ -98,12 +105,9 @@ let getValidSquareID;
 export let getFilePosition;
 export let getRankPosition;
 
-
 export function changePosition(twoSquare, squareToGoFromEngine) {
   const getPieceEle = document.getElementById(getPieceId);
   let getAttri = getPieceEle.getAttribute("position");
-
-  console.log(getAttri);
 
   let squareToGo, getPosition, getSquareToGoFromEngine;
 
@@ -126,9 +130,7 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
   getFilePosition = parseInt(filePart); // convert to number
   getRankPosition = parseInt(rankPart);
 
-  // let CAPTURE = `${filePart}${rankPart}`;
   let CAPTURE = document.querySelector(`[position="${filePart}${rankPart}"]`);
-  // console.log("captured position: ", CAPTURE);
 
   // change position
   if (playWithEngine) {
@@ -153,11 +155,24 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
     getPiece.setAttribute("tw", "tw");
   }
 
-  const captureResult = capture(getFilePosition, getRankPosition, filePart, rankPart);
+  const captureResult = capture(
+    getFilePosition,
+    getRankPosition,
+    filePart,
+    rankPart,
+  );
 
   removeValidMove(); // remove valid square
 
+  const pgn = new PGN(
+    getFilePosition,
+    getRankPosition,
+    overlapBlack,
+    overlapWhite,
+  );
   let keepTurn = turn;
+  let moveCheck;
+
   turn === "white" ? (turn = "black") : (turn = "white"); // change player turn
 
   if (playWithEngine) {
@@ -173,7 +188,9 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
         take,
         pawnMove,
       );
-      sendMoveToEngine(FEN, "player");
+      sendMoveToEngine(FEN, "player").then((bestMove) => {
+        Replay.displayPgnContent(pgn.pgn("checkmate"));
+      });
     } else {
       let FEN = generateFen(
         getFile,
@@ -186,7 +203,9 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
         take,
         pawnMove,
       );
-      sendMoveToEngine(FEN, "engine");
+      sendMoveToEngine(FEN, "engine").then((bestMove) => {
+        Replay.displayPgnContent(pgn.pgn("checkmate"));
+      });
     }
   } else {
     let FEN = generateFen(
@@ -200,48 +219,47 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
       take,
       pawnMove,
     );
-    sendMoveToEngine(FEN, "player");
+
+    sendMoveToEngine(FEN, "player").then((moveCheck) => {
+      calculateAttackSquare();
+
+      take = false;
+      pawnMove = false;
+
+      const kingEvent = new KingEvent();
+      const attack = kingEvent.isCheck()?.result;
+      const pair = `${filePart}${rankPart}`;
+
+      if (captureResult && !attack) {
+        // capture but not check
+        Replay.displayPgnContent(pgn.pgn("capture", getAttri));
+        Replay.getPosition(getAttri, pair, "capture", CAPTURE);
+      } else if (attack && captureResult === true) {
+        // capture with checkmate
+        if (moveCheck === "checkmate") {
+          Replay.displayPgnContent(pgn.pgn("captureWithMate", getAttri));
+          Replay.getPosition(getAttri, pair, "capture", CAPTURE);
+          return;
+        }
+        // capture with check
+        Replay.displayPgnContent(pgn.pgn("captureWithCheck", getAttri));
+        Replay.getPosition(getAttri, pair, "capture", CAPTURE);
+      } else if (
+        attack &&
+        captureResult === undefined &&
+        moveCheck !== "checkmate"
+      ) {
+        // only check
+        Replay.displayPgnContent(pgn.pgn("check"));
+        Replay.getPosition(getAttri, pair, "move", CAPTURE);
+      } else if (captureResult === undefined && !attack) {
+        // just move
+        Replay.displayPgnContent(pgn.pgn("", getAttri));
+        Replay.getPosition(getAttri, pair, "move", CAPTURE);
+      } else if (moveCheck === "checkmate") {
+        Replay.displayPgnContent(pgn.pgn("checkmate", getAttri));
+        Replay.getPosition(getAttri, pair, "move", CAPTURE);
+      }
+    });
   }
-
-  calculateAttackSquare();
-
-  take = false;
-  pawnMove = false;
-
-  const kingEvent = new KingEvent();
-  const attack = kingEvent.isCheck()?.result;
-  const pgn = new PGN(getFilePosition, getRankPosition, overlapBlack, overlapWhite);
-  const pair = `${filePart}${rankPart}`;
-  console.log("attack: ", attack, captureResult);  
-  console.log("captured position: ", CAPTURE);
-  
-  if (captureResult && !attack){ // capture but not check
-    Replay.displayPgnContent(pgn.pgn("capture", getAttri));
-    Replay.getPosition(getAttri, pair, "capture", CAPTURE);
-
-  } else if (attack && captureResult === true) { // capture with check 
-    Replay.displayPgnContent(pgn.pgn("captureWithCheck")); 
-    Replay.getPosition(getAttri, pair, "move", CAPTURE);
-
-  } else if (attack && captureResult === undefined) { // only check
-    Replay.displayPgnContent(pgn.pgn("check"));
-    Replay.getPosition(getAttri, pair, "move", CAPTURE);
-
-  } else if (captureResult === undefined && !attack) { // just move 
-    Replay.displayPgnContent(pgn.pgn("", getAttri));
-    Replay.getPosition(getAttri, pair, "move", CAPTURE);
-  }
-}
-
-
-export function removeValidMove() {
-  // Remove existing highlighted squares
-  const getValidSquare = document.querySelectorAll(".valid-square");
-
-  // remove all valid square
-  getValidSquare.forEach(function (div) {
-    div.remove();
-  });
-
-  isSamePiece = ""; // set to default
 }

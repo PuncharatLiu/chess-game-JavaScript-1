@@ -18,10 +18,8 @@ export function calculateAttackSquare() {
   let whiteKingEscape = [];
   let blackPawnBlock = [];
   let whitePawnBlock = [];
-  let protectDirection = {
-    black: [],
-    white: [],
-  };
+  let blackProtectDirection = [];
+  let whiteProtectDirection = [];
 
   function pushSquare(direction, filePosition, rankPosition) {
     if (
@@ -66,6 +64,12 @@ export function calculateAttackSquare() {
       : whitePawnBlock.push(direction);
   }
 
+  function pushProtectDirection(direction) {
+    0 <= index && index <= 15
+      ? blackProtectDirection.push(direction)
+      : whiteProtectDirection.push(direction);
+  }
+
   function ifEmpty(atkDirec, pinDirec) {
     if (atkDirec.length === 1) {
       atkDirec.splice(0, atkDirec.length, ...pinDirec);
@@ -81,6 +85,15 @@ export function calculateAttackSquare() {
     [attackFile, attackRank] = allPosition[index].toString().split("");
     attackFile = parseInt(attackFile);
     attackRank = parseInt(attackRank);
+
+    function isKing(file, rank) {
+      const pair = `${file}${rank}`;
+      let kingPosition = turn === "white" ? overlapBlack[4] : overlapWhite[12];
+
+      if (pair === kingPosition) {
+        return true;
+      }
+    }
 
     // =============================== Rook move  =========================================== //
     if (
@@ -222,6 +235,7 @@ export function calculateAttackSquare() {
       // left move
       let L = ["L"];
       let PIN_L = ["L"];
+      let protect_L = ["L"];
       for (let i = 0; i <= attackFile + 1; i++) {
         const filePosition = attackFile - i;
         const rankPosition = attackRank;
@@ -256,6 +270,10 @@ export function calculateAttackSquare() {
           OP = false;
         }
 
+        if (isKing(filePosition, rankPosition)) {
+          pushProtectDirection([...PIN_L]);
+        }
+
         if (i === attackFile + 1) OP = true;
       }
       ifEmpty(L, PIN_L);
@@ -265,6 +283,7 @@ export function calculateAttackSquare() {
       // right move
       let R = ["R"];
       let PIN_R = ["R"];
+      let protect_R = ["R"];
       for (let i = 0; i <= 7 - attackFile + 1; i++) {
         const filePosition = attackFile + i;
         const rankPosition = attackRank;
@@ -297,6 +316,10 @@ export function calculateAttackSquare() {
         ) {
           R = [...PIN_R];
           OP = false;
+        }
+
+        if (isKing(filePosition, rankPosition)) {
+          pushProtectDirection([...PIN_R]);
         }
 
         if (i === 7 - attackFile + 1) OP = true;
@@ -343,6 +366,10 @@ export function calculateAttackSquare() {
           OP = false;
         }
 
+        if (isKing(filePosition, rankPosition)) {
+          pushProtectDirection([...PIN_U]);
+        }
+
         if (i === attackRank + 1) OP = true;
       }
       ifEmpty(U, PIN_U);
@@ -386,6 +413,11 @@ export function calculateAttackSquare() {
           D = [...PIN_D];
           OP = false;
         }
+
+        if (isKing(filePosition, rankPosition)) {
+          pushProtectDirection([...PIN_D]);
+        }
+
         if (i === 7 - attackRank + 1) OP = true;
       }
       ifEmpty(D, PIN_D);
@@ -400,6 +432,7 @@ export function calculateAttackSquare() {
       // up left diagonal
       let DUL = ["DUL"];
       let PIN_DUL = ["DUL"];
+      let prtect_DUL = ["DUL"];
       for (let i = 0; i <= attackFile + 1; i++) {
         const filePosition = attackFile - i;
         const rankPosition = attackRank - i;
@@ -433,6 +466,11 @@ export function calculateAttackSquare() {
           DUL = [...PIN_DUL];
           OP = false;
         }
+
+        if (isKing(filePosition, rankPosition)) {
+          pushProtectDirection([...PIN_DUL]);
+        }
+
         if (i === attackFile + 1) OP = true;
       }
       ifEmpty(DUL, PIN_DUL);
@@ -443,6 +481,7 @@ export function calculateAttackSquare() {
 
       let DUR = ["DUR"];
       let PIN_DUR = ["DUR"];
+      let protect_DUR = ["DUR"];
       for (let i = 0; i <= 7 - attackFile + 1; i++) {
         const filePosition = attackFile + i;
         const rankPosition = attackRank - i;
@@ -477,6 +516,10 @@ export function calculateAttackSquare() {
           OP = false;
         }
 
+        if (isKing(filePosition, rankPosition)) {
+          pushProtectDirection([...PIN_DUR]);
+        }
+
         if (i === 7 - attackFile + 1) OP = true;
       }
       ifEmpty(DUR, PIN_DUR);
@@ -485,6 +528,7 @@ export function calculateAttackSquare() {
 
       let DDL = ["DDL"];
       let PIN_DDL = ["DDL"];
+      let protect_DDL = [];
       // down left diagonal
       for (let i = 0; i <= attackFile + 1; i++) {
         const filePosition = attackFile - i;
@@ -520,6 +564,10 @@ export function calculateAttackSquare() {
           OP = false;
         }
 
+        if (isKing(filePosition, rankPosition)) {
+          pushProtectDirection([...PIN_DDL]);
+        }
+
         if (i === attackFile + 1) {
           OP = true;
         }
@@ -530,6 +578,7 @@ export function calculateAttackSquare() {
 
       let DDR = ["DDR"];
       let PIN_DDR = ["DDR"];
+      let protect_DDR = ["DDR"];
       // down right diagonal
       for (let i = 0; i <= 7 - attackFile + 1; i++) {
         const filePosition = attackFile + i;
@@ -565,6 +614,10 @@ export function calculateAttackSquare() {
           OP = false;
         }
 
+        if (isKing(filePosition, rankPosition)) {
+          pushProtectDirection([...PIN_DDR]);
+        }
+
         if (i === 7 - attackFile + 1) OP = true;
       }
       ifEmpty(DDR, PIN_DDR);
@@ -573,13 +626,13 @@ export function calculateAttackSquare() {
     }
   }
 
-  //console.log("bas: ", blackAttackSquare);
-  //console.log("was: ", whiteAttackSquare.flat());
+  console.log("bas: ", blackAttackSquare);
+  console.log("was: ", whiteAttackSquare);
   //console.log(overlapBlack, overlapWhite);
   // console.log("wp: ", whitePinDirection);
   // console.log("bp: ", blackPinDirection);
-  //console.log("kingEscape: ", blackKingEscape, whiteKingEscape);
-  //console.log("protect: ", protectDirection.black, protectDirection.white);
+  console.log("kingEscape: ", blackKingEscape, whiteKingEscape.flat());
+  console.log("protect: ", blackProtectDirection, whiteProtectDirection);
   //console.log("pawnBlock: ", blackPawnBlock, whitePawnBlock);
 
   return {
@@ -602,6 +655,10 @@ export function calculateAttackSquare() {
     pawnBlock: {
       black: blackPawnBlock,
       white: whitePawnBlock,
+    },
+    protectDirection: {
+      black: blackProtectDirection,
+      white: whiteProtectDirection,
     },
   };
 }

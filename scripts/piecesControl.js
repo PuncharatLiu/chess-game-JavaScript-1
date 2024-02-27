@@ -188,8 +188,8 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
         take,
         pawnMove,
       );
-      sendMoveToEngine(FEN, "player").then((bestMove) => {
-        Replay.displayPgnContent(pgn.pgn("checkmate"));
+      sendMoveToEngine(FEN, "player").then((moveCheck) => {
+        handleReplayEvent(moveCheck);
       });
     } else {
       let FEN = generateFen(
@@ -203,8 +203,8 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
         take,
         pawnMove,
       );
-      sendMoveToEngine(FEN, "engine").then((bestMove) => {
-        Replay.displayPgnContent(pgn.pgn("checkmate"));
+      sendMoveToEngine(FEN, "engine").then((moveCheck) => {
+        handleReplayEvent(moveCheck);
       });
     }
   } else {
@@ -220,46 +220,57 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
       pawnMove,
     );
 
-    sendMoveToEngine(FEN, "player").then((moveCheck) => {
-      calculateAttackSquare();
+    sendMoveToEngine(FEN, "player");
+  }
 
-      take = false;
-      pawnMove = false;
+  handleReplayEvent();
+  function handleReplayEvent() {
+    calculateAttackSquare();
 
-      const kingEvent = new KingEvent();
-      const attack = kingEvent.isCheck()?.result;
-      const pair = `${filePart}${rankPart}`;
+    take = false;
+    pawnMove = false;
 
-      if (captureResult && !attack) {
-        // capture but not check
-        Replay.displayPgnContent(pgn.pgn("capture", getAttri));
-        Replay.getPosition(getAttri, pair, "capture", CAPTURE);
-      } else if (attack && captureResult === true) {
-        // capture with checkmate
-        if (moveCheck === "checkmate") {
-          Replay.displayPgnContent(pgn.pgn("captureWithMate", getAttri));
-          Replay.getPosition(getAttri, pair, "capture", CAPTURE);
-          return;
-        }
-        // capture with check
-        Replay.displayPgnContent(pgn.pgn("captureWithCheck", getAttri));
-        Replay.getPosition(getAttri, pair, "capture", CAPTURE);
-      } else if (
-        attack &&
-        captureResult === undefined &&
-        moveCheck !== "checkmate"
-      ) {
-        // only check
-        Replay.displayPgnContent(pgn.pgn("check"));
-        Replay.getPosition(getAttri, pair, "move", CAPTURE);
-      } else if (captureResult === undefined && !attack) {
-        // just move
-        Replay.displayPgnContent(pgn.pgn("", getAttri));
-        Replay.getPosition(getAttri, pair, "move", CAPTURE);
-      } else if (moveCheck === "checkmate") {
-        Replay.displayPgnContent(pgn.pgn("checkmate", getAttri));
-        Replay.getPosition(getAttri, pair, "move", CAPTURE);
+    const kingEvent = new KingEvent();
+    const attack = kingEvent.isCheck()?.result;
+    const pair = `${filePart}${rankPart}`;
+
+    if (attack) {
+      if (kingEvent.isCheckmate()) {
+        moveCheck = "checkmate";
+        console.log("checkmate!!!!!!!!!!");
+        alert("Game Over");
       }
-    });
+    }
+
+    if (captureResult && !attack) {
+      // capture but not check
+      Replay.displayPgnContent(pgn.pgn("capture", getAttri));
+      Replay.getPosition(getAttri, pair, "capture", CAPTURE);
+    } else if (attack && captureResult === true) {
+      // capture with checkmate
+      if (moveCheck === "checkmate") {
+        Replay.displayPgnContent(pgn.pgn("captureWithMate", getAttri));
+        Replay.getPosition(getAttri, pair, "capture", CAPTURE);
+        return;
+      }
+      // capture with check
+      Replay.displayPgnContent(pgn.pgn("captureWithCheck", getAttri));
+      Replay.getPosition(getAttri, pair, "capture", CAPTURE);
+    } else if (
+      attack &&
+      captureResult === undefined &&
+      moveCheck !== "checkmate"
+    ) {
+      // only check
+      Replay.displayPgnContent(pgn.pgn("check"));
+      Replay.getPosition(getAttri, pair, "move", CAPTURE);
+    } else if (captureResult === undefined && !attack) {
+      // just move
+      Replay.displayPgnContent(pgn.pgn("", getAttri));
+      Replay.getPosition(getAttri, pair, "move", CAPTURE);
+    } else if (moveCheck === "checkmate") {
+      Replay.displayPgnContent(pgn.pgn("checkmate", getAttri));
+      Replay.getPosition(getAttri, pair, "move", CAPTURE);
+    }
   }
 }

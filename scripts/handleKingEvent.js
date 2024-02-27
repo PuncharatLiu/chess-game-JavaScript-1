@@ -120,5 +120,54 @@ class KingEvent {
     }
     return false;
   }
+
+  isCheckmate() {
+    const opponentAtkDirections =
+      this.direction.attackDirection[this.opponentDirection];
+    const selfAtkDirections = this.direction.attackDirection[turn];
+    const protectDirections =
+      this.direction.protectDirection[this.opponentDirection];
+    const kingEscapes = this.direction.kingEscape[turn].flat();
+
+    console.log(
+      "kingProtect: ",
+      this.direction.protectDirection[this.opponentDirection],
+    );
+    let countKingEscape = 0;
+
+    for (const opDirection of opponentAtkDirections) {
+      for (const kingEscape of kingEscapes) {
+        if (opDirection.slice(2).includes(kingEscape)) {
+          countKingEscape++;
+          console.log("countKingEscape: ", countKingEscape);
+        }
+      }
+    }
+
+    for (const selfDirection of selfAtkDirections) {
+      for (const protectDirection of protectDirections) {
+        for (const protectSquare of protectDirection.slice(1)) {
+          if (
+            !selfDirection.includes("PAWN") &&
+            selfDirection.includes(protectSquare) &&
+            protectSquare !== this.kingPosition
+          ) {
+            console.log(
+              "Not mate there's piece block!: ",
+              selfDirection,
+              protectSquare,
+            );
+            return false;
+          }
+        }
+      }
+    }
+
+    if (countKingEscape === kingEscapes.length) {
+      console.log("No escape square");
+      return true;
+    }
+    return false;
+  }
 }
 export default KingEvent;

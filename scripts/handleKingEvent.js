@@ -128,7 +128,7 @@ class KingEvent {
     const protectDirections =
       this.direction.protectDirection[this.opponentDirection];
     const kingEscapes = this.direction.kingEscape[turn].flat();
-
+    const pawnBlock = this.direction.pawnBlock[turn].flat();
     console.log(
       "kingProtect: ",
       this.direction.protectDirection[this.opponentDirection],
@@ -158,6 +158,13 @@ class KingEvent {
               protectSquare,
             );
             return false;
+          } else {
+            for (const pawnBlockSquare of pawnBlock) {
+              if (protectDirection.includes(pawnBlockSquare)) {
+                console.log("Not mate pawn can block!!!");
+                return false;
+              }
+            }
           }
         }
       }

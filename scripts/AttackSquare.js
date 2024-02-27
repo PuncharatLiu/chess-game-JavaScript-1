@@ -633,7 +633,7 @@ export function calculateAttackSquare() {
   // console.log("bp: ", blackPinDirection);
   console.log("kingEscape: ", blackKingEscape, whiteKingEscape.flat());
   console.log("protect: ", blackProtectDirection, whiteProtectDirection);
-  //console.log("pawnBlock: ", blackPawnBlock, whitePawnBlock);
+  console.log("pawnBlock: ", blackPawnBlock.flat(), whitePawnBlock.flat());
 
   return {
     attackDirection: {

@@ -7,6 +7,7 @@ class KingEvent {
     this.direction = calculateAttackSquare();
     this.opponentDirection = turn === "white" ? "black" : "white";
     this.kingPosition = turn === "white" ? overlapWhite[12] : overlapBlack[4];
+    this.opOverlap = turn === "white" ? overlapBlack : overlapWhite;
   }
 
   isCheck() {
@@ -158,6 +159,13 @@ class KingEvent {
               protectSquare,
             );
             return false;
+          } else if (selfDirection.includes("PAWN")) {
+            for (const pawnAtkSquare of selfDirection) {
+              if (this.opOverlap.includes(pawnAtkSquare)) {
+                console.log("Not mate pawn can capture!");
+                return false;
+              }
+            }
           } else {
             for (const pawnBlockSquare of pawnBlock) {
               if (protectDirection.includes(pawnBlockSquare)) {

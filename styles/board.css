@@ -155,6 +155,7 @@ body {
   background-color: #262521;
   width: 350px;
   height: 600px;
+  overflow-y: auto;
 }
 
 .move-pair-wrap {
@@ -193,4 +194,3 @@ body {
 .move-pair-highlight {
   background-color: #2a4053;
 }
-

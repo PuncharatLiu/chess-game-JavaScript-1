@@ -72,6 +72,9 @@ function createReplayComponent() {
   pgnPairWrap.appendChild(pgnPairIndex);
   pgnPairWrap.appendChild(pgnLeft);
   pgnPairWrap.appendChild(pgnRight);
+
+  const MOVE_CONTROL = document.querySelector(".move-control");
+  MOVE_CONTROL.scrollTop = MOVE_CONTROL.scrollHeight;
 }
 
 function getPisition(fromPosition, toPosition, event, CAPTURE) {

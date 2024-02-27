@@ -12,14 +12,24 @@ let position;
 
 const prevBtn = document.querySelector(".prev-btn");
 const nextBtn = document.querySelector(".next-btn");
+const firstBtn = document.querySelector(".first-btn");
+const lastBtn = document.querySelector(".last-btn");
 prevBtn.addEventListener("click", previous);
 nextBtn.addEventListener("click", next);
+firstBtn.addEventListener("click", first);
+lastBtn.addEventListener("click", last);
 
 document.addEventListener("keydown", function (event) {
+  event.preventDefault();
+
   if (event.key === "ArrowLeft") {
     previous();
   } else if (event.key === "ArrowRight") {
     next();
+  } else if (event.key === "ArrowUp") {
+    first();
+  } else if (event.key === "ArrowDown") {
+    last();
   }
 });
 
@@ -78,6 +88,16 @@ function previous() {
 function next() {
   replay("NEXT");
 }
+function first() {
+  for (let i = 0; i < pgnList.length; i++) {
+    previous();
+  }
+}
+function last() {
+  for (let i = 0; i < pgnList.length; i++) {
+    next();
+  }
+}
 
 function replay(replayType) {
   if (replayType === "PREV" && currentMove !== 0) {
@@ -88,6 +108,10 @@ function replay(replayType) {
     currentMove++;
     const getEvent = moveList[currentMove][1][0];
     changePosition(replayType, getEvent);
+  } else if (replayType === "FIRST") {
+    changePosition(replayType);
+  } else if (replayType === "LAST") {
+    changePosition(replayType);
   }
 }
 

@@ -95,7 +95,7 @@ class PGN {
             "x" +
             this.pgnFile(this.file) +
             this.pgnRank(this.rank) +
-            "+"
+            "#"
           );
         }
       default:

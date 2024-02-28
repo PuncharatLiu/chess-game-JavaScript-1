@@ -1,11 +1,11 @@
-import { TAKE, turn } from "./piecesControl.js";
+import { TAKE, turn } from "../move-control/piecesControl.js";
 import {
   overlapBlack,
   overlapWhite,
   changeDefualtPosition,
-} from "./position.js";
-import { pieces } from "./pieces.js";
-import PGN from "./PGN.js";
+} from "../position/position.js";
+import { pieces } from "../pieces/pieces.js";
+import PGN from "../notation/PGN.js";
 
 export function capture(getFilePosition, getRankPosition, filePart, rankPart) {
   const storeFR = filePart + rankPart;

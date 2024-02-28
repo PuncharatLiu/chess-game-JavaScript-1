@@ -1,14 +1,14 @@
-import { handleEnPosition } from "./enPassant.js";
-import { pieces } from "./pieces.js";
-import { validSquare } from "./handleValidMove.js";
-import { capture } from "./capture.js";
-import { calculateAttackSquare } from "./AttackSquare.js";
-import KingEvent from "./handleKingEvent.js";
-import { generateFen } from "./generateFen.js";
-import { sendMoveToEngine } from "./main.js";
-import PGN from "./PGN.js";
-import Replay from "./game-control-panel/move-replay.js";
-import { overlapBlack, overlapWhite } from "./position.js";
+import { handleEnPosition } from "../rule/enPassant.js";
+import { pieces } from "../pieces/pieces.js";
+import { validSquare } from "../rule/handleValidMove.js";
+import { capture } from "../rule/capture.js";
+import { calculateAttackSquare } from "../rule/AttackSquare.js";
+import KingEvent from "../rule/handleKingEvent.js";
+import { generateFen } from "../notation/generateFen.js";
+import { sendMoveToEngine } from "../mode/main.js";
+import PGN from "../notation/PGN.js";
+import Replay from "../game-control-panel/move-replay.js";
+import { overlapBlack, overlapWhite } from "../position/position.js";
 
 export let take = false;
 export let pawnMove = false;

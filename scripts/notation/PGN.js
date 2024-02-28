@@ -1,6 +1,6 @@
-import { Is } from "./pieces.js";
-import { getPieceId } from "./piecesControl.js";
-import KingEvent from "./handleKingEvent.js";
+import { Is } from "../pieces/pieces.js";
+import { getPieceId } from "../move-control/piecesControl.js";
+import KingEvent from "../rule/handleKingEvent.js";
 
 class PGN {
   constructor(file, rank, overlapBlack, overlapWhite) {

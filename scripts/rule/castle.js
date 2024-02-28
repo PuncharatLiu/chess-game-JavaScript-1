@@ -1,16 +1,10 @@
-import { removeValidMove, turn } from "./piecesControl.js";
-import { pieces } from "./pieces.js";
-import { getCurrentPosition } from "./position.js";
-import { playWithEngine } from "./piecesControl.js";
-import { SWITCH_TURN } from "./piecesControl.js";
-import { overlapBlack, overlapWhite } from "./position.js";
-import { clearPosition } from "./position.js";
-import { overlap } from "./position.js";
-import { playerSide } from "./piecesControl.js";
-import { generateFen } from "./generateFen.js";
-import { sendMoveToEngine } from "./main.js";
-import Replay from "./game-control-panel/move-replay.js";
-import PGN from "./PGN.js";
+import { removeValidMove, turn, playWithEngine, SWITCH_TURN, playerSide } from "../move-control/piecesControl.js";
+import { pieces } from "../pieces/pieces.js";
+import { getCurrentPosition, overlapBlack, overlapWhite, clearPosition, overlap } from "../position/position.js";
+import { generateFen } from "../notation/generateFen.js";
+import { sendMoveToEngine } from "../mode/main.js";
+import Replay from "../game-control-panel/move-replay.js";
+import PGN from "../notation/PGN.js";
 
 export let isWhiteCastle = false;
 export let isBlackCastle = false;

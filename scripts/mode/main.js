@@ -1,11 +1,10 @@
-import { initializeBoard } from "./initBoard.js";
-import { getCurrentPosition } from "./position.js";
-import { calculateAttackSquare } from "./AttackSquare.js";
+import { initializeBoard } from "../board/initBoard.js";
+import { getCurrentPosition } from "../position/position.js";
+import { calculateAttackSquare } from "../rule/AttackSquare.js";
 
-import { handleEngineResponse } from "./handleEngineResponse.js";
-import { playWithEngine } from "./piecesControl.js";
-import { shortCastle, longCastle } from "./castle.js";
-import { invertTurn } from "./piecesControl.js";
+import { handleEngineResponse } from "../engine/handleEngineResponse.js";
+import { playWithEngine, invertTurn } from "../move-control/piecesControl.js";
+import { shortCastle, longCastle } from "../rule/castle.js";
 
 initializeBoard();
 getCurrentPosition();

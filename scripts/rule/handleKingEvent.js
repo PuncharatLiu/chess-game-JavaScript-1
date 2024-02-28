@@ -1,6 +1,6 @@
-import { calculateAttackSquare } from "./AttackSquare.js";
-import { turn } from "./piecesControl.js";
-import { overlapBlack, overlapWhite } from "./position.js";
+import { calculateAttackSquare } from "../rule/AttackSquare.js";
+import { turn } from "../move-control/piecesControl.js";
+import { overlapBlack, overlapWhite } from "../position/position.js";
 
 class KingEvent {
   constructor(/*overlapBlack, overlapWhite*/) {

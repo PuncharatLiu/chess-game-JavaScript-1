@@ -1,8 +1,8 @@
-import { calculateAttackSquare } from "../AttackSquare.js";
-import { getCurrentPosition } from "../position.js";
-import { turn, SWITCH_TURN } from "../piecesControl.js";
-import { pieces } from "../pieces.js";
-import { overlapBlack, overlapWhite } from "../position.js";
+import { calculateAttackSquare } from "../rule/AttackSquare.js";
+import { getCurrentPosition, overlapBlack, overlapWhite } from "../position/position.js";
+import { turn, SWITCH_TURN } from "../move-control/piecesControl.js";
+import { pieces } from "../pieces/pieces.js";
+
 
 let pgnList = [];
 let pgnLeft, pgnRight, pgnPairIndex;

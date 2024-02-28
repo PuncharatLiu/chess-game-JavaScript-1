@@ -1,8 +1,10 @@
-import { pieces } from "./pieces.js";
-import { handleClick } from "./piecesControl.js";
+import { pieces } from "../pieces/pieces.js";
+import { handleClick } from "../move-control/piecesControl.js";
+
+// initializeBoard();
 
 let i = 0;
-
+// initializeBoard();
 export function initializeBoard() {
   pieces.forEach(renderPiece);
 
@@ -33,4 +35,3 @@ export function initializeBoard() {
     i++;
   }
 }
-

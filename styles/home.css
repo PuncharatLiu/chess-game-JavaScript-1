@@ -1,0 +1,31 @@
+body {
+  background-color: #161512;
+  font-size: 1.5rem;
+  color: #bababa;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-family: Arial, Helvetica, sans-serif;
+  height: 100vh;
+}
+
+.mode-wrap {
+  background-color: #262521;
+  width: 600px;
+  height: 400px;
+  display: flex;
+  flex-direction: column; /* Stack items vertically */
+  align-items: center; /* Center items horizontally */
+  justify-content: center;
+}
+
+.mode {
+  background-color: #383630;
+  width: 500px;
+  height: 80px;
+  margin-top: 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 5px;
+}

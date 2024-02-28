@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>chess</title>
+    <link rel="stylesheet" href="/styles/board.css" />
+    <link rel="stylesheet" href="/styles/move-control-panel.css" />
+  </head>
+  <body>
+    <div class="main">
+      <div class="chess-board-wrap">
+        <div id="chess-board" class="chess-board"></div>
+      </div>
+
+      <!-- control window -->
+      <div class="move-control-panel-wrap">
+        <div class="clock-top">
+          <div class="time">00:00</div>
+        </div>
+
+        <div class="move-control">
+          <div class="move-replay-wrap"></div>          
+        </div>
+        <div class="control-btn">
+          <div class="first-btn"><<</div>
+          <div class="prev-btn"><</div>
+          <div class="next-btn">></div>
+          <div class="last-btn">>></div>
+        </div>
+
+        <div class="clock-bottom">
+          <div class="time">00:00</div>
+        </div>
+      </div>
+    </div>
+
+    <script type="module" src="/scripts/main.js"></script>
+    <script type="module" src="/scripts/game-control-panel/move-replay.js"></script>
+  </body>
+</html>

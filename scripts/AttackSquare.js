@@ -626,14 +626,14 @@ export function calculateAttackSquare() {
     }
   }
 
-  console.log("bas: ", blackAttackSquare);
-  console.log("was: ", whiteAttackSquare);
+  //console.log("bas: ", blackAttackSquare);
+  //console.log("was: ", whiteAttackSquare);
   //console.log(overlapBlack, overlapWhite);
   // console.log("wp: ", whitePinDirection);
   // console.log("bp: ", blackPinDirection);
-  console.log("kingEscape: ", blackKingEscape, whiteKingEscape.flat());
-  console.log("protect: ", blackProtectDirection, whiteProtectDirection);
-  console.log("pawnBlock: ", blackPawnBlock.flat(), whitePawnBlock.flat());
+  //console.log("kingEscape: ", blackKingEscape, whiteKingEscape.flat());
+  //console.log("protect: ", blackProtectDirection, whiteProtectDirection);
+  //console.log("pawnBlock: ", blackPawnBlock.flat(), whitePawnBlock.flat());
 
   return {
     attackDirection: {

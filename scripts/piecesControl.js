@@ -188,9 +188,7 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
         take,
         pawnMove,
       );
-      sendMoveToEngine(FEN, "player").then((moveCheck) => {
-        handleReplayEvent(moveCheck);
-      });
+      sendMoveToEngine(FEN, "player");
     } else {
       let FEN = generateFen(
         getFile,
@@ -203,9 +201,7 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
         take,
         pawnMove,
       );
-      sendMoveToEngine(FEN, "engine").then((moveCheck) => {
-        handleReplayEvent(moveCheck);
-      });
+      sendMoveToEngine(FEN, "engine");
     }
   } else {
     let FEN = generateFen(

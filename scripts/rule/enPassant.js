@@ -3,7 +3,7 @@ import {
   getFile,
   getRank,
   getRankPosition,
-} from "../move-control/piecesControl.js";
+} from "../modules/index.js";
 
 export function handleEnPosition() {
   const checkForEnPosition = () => {

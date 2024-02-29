@@ -1,5 +1,12 @@
-import { overlapBlack, overlapWhite, whitePieceIndex, blackPieceIndex, getCurrentPosition } from "../position/position.js";
-import { isSelfPiece, isOpponentPiece } from "../pieces/pieces.js";
+import {
+  overlapBlack,
+  overlapWhite, 
+  whitePieceIndex, 
+  blackPieceIndex, 
+  getCurrentPosition, 
+  isSelfPiece, 
+  isOpponentPiece
+} from "../modules/index.js";
 
 export function calculateAttackSquare() {
   let pieceAttackId, attackFile, attackRank;

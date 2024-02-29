@@ -1,14 +1,22 @@
-import { Is, isSelfPiece, isOpponentPiece, pieces } from "../pieces/pieces.js";
-import { overlapBlack, overlapWhite, getCurrentPosition } from "../position/position.js";
-import { pawnMove, changePosition } from "../move-control/piecesControl.js";
 import {
+  Is,
+  isSelfPiece,
+  isOpponentPiece,
+  pieces,
+  overlapBlack,
+  overlapWhite,
+  getCurrentPosition,
+  pawnMove,
+  changePosition,
   shortCastleSquare,
   longCastlesquare,
   isBlackCastle,
   isWhiteCastle,
-} from "../rule/castle.js";
-import { enPassantState, handleEnPosition, enPassant } from "../rule/enPassant.js";
-import KingEvent from "../rule/handleKingEvent.js";
+  enPassantState,
+  handleEnPosition,
+  enPassant,
+  KingEvent
+} from "../modules/index.js";
 
 export function validSquare(
   getPieceId,

@@ -1,5 +1,7 @@
-import { handleClick } from "../move-control/piecesControl.js";   
-import { checkCastleEvenForEngine } from "../mode/main.js";
+import { 
+  handleClick, 
+  checkCastleEvenForEngine
+ } from "../modules/index.js";   
 
 export function handleEngineResponse (bestMove) {
    engineResponse();

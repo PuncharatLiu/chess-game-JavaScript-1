@@ -1,5 +1,4 @@
-import { pieces } from "../pieces/pieces.js";
-import { getPieceId } from "../move-control/piecesControl.js";
+import { pieces, getPieceId } from "../modules/index.js";
 
 export let overlapBlack = [];
 export let overlapWhite = [];

@@ -1,8 +1,17 @@
-import { calculateAttackSquare } from "../rule/AttackSquare.js";
-import { getCurrentPosition, overlapBlack, overlapWhite } from "../position/position.js";
-import { turn, SWITCH_TURN } from "../move-control/piecesControl.js";
-import { pieces } from "../pieces/pieces.js";
+// import { calculateAttackSquare } from "../rule/AttackSquare.js";
+// import { getCurrentPosition, overlapBlack, overlapWhite } from "../position/position.js";
+// import { turn, SWITCH_TURN } from "../move-control/piecesControl.js";
+// import { pieces } from "../pieces/pieces.js";
 
+import {
+  calculateAttackSquare,
+  getCurrentPosition,
+  overlapBlack,
+  overlapWhite,
+  turn,
+  SWITCH_TURN,
+  pieces
+} from "../modules/index.js"
 
 let pgnList = [];
 let pgnLeft, pgnRight, pgnPairIndex;
@@ -312,4 +321,4 @@ const Replay = {
   getPosition: getPisition,
 };
 
-export default Replay;
+export {Replay};

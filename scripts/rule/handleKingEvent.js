@@ -1,8 +1,11 @@
-import { calculateAttackSquare } from "../rule/AttackSquare.js";
-import { turn } from "../move-control/piecesControl.js";
-import { overlapBlack, overlapWhite } from "../position/position.js";
+import {
+  calculateAttackSquare,
+  turn,
+  overlapBlack,
+  overlapWhite
+} from "../modules/index.js";
 
-class KingEvent {
+export class KingEvent {
   constructor(/*overlapBlack, overlapWhite*/) {
     this.direction = calculateAttackSquare();
     this.opponentDirection = turn === "white" ? "black" : "white";
@@ -185,4 +188,4 @@ class KingEvent {
     return false;
   }
 }
-export default KingEvent;
+// export default KingEvent;

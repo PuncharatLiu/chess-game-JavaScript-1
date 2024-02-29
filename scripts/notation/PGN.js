@@ -1,8 +1,14 @@
-import { Is } from "../pieces/pieces.js";
-import { getPieceId } from "../move-control/piecesControl.js";
-import KingEvent from "../rule/handleKingEvent.js";
+// import { Is } from "../pieces/pieces.js";
+// import { getPieceId } from "../move-control/piecesControl.js";
+// import KingEvent from "../rule/handleKingEvent.js";
 
-class PGN {
+import {
+  Is,
+  getPieceId,
+  KingEvent
+} from "../modules/index.js"
+
+export class PGN {
   constructor(file, rank, overlapBlack, overlapWhite) {
     this.file = file;
     this.rank = rank;
@@ -174,4 +180,4 @@ class PGN {
   }
 }
 
-export default PGN;
+// export default PGN;

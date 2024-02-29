@@ -1,10 +1,6 @@
-import { pieces } from "../pieces/pieces.js";
-import { handleClick } from "../move-control/piecesControl.js";
-
-// initializeBoard();
+import { pieces, handleClick } from "../modules/index.js";
 
 let i = 0;
-// initializeBoard();
 export function initializeBoard() {
   pieces.forEach(renderPiece);
 

@@ -1,7 +1,3 @@
-// import { Is } from "../pieces/pieces.js";
-// import { getPieceId } from "../move-control/piecesControl.js";
-// import KingEvent from "../rule/handleKingEvent.js";
-
 import {
   Is,
   getPieceId,

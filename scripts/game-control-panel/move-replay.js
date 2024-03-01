@@ -1,15 +1,10 @@
-// import { calculateAttackSquare } from "../rule/AttackSquare.js";
-// import { getCurrentPosition, overlapBlack, overlapWhite } from "../position/position.js";
-// import { turn, SWITCH_TURN } from "../move-control/piecesControl.js";
-// import { pieces } from "../pieces/pieces.js";
-
 import {
   calculateAttackSquare,
   getCurrentPosition,
   overlapBlack,
   overlapWhite,
   turn,
-  SWITCH_TURN,
+  setTurn,
   pieces
 } from "../modules/index.js"
 
@@ -159,7 +154,7 @@ function changePosition(replayType, event) {
         rookElement.setAttribute("position", "70");
       }
 
-      SWITCH_TURN(turn);
+      setTurn(turn);
       getCurrentPosition();
       calculateAttackSquare();
       return;
@@ -190,7 +185,7 @@ function changePosition(replayType, event) {
         rookElement.setAttribute("position", "00");
       }
 
-      SWITCH_TURN(turn);
+      setTurn(turn);
       getCurrentPosition();
       calculateAttackSquare();
       return;
@@ -248,7 +243,7 @@ function changePosition(replayType, event) {
         rookElement.setAttribute("position", "50");
       }
 
-      SWITCH_TURN(turn);
+      setTurn(turn);
       getCurrentPosition();
       calculateAttackSquare();
       return;
@@ -279,7 +274,7 @@ function changePosition(replayType, event) {
         rookElement.setAttribute("position", "30");
       }
 
-      SWITCH_TURN(turn);
+      setTurn(turn);
       getCurrentPosition();
       calculateAttackSquare();
       return;
@@ -311,7 +306,7 @@ function changePosition(replayType, event) {
     }
   }
 
-  SWITCH_TURN(turn);
+  setTurn(turn);
   getCurrentPosition();
   calculateAttackSquare();
 }

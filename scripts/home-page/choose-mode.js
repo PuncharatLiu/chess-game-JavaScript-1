@@ -1,22 +1,23 @@
-let mode;
+const pwcBtn = document.getElementById("pwc");
+const pwfBtn = document.getElementById("pwf");
+const paBtn = document.getElementById("pa");
 
-const pwc = document.getElementById("pwc");
+pwcBtn.addEventListener("click", pwc);
 
-const pwf = document.getElementById("pwf");
+pwfBtn.addEventListener("click", pwf);
 
-const pb = document.getElementById("pb");
+paBtn.addEventListener("click", pa);
 
-pwc.addEventListener("click", function () {
-  window.location.href = "./html/play.html";
-  mode = true;
-});
+function pwc(){
+  // localStorage.setItem("mode", "pwc");
+  window.location.href = "./html/pwc.html?mode=pwc";
+}
 
-pwf.addEventListener("click", function () {
-  window.location.href = "./html/play.html";
-  mode = true;
-});
+function pwf(){
+  // localStorage.setItem("mode", "pwf");
+  window.location.href = "./html/pwc.html?mode=pwf";
+}
 
-pb.addEventListener("click", function () {
-  window.location.href = "./html/play.html";
-  mode = true;
-});
+function pa(){
+  window.location.href = "./html/pa.html?mode=pa";
+}

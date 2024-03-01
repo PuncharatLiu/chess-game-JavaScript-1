@@ -1,15 +1,3 @@
-// import { handleEnPosition } from "../rule/enPassant.js";
-// import { pieces } from "../pieces/pieces.js";
-// import { validSquare } from "../rule/handleValidMove.js";
-// import { capture } from "../rule/capture.js";
-// import { calculateAttackSquare } from "../rule/AttackSquare.js";
-// import KingEvent from "../rule/handleKingEvent.js";
-// import { generateFen } from "../notation/generateFen.js";
-// import { sendMoveToEngine } from "../engine/engine-move.js";
-// import PGN from "../notation/PGN.js";
-// import Replay from "../game-control-panel/move-replay.js";
-// import { overlapBlack, overlapWhite } from "../position/position.js";
-
 import {
   handleEnPosition,
   pieces,
@@ -25,42 +13,47 @@ import {
   overlapWhite
 } from "../modules/index.js";
 
-export let take = false;
-export let pawnMove = false;
-export let getPieceId;
-export let getFile;
-export let getRank;
+import {
+  turn,
+  take,
+  pawnMove,
+  getPieceId,
+  getFile,
+  getRank,
+  playWithEngine,
+  setTurn,
+  setTake,
+  setPawnMove,
+  setPieceId,
+  setFile,
+  setRank,
+  playerSide,
+  mode,
+  checkMode
+} from "../modules/index.js";
+
+// const urlParams = new URLSearchParams(window.location.search);
+// const mode = urlParams.get("mode");
+
+checkMode();
+
 let getPiece, pieceIdBackup;
 let isSamePiece = "";
-export let turn = "white";
 let playerTurn;
-export let invertTurn;
-invertTurn = turn === "white" ? (invertTurn = "black") : (invertTurn = "white");
-let storeFR;
-export let playWithEngine = false;
+let hasRun = false;
 
-export function removeValidMove() {
-  // Remove existing highlighted squares
+export function removeValidMove() {  
   const getValidSquare = document.querySelectorAll(".valid-square");
-
-  // remove all valid square
   getValidSquare.forEach(function (div) {
     div.remove();
   });
-
   isSamePiece = ""; // set to default
 }
 
-export function TAKE(bool) {
-  return (take = bool);
-}
-
-export function SWITCH_TURN(color) {
-  turn = color === "white" ? "black" : "white";
-}
-
-export function playerSide() {
-  return turn === "white";
+if (!playerSide() && !hasRun && mode === "pwc"){
+  const startFEN = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+  sendMoveToEngine(startFEN, "player");
+  hasRun = true;
 }
 
 export function handleClick(event, squareToGoFromEngine) {
@@ -91,9 +84,9 @@ export function handleClick(event, squareToGoFromEngine) {
 function handlePlay(event, squareToGoFromEngine) {
   removeValidMove();
   if (playWithEngine) {
-    if (playerSide()) getPieceId = event.target.id;
-    else getPieceId = event.id;
-  } else getPieceId = event.target.id;
+    if (playerSide()) setPieceId(event.target.id);    
+    else setPieceId(event.id);
+  } else setPieceId(event.target.id);
 
   getPiece = document.getElementById(getPieceId);
 
@@ -101,8 +94,11 @@ function handlePlay(event, squareToGoFromEngine) {
   let selectedPiece = pieces[getPieceId];
 
   // get file and column
-  getFile = selectedPiece.position.file;
-  getRank = selectedPiece.position.rank;
+  // getFile = selectedPiece.position.file;
+  // getRank = selectedPiece.position.rank;
+
+  setFile(selectedPiece.position.file);
+  setRank(selectedPiece.position.rank);
 
   // generate and calculate valid square
   validSquare(getPieceId, undefined, turn, getFile, getRank, pawnMove);
@@ -117,7 +113,7 @@ function handlePlay(event, squareToGoFromEngine) {
 }
 
 let getValidSquareID;
-export let getFilePosition;
+let getFilePosition;
 export let getRankPosition;
 
 export function changePosition(twoSquare, squareToGoFromEngine) {
@@ -188,7 +184,8 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
   let keepTurn = turn;
   let moveCheck;
 
-  turn === "white" ? (turn = "black") : (turn = "white"); // change player turn
+  // turn === "white" ? (turn = "black") : (turn = "white"); // change player turn
+  setTurn (turn);
 
   if (playWithEngine) {
     if (!playerSide()) {
@@ -238,8 +235,10 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
   function handleReplayEvent() {
     calculateAttackSquare();
 
-    take = false;
-    pawnMove = false;
+    // take = false;
+    setTake(false);
+    setPawnMove(false);
+    // pawnMove = false;
 
     const kingEvent = new KingEvent();
     const attack = kingEvent.isCheck()?.result;
@@ -247,8 +246,7 @@ export function changePosition(twoSquare, squareToGoFromEngine) {
 
     if (attack) {
       if (kingEvent.isCheckmate()) {
-        moveCheck = "checkmate";
-        console.log("checkmate!!!!!!!!!!");
+        moveCheck = "checkmate";        
         alert("Game Over");
       }
     }

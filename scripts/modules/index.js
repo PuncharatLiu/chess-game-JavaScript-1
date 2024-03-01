@@ -1,5 +1,5 @@
 // Board modules
-export * from "../board/initBoard.js"
+export * from "../board/board.js"
 
 // Rule modules
 export * from "../rule/AttackSquare.js";
@@ -24,10 +24,12 @@ export * from "../engine/engine-move.js";
 export * from "../engine/handleEngineResponse.js";
 
 // Mode modules
-export * from "../mode/main.js";
+export * from "../mode/pwc-main.js";
 
-// move-control modules
-export * from "../move-control/piecesControl.js";
+// pieces-control and game state modules
+export * from "../piece-control/game-state.js";
+export * from "../piece-control/piece-control.js"
 
 // replay control panel modules
 export * from "../game-control-panel/move-replay.js";
+export * from "../mode/handle-mode.js";

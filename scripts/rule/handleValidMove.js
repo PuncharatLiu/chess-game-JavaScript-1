@@ -15,7 +15,8 @@ import {
   enPassantState,
   handleEnPosition,
   enPassant,
-  KingEvent
+  KingEvent,
+  playWithEngine,
 } from "../modules/index.js";
 
 export function validSquare(
@@ -85,7 +86,11 @@ export function validSquare(
     validSquare.className = "valid-square";
     validSquare.id = `${filePosition} ${rankPosition}`;
     validSquare.addEventListener("click", function () {
-      changePosition(twoSquare);
+      if (playWithEngine) {
+        changePosition(twoSquare);  
+      } else {
+        changePosition(twoSquare);
+      }
     });
 
     if (inEnState) {

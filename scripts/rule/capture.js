@@ -1,14 +1,5 @@
-// import { TAKE, turn } from "../move-control/piecesControl.js";
-// import {
-//   overlapBlack,
-//   overlapWhite,
-//   changeDefualtPosition,
-// } from "../position/position.js";
-// import { pieces } from "../pieces/pieces.js";
-// import PGN from "../notation/PGN.js";
-
 import {
-  TAKE,
+  setTake,
   turn,
   overlapBlack,
   overlapWhite,
@@ -43,7 +34,7 @@ export function capture(getFilePosition, getRankPosition, filePart, rankPart) {
           filePart,
           rankPart,
         );
-        TAKE(true);
+        setTake(true);
         return true;
       }
     }
@@ -70,7 +61,7 @@ export function capture(getFilePosition, getRankPosition, filePart, rankPart) {
         );
 
         // take = true;
-        TAKE(true);
+        setTake(true);
         //pgn.capture(true);
 
         return true;

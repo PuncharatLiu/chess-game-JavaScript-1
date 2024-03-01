@@ -1,5 +1,6 @@
 import { pieces, handleClick } from "../modules/index.js";
 
+// handleClick
 let i = 0;
 export function initializeBoard() {
   pieces.forEach(renderPiece);
@@ -22,8 +23,8 @@ export function initializeBoard() {
 
     chessPiece.id = i; // set id
 
-    // set eventlistenner.
-    chessPiece.addEventListener("click", handleClick);
+    // set eventlistenner.        
+    chessPiece.addEventListener("click", handleClick);  
 
     // add to wrap "chess-Board"
     chessBoard.appendChild(chessPiece);

@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>chess</title>
+    <title>analysis board</title>
     <link rel="stylesheet" href="/styles/board.css" />
   </head>
   <body>
@@ -13,11 +13,8 @@
       </div>
 
       <!-- control window -->
-      <div class="move-control-panel-wrap">
-        <div class="clock-top">
-          <div class="time">00:00</div>
+      <div class="move-control-panel-wrap">                  
         </div>
-
         <div class="move-control">
           <div class="move-replay-wrap"></div>
         </div>
@@ -26,18 +23,11 @@
           <div class="prev-btn"><</div>
           <div class="next-btn">></div>
           <div class="last-btn">>></div>
-        </div>
-
-        <div class="clock-bottom">
-          <div class="time">00:00</div>
+        </div>        
         </div>
       </div>
     </div>
 
-    <script type="module" src="/scripts/mode/main.js"></script>
-    <!-- <script
-      type="module"
-      src="/scripts/game-control-panel/move-replay.js"
-    ></script> -->
+    <script type="module" src="/scripts/mode/pwc-main.js"></script>
   </body>
 </html>

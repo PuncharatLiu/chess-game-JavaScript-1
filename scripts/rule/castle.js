@@ -1,16 +1,8 @@
-// import { removeValidMove, turn, playWithEngine, SWITCH_TURN, playerSide } from "../move-control/piecesControl.js";
-// import { pieces } from "../pieces/pieces.js";
-// import { getCurrentPosition, overlapBlack, overlapWhite, clearPosition, overlap } from "../position/position.js";
-// import { generateFen } from "../notation/generateFen.js";
-// import { sendMoveToEngine } from "../engine/engine-move.js";
-// import Replay from "../game-control-panel/move-replay.js";
-// import PGN from "../notation/PGN.js";
-
 import {
   removeValidMove,
   turn,
   playWithEngine,
-  SWITCH_TURN,
+  setTurn,
   playerSide,
   pieces,
   getCurrentPosition,
@@ -101,7 +93,7 @@ export function shortCastle() {
         "player",
       );
     }
-    SWITCH_TURN("white");
+    setTurn("white");
     console.log("rook castle", overlapWhite);
 
     Replay.displayPgnContent(pgn.pgn("shortCastle"));
@@ -140,7 +132,7 @@ export function shortCastle() {
         "player",
       );
     }
-    SWITCH_TURN("black");
+    setTurn("black");
     Replay.displayPgnContent(pgn.pgn("shortCastle"));
     Replay.getPosition(4, 7, "shortCastle", "black");
   }
@@ -170,7 +162,7 @@ export function longCastle() {
     removeValidMove();
     generateFen(4, 7, 2, 7, "black", isWhiteCastle);
     generateFen(0, 7, 3, 7, "black", isWhiteCastle);
-    SWITCH_TURN("white");
+    setTurn("white");
 
     Replay.displayPgnContent(pgn.pgn("longCastle"));
     Replay.getPosition(28, 24, "longCastle", "white");
@@ -189,7 +181,7 @@ export function longCastle() {
     removeValidMove();
     generateFen(4, 0, 2, 0, "white", isBlackCastle);
     generateFen(0, 0, 3, 0, "white", isBlackCastle);
-    SWITCH_TURN("black");
+    setTurn("black");
 
     Replay.displayPgnContent(pgn.pgn("longCastle"));
     Replay.getPosition(4, 0, "longCastle", "black");
